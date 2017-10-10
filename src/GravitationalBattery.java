@@ -1,4 +1,3 @@
-import java.util.ArrayList;
 import java.util.Timer;
 import java.util.TimerTask;
 
@@ -34,6 +33,8 @@ public class GravitationalBattery extends Battery
 		//There is a bug here. When the battery fills and there is an excess amount of incoming power,
 		//that excess power really should not be subject to the efficiency modifier. In fact I am not so
 		//that the remaining seconds are accurate here. must reinvestigate.
+		
+		//Ok I thought I fixed this bug but I later found out that it still is not right. I put it back to its original version
 		
 		double incomingEnergyInJoules = incomingEnergyInWatts * timeIncomingEnergyLastsInSeconds;
 		double massMultipliedByGravity = this.massInKilograms * this.forceOfGravity;

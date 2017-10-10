@@ -20,7 +20,7 @@ public class ProgramDriver
 		System.out.println(testBattery.currentPotentialEnergyInJoules);
 		
 		testBattery.displayBattery();
-*/
+ 		*/
 		
 /*		BatteryGrid batteryGrid = new BatteryGrid();
 		
@@ -48,9 +48,10 @@ public class ProgramDriver
 		
 		batteryGrid.displayGrid();
 		batteryGrid.allocateEnergyDemand(2250, 1000);
-		batteryGrid.displayGrid();*/
+		batteryGrid.displayGrid();
+		*/
 		
-		City testCity = new City("Des Moines");
+/*		City testCity = new City("Des Moines");
 		testCity.powerNeed(1500000, 3600);
 		testCity.cityPopulation = 215472;
 		testCity.statePopulation = 3134693;
@@ -78,6 +79,17 @@ public class ProgramDriver
 		batteryGrid.displayGrid();
 		batteryGrid.allocateEnergyDemand(100,5);
 		batteryGrid.displayGrid();
+		*/
+		
+/*		WindmillFarmPerformanceType performance = new WindmillFarmPerformanceType();
+		performance.setToLowPerformance();
+		
+		WindmillFarm farm = new WindmillFarm();
+		System.out.println(farm.calculateWindmillFarmOutput(performance));
+		*/
+		
+		WindmillFarmSimulator simulator = new WindmillFarmSimulator();
+		simulator.simulateWindFarm();
 	}
 
 }
