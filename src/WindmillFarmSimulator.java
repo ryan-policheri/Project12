@@ -6,12 +6,11 @@ import java.util.Calendar;
 
 public class WindmillFarmSimulator
 {
-	private double simulatedHourLengthInSeconds = 30;
+	private double simulatedHourLengthInSeconds = 5;
 	private int hoursInDay = 24;
 	private int currentHourOfDay = 0;
 	
 	private String[] hoursOfDay = new String[24];
-	private WindmillFarmPerformanceType[] performancesOfDay = new WindmillFarmPerformanceType[24];
 	
 	private WindmillFarm windmillFarm = new WindmillFarm();
 	
@@ -19,7 +18,6 @@ public class WindmillFarmSimulator
 	public WindmillFarmSimulator()
 	{
 		buildHoursOfDayArray();
-		buildPerformancesOfDayArray();
 	}
 	
 	public void simulateWindFarm()
@@ -39,7 +37,7 @@ public class WindmillFarmSimulator
 	
 	private void generatePowerFromWindmillFarm()
 	{
-		double windmillFarmOutput = windmillFarm.calculateWindmillFarmOutput(this.performancesOfDay[this.currentHourOfDay]);
+		double windmillFarmOutput = windmillFarm.calculateWindmillFarmOutput(this.currentHourOfDay);
 		String AMOrPM = "AM";
 		
 		if(currentHourOfDay >= 12)
@@ -72,53 +70,5 @@ public class WindmillFarmSimulator
 		}
 		
 	}
-	
-	private void buildPerformancesOfDayArray()
-	{
-		for(int hour = 0; hour < 6; hour++)
-		{
-			WindmillFarmPerformanceType tempPerformance = new WindmillFarmPerformanceType();
-			tempPerformance.setToLowPerformance();
-			this.performancesOfDay[hour] = tempPerformance;
-		}
-		
-		for(int hour = 6; hour < 10; hour++)
-		{
-			WindmillFarmPerformanceType tempPerformance = new WindmillFarmPerformanceType();
-			tempPerformance.setToModeratePerformance();
-			this.performancesOfDay[hour] = tempPerformance;
-		}
-		
-		for(int hour = 10; hour < 13; hour++)
-		{
-			WindmillFarmPerformanceType tempPerformance = new WindmillFarmPerformanceType();
-			tempPerformance.setToHighPerformance();
-			this.performancesOfDay[hour] = tempPerformance;
-		}
-		
-		for(int hour = 13; hour < 18; hour++)
-		{
-			WindmillFarmPerformanceType tempPerformance = new WindmillFarmPerformanceType();
-			tempPerformance.setToModeratePerformance();
-			this.performancesOfDay[hour] = tempPerformance;
-		}
-		
-		for(int hour = 18; hour < 21; hour++)
-		{
-			WindmillFarmPerformanceType tempPerformance = new WindmillFarmPerformanceType();
-			tempPerformance.setToHighPerformance();
-			this.performancesOfDay[hour] = tempPerformance;
-		}
-		
-		for(int hour = 21; hour < 24; hour++)
-		{
-			WindmillFarmPerformanceType tempPerformance = new WindmillFarmPerformanceType();
-			tempPerformance.setToLowPerformance();
-			this.performancesOfDay[hour] = tempPerformance;
-		}
-		
-	}
-	
-	
 	
 }

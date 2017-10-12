@@ -9,19 +9,19 @@ public class WindmillFarm
 	{
 	}
 	
-	public double calculateWindmillFarmOutput(WindmillFarmPerformanceType performance)
+	public double calculateWindmillFarmOutput(int hourOfDay)
 	{
-		if(performance.returnPerformanceType() == "High")
+		if((hourOfDay >= 0 && hourOfDay <= 5) || (hourOfDay >= 21 && hourOfDay <= 23))
 		{
-			randomizeHighOutput();
+			randomizeLowOutput();
 		}
-		else if(performance.returnPerformanceType() == "Moderate")
+		else if((hourOfDay >= 6 && hourOfDay <= 9) || (hourOfDay >= 13 && hourOfDay <= 17))
 		{
 			randomizeModerateOutput();
 		}
-		else if(performance.returnPerformanceType() == "Low")
+		else if((hourOfDay >= 10 && hourOfDay <= 12) || (hourOfDay >= 18 && hourOfDay <= 20))
 		{
-			randomizeLowOutput();
+			randomizeHighOutput();
 		}
 		
 		return this.powerOutput;
