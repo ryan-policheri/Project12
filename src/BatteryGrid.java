@@ -14,8 +14,11 @@ public class BatteryGrid
 		this.gravitationalBatteries.add(gravitationalBattery);
 	}
 	
-	public void allocateEnergySurplus(double incomingEnergyInWatts, double timeIncomingEnergyLastsInSeconds)
+	public void allocateEnergySurplus(Surplus surplus)
 	{
+		double incomingEnergyInWatts = surplus.getEnergyAvailableInWatts();
+		double timeIncomingEnergyLastsInSeconds = surplus.getTimeAvailableInSeconds();
+		
 		double highestJoules = -1;
 		int highestJoulesPosition = -1;
 		
@@ -38,11 +41,11 @@ public class BatteryGrid
 		}
 		else
 		{
-			double timeRemainingForDemand = gravitationalBatteries.get(highestJoulesPosition).storeEnergy(incomingEnergyInWatts, timeIncomingEnergyLastsInSeconds);
+			Surplus remainingSurplus = gravitationalBatteries.get(highestJoulesPosition).storeEnergy(surplus);
 		
-			if (timeRemainingForDemand > 0)
+			if (remainingSurplus.isSurplusGone() == false)
 			{
-				allocateEnergySurplus(incomingEnergyInWatts, timeRemainingForDemand);
+				allocateEnergySurplus(remainingSurplus);
 			}
 			else
 			{
@@ -51,8 +54,11 @@ public class BatteryGrid
 		}
 	}
 	
-	public void allocateEnergyDemand(double energyDemandInWatts, double timeDemandIsNeededInSeconds)
+	public void allocateEnergyDemand(Demand demand)
 	{
+		double energyDemandInWatts = demand.getEnergyNeededInWatts();
+		double timeDemandIsNeededInSeconds = demand.getTimeNeededInSeconds();
+		
 		double lowestJoules = Double.MAX_VALUE;
 		int lowestJoulesPosition = -1;
 		
@@ -74,11 +80,11 @@ public class BatteryGrid
 		}
 		else
 		{
-			double timeRemainingForDemand = gravitationalBatteries.get(lowestJoulesPosition).releaseEnergy(energyDemandInWatts, timeDemandIsNeededInSeconds);
+			Demand remainingDemand = gravitationalBatteries.get(lowestJoulesPosition).releaseEnergy(demand);
 		
-			if (timeRemainingForDemand > 0)
+			if (remainingDemand.isDemandGone() == false)
 			{
-				allocateEnergyDemand(energyDemandInWatts, timeRemainingForDemand);
+				allocateEnergyDemand(remainingDemand);
 			}
 			else
 			{
