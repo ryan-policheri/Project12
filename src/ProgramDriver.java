@@ -1,8 +1,9 @@
+import java.util.concurrent.TimeUnit;
 
 public class ProgramDriver
 {
 
-	public static void main(String[] args)
+	public static void main(String[] args) throws InterruptedException
 	{
 		
 /*		GravitationalBattery testBattery = new GravitationalBattery("GB_1",10000,40);
@@ -86,10 +87,33 @@ public class ProgramDriver
 		
 		WindmillFarm farm = new WindmillFarm();
 		System.out.println(farm.calculateWindmillFarmOutput(performance));
-		*/
 		
 		WindmillFarmSimulator simulator = new WindmillFarmSimulator();
-		simulator.simulateWindFarm();
+		simulator.simulate()
+		*/
+		
+		BatteryGrid batteryGrid = new BatteryGrid();
+		
+		batteryGrid.addGravitationalBattery(new GravitationalBattery("GB_1",10000,40));
+		batteryGrid.addGravitationalBattery(new GravitationalBattery("GB_2",5000,50));
+		batteryGrid.addGravitationalBattery(new GravitationalBattery("GB_3",7500,30));
+		batteryGrid.addGravitationalBattery(new GravitationalBattery("GB_4",7500,30));
+		batteryGrid.addGravitationalBattery(new GravitationalBattery("GB_5",2500,20));
+		
+		batteryGrid.displayGrid();
+		batteryGrid.allocateEnergySurplus(new Surplus(100,20));
+		batteryGrid.displayGrid();
+		TimeUnit.SECONDS.sleep(5);
+		batteryGrid.allocateEnergySurplus(new Surplus(100,10));
+		batteryGrid.displayGrid();
+		TimeUnit.SECONDS.sleep(10);
+		batteryGrid.allocateEnergyDemand(new Demand(100,5));
+		batteryGrid.displayGrid();
+		
+		WindmillFarmSimulator simulator = new WindmillFarmSimulator();
+		
+		EnergyCommander energyCommander = new EnergyCommander(batteryGrid, simulator);
+		
 	}
 
 }

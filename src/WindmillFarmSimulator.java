@@ -6,7 +6,7 @@ import java.util.Calendar;
 
 public class WindmillFarmSimulator
 {
-	private double simulatedHourLengthInSeconds = 5;
+	private double simulatedHourLengthInSeconds = 10;
 	private int hoursInDay = 24;
 	private int currentHourOfDay = 0;
 	
@@ -20,7 +20,7 @@ public class WindmillFarmSimulator
 		buildHoursOfDayArray();
 	}
 	
-	public void simulateWindFarm()
+	public void simulate()
 	{
 		long intervalInMilliseconds = (long) (this.simulatedHourLengthInSeconds * 1000);
 		
@@ -29,15 +29,22 @@ public class WindmillFarmSimulator
 										            @Override
 										            public void run()
 										            {
-										            	generatePowerFromWindmillFarm();
+										        		Surplus surplus = generatePowerFromWindmillFarm();
+										        		//how do I send this surplus to the energy commander?
 										            }
 									              }
 									, 0, intervalInMilliseconds);
 	}
 	
-	private void generatePowerFromWindmillFarm()
+	private void sendSurplusToEnergyCommander(Surplus surplus)
+	{
+		
+	}
+	
+	private Surplus generatePowerFromWindmillFarm()
 	{
 		double windmillFarmOutput = windmillFarm.calculateWindmillFarmOutput(this.currentHourOfDay);
+		
 		String AMOrPM = "AM";
 		
 		if(currentHourOfDay >= 12)
@@ -54,6 +61,10 @@ public class WindmillFarmSimulator
 		{
 			this.currentHourOfDay = 0;
 		}
+		
+		Surplus surplus = new Surplus(windmillFarmOutput,simulatedHourLengthInSeconds);
+		
+		return surplus;
 	}
 	
 	private void buildHoursOfDayArray()

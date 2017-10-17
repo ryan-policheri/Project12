@@ -28,13 +28,16 @@ public class GravitationalBattery extends Battery
 	}
 	
 	// FUNCTIONS
-	public double storeEnergy(double incomingEnergyInWatts, double timeIncomingEnergyLastsInSeconds)
+	public Surplus storeEnergy(Surplus surplus)
 	{
 		//There is a bug here. When the battery fills and there is an excess amount of incoming power,
 		//that excess power really should not be subject to the efficiency modifier. In fact I am not so
 		//that the remaining seconds are accurate here. must reinvestigate.
 		
 		//Ok I thought I fixed this bug but I later found out that it still is not right. I put it back to its original version
+		
+		double incomingEnergyInWatts = surplus.getEnergyAvailableInWatts();
+		double timeIncomingEnergyLastsInSeconds = surplus.getTimeAvailableInSeconds();
 		
 		double incomingEnergyInJoules = incomingEnergyInWatts * timeIncomingEnergyLastsInSeconds;
 		double massMultipliedByGravity = this.massInKilograms * this.forceOfGravity;
@@ -75,12 +78,17 @@ public class GravitationalBattery extends Battery
 									   }
 						, timeInUseInMilliseconds);
 		
-		return remainingTimeOfIncomingEnergy;
+		Surplus returnSurplus = new Surplus(incomingEnergyInWatts, remainingTimeOfIncomingEnergy);
+		
+		return returnSurplus;
 		
 	}
 	
-	public double releaseEnergy(double energyDemandInWatts, double timeDemandIsNeededInSeconds)
+	public Demand releaseEnergy(Demand demand)
 	{
+		double energyDemandInWatts = demand.getEnergyNeededInWatts();
+		double timeDemandIsNeededInSeconds = demand.getTimeNeededInSeconds();
+				
 		double secondsDemandCanBeProvided = (this.currentPotentialEnergyInJoules * this.efficiencyModifierForReleasing) / energyDemandInWatts;
 		double secondsLeftWattageIsNeeded;
 		
@@ -116,7 +124,9 @@ public class GravitationalBattery extends Battery
 									   }
 						, timeInUseInMilliseconds);
 		
-		return secondsLeftWattageIsNeeded;
+		Demand returnDemand = new Demand(energyDemandInWatts, secondsLeftWattageIsNeeded);
+		
+		return returnDemand;
 	}
 	
 	public double getCurrentEnergyInJoules()
