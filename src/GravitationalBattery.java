@@ -44,7 +44,7 @@ public class GravitationalBattery extends Battery
 		double heightRaisedInMeters = incomingEnergyInJoules / massMultipliedByGravity;
 		heightRaisedInMeters *= this.efficiencyModifierForStoring;
 		
-		double remainingTimeOfIncomingEnergy = -1;
+		double remainingTimeOfIncomingEnergy;
 		
 		if (this.currentHeightInMeters + heightRaisedInMeters <= this.maxHeightInMeters)
 		{
@@ -53,19 +53,17 @@ public class GravitationalBattery extends Battery
 		}
 		else
 		{
-			this.currentHeightInMeters = this.maxHeightInMeters;
-			
-			double remainingHeight = heightRaisedInMeters - this.maxHeightInMeters;
+			double remainingHeight = heightRaisedInMeters + this.currentHeightInMeters - this.maxHeightInMeters;
 			double remainingJoules = remainingHeight * this.massInKilograms * this.forceOfGravity;
 			remainingTimeOfIncomingEnergy = remainingJoules / incomingEnergyInWatts;
 			
+			this.currentHeightInMeters = this.maxHeightInMeters;
 		}
 		
 		this.currentPotentialEnergyInJoules = this.massInKilograms * this.forceOfGravity * this.currentHeightInMeters;
 		
 		this.inUse = true;
 		double timeInUseInSeconds = timeIncomingEnergyLastsInSeconds - remainingTimeOfIncomingEnergy;
-		System.out.println(timeInUseInSeconds);
 		long timeInUseInMilliseconds = (long) (timeInUseInSeconds * 1000);
 		
 		Timer timer = new Timer();
