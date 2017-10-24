@@ -100,19 +100,23 @@ public class ProgramDriver
 		batteryGrid.addGravitationalBattery(new GravitationalBattery("GB_4",7500,30));
 		batteryGrid.addGravitationalBattery(new GravitationalBattery("GB_5",2500,20));
 		
-		batteryGrid.displayGrid();
+		//batteryGrid.displayGrid();
 		batteryGrid.allocateEnergySurplus(new Surplus(100,20));
-		batteryGrid.displayGrid();
+		//batteryGrid.displayGrid();
 		TimeUnit.SECONDS.sleep(5);
 		batteryGrid.allocateEnergySurplus(new Surplus(100,10));
-		batteryGrid.displayGrid();
+		//batteryGrid.displayGrid();
 		TimeUnit.SECONDS.sleep(10);
 		batteryGrid.allocateEnergyDemand(new Demand(100,5));
 		batteryGrid.displayGrid();
 		
-		WindmillFarmSimulator simulator = new WindmillFarmSimulator();
+		WindmillFarmSimulator windmillFarmSimulator = new WindmillFarmSimulator();
 		
-		EnergyCommander energyCommander = new EnergyCommander(batteryGrid, simulator);
+		EnergyCommander energyCommander = new EnergyCommander(batteryGrid);
+		
+		windmillFarmSimulator.simulate();
+		
+
 		
 	}
 

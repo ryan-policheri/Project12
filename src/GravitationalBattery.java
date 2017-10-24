@@ -65,6 +65,7 @@ public class GravitationalBattery extends Battery
 		
 		this.inUse = true;
 		double timeInUseInSeconds = timeIncomingEnergyLastsInSeconds - remainingTimeOfIncomingEnergy;
+		System.out.println(timeInUseInSeconds);
 		long timeInUseInMilliseconds = (long) (timeInUseInSeconds * 1000);
 		
 		Timer timer = new Timer();
