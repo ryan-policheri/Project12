@@ -42,7 +42,7 @@ public class UserInputDriver
 				removeBattery();
 				break;
 			case "-addEnergy":
-				addEnergy();
+				addEnergySurplus();
 				break;
 			case "-demandEnergy":
 				demandEnergy();
@@ -97,7 +97,7 @@ public class UserInputDriver
 		
 	}
 	
-	private static void addEnergy()
+	private static void addEnergySurplus()
 	{
 		System.out.println("Enter the amount of energy to add in watts: ");
 		double incomingEnergyInWatts = scanner.nextDouble();
@@ -105,7 +105,9 @@ public class UserInputDriver
 		System.out.println("Enter the amount of time the incoming energy lasts in seconds: ");
 		double timeIncomingEnergyLastsInSeconds = scanner.nextDouble();
 		
-		grid.allocateEnergySurplus(incomingEnergyInWatts, timeIncomingEnergyLastsInSeconds);
+		Surplus surplus = new Surplus(incomingEnergyInWatts, timeIncomingEnergyLastsInSeconds);
+		
+		grid.allocateEnergySurplus(surplus);
 	}
 
 	private static void demandEnergy()
@@ -116,7 +118,9 @@ public class UserInputDriver
 		System.out.println("Enter how long the demand is needed in seconds: ");
 		double timeDemandIsNeededInSeconds = scanner.nextDouble();
 		
-		grid.allocateEnergyDemand(energyDemandInWatts, timeDemandIsNeededInSeconds);
+		Demand demand = new Demand(energyDemandInWatts, timeDemandIsNeededInSeconds);
+		
+		grid.allocateEnergyDemand(demand);
 	}
 
 	private static void displayBatteryStats()
