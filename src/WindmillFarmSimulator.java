@@ -10,7 +10,7 @@ public class WindmillFarmSimulator
 	private int hoursInDay = 24;
 	private int currentHourOfDay = 0;
 	
-	private String[] hoursOfDay = new String[24];
+	private String[] hoursOfDay = new String[this.hoursInDay];
 	
 	private WindmillFarm windmillFarm = new WindmillFarm();
 	
@@ -30,15 +30,16 @@ public class WindmillFarmSimulator
 										            public void run()
 										            {
 										        		Surplus surplus = generatePowerFromWindmillFarm();
+										        		sendSurplusThroughEnergyCommander(surplus);
 										        		//how do I send this surplus to the energy commander?
 										            }
 									              }
 									, 0, intervalInMilliseconds);
 	}
 	
-	private void sendSurplusToEnergyCommander(Surplus surplus)
+	private void sendSurplusThroughEnergyCommander(Surplus surplus)
 	{
-		
+		EnergyCommander.commandEnergy(surplus);
 	}
 	
 	private Surplus generatePowerFromWindmillFarm()

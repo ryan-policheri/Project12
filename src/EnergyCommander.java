@@ -1,25 +1,18 @@
 
 public class EnergyCommander
 {
-	private BatteryGrid batteryGrid;
-	private WindmillFarmSimulator windmillFarm;
+	private static BatteryGrid batteryGrid;
 	
-	public EnergyCommander(BatteryGrid batteryGrid, WindmillFarmSimulator windmillFarmSimulator)
+	public EnergyCommander(BatteryGrid batteryGrid)
 	{
 		this.batteryGrid = batteryGrid;
-		this.windmillFarm = windmillFarmSimulator;
 	}
 
-	public static void commandEnergy()
+	public static void commandEnergy(Surplus surplus)
 	{
-		
+		batteryGrid.allocateEnergySurplus(surplus);
+		batteryGrid.displayGrid();
 	}
-	
-	public static void acceptSurplus(Surplus surplus)
-	{
 		
-	}
-	
-	
 	
 }
