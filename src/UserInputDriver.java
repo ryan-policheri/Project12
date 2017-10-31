@@ -19,15 +19,14 @@ public class UserInputDriver
 		{
 			System.out.println("------------------------------------------------------");
 			userInput = askForInput();
+			System.out.println();
 		}
 	} 
 	
 	private static String askForInput()
 	{
 		System.out.println("What would you like to do: ");
-		System.out.println("USER INPUT");
 		String userInput = scanner.nextLine();
-		System.out.println("USER INPUT = " + userInput);
 		System.out.println("------------------------------------------------------");
 		
 		switch (userInput) 
