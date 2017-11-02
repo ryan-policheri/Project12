@@ -92,7 +92,7 @@ public class ProgramDriver
 		simulator.simulate()
 		*/
 		
-		BatteryGrid batteryGrid = new BatteryGrid();
+/*		BatteryGrid batteryGrid = new BatteryGrid();
 		
 		batteryGrid.addGravitationalBattery(new GravitationalBattery("GB_1",10000,40));
 		batteryGrid.addGravitationalBattery(new GravitationalBattery("GB_2",5000,50));
@@ -103,7 +103,7 @@ public class ProgramDriver
 		batteryGrid.addGravitationalBattery(new GravitationalBattery("GB_7",5000,50));
 		batteryGrid.addGravitationalBattery(new GravitationalBattery("GB_8",7500,30));
 		batteryGrid.addGravitationalBattery(new GravitationalBattery("GB_9",7500,30));
-		batteryGrid.addGravitationalBattery(new GravitationalBattery("GB_10",2500,20));
+		batteryGrid.addGravitationalBattery(new GravitationalBattery("GB_10",2500,20));*/
 		
 		//batteryGrid.displayGrid();
 		//batteryGrid.allocateEnergySurplus(new Surplus(100,20));
@@ -113,13 +113,14 @@ public class ProgramDriver
 		//batteryGrid.displayGrid();
 		//TimeUnit.SECONDS.sleep(10);
 		//batteryGrid.allocateEnergyDemand(new Demand(100,5));
+/*		
 		batteryGrid.displayGrid();
 		
 		WindmillFarmSimulator windmillFarmSimulator = new WindmillFarmSimulator();
 		
 		EnergyCommander energyCommander = new EnergyCommander(batteryGrid);
 		
-		windmillFarmSimulator.simulate();
+		windmillFarmSimulator.simulate();*/
 		
 /*		batteryGrid.allocateEnergySurplus(new Surplus(239024.48901238025,10));
 		batteryGrid.displayGrid();
@@ -134,6 +135,16 @@ public class ProgramDriver
 		batteryGrid.displayGrid();
 		TimeUnit.SECONDS.sleep(11);*/
 		
+		RotationalBattery rotBat = new RotationalBattery("RB_1", 450, 10.72);
+		rotBat.displayBattery();
+		rotBat.storeEnergy(new Surplus(50013574,10));
+		rotBat.displayBattery();
+		TimeUnit.SECONDS.sleep(11);
+		rotBat.releaseEnergy(new Demand(37445006,10));
+		rotBat.displayBattery();
+		TimeUnit.SECONDS.sleep(11);
+		rotBat.releaseEnergy(new Demand(29744500,10));
+		rotBat.displayBattery();
 
 		
 	}
