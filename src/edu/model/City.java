@@ -1,6 +1,6 @@
-package com.model;
+package edu.model;
 
-import com.model.batteries.Demand;
+import edu.model.batteries.Demand;
 
 import java.sql.Time;
 import java.util.ArrayList;

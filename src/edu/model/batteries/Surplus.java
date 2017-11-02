@@ -1,4 +1,4 @@
-package com.model.batteries;
+package edu.model.batteries;
 
 public class Surplus
 {	

@@ -1,4 +1,4 @@
-package com.model.batteries;
+package edu.model.batteries;
 
 import java.util.Timer;
 import java.util.TimerTask;

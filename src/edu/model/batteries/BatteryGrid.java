@@ -1,4 +1,4 @@
-package com.model.batteries;
+package edu.model.batteries;
 
 import java.util.ArrayList;
 
@@ -51,7 +51,7 @@ public class BatteryGrid
 			}
 			else
 			{
-				System.out.println("com.model.batteries.Surplus succesfully allocated");
+				System.out.println("Surplus succesfully allocated");
 			}
 		}
 	}
@@ -90,7 +90,7 @@ public class BatteryGrid
 			}
 			else
 			{
-				System.out.println("com.model.batteries.Demand succesfully allocated");
+				System.out.println("Demand succesfully allocated");
 			}
 		}
 		

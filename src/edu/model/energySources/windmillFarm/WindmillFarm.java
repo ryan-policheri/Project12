@@ -1,4 +1,4 @@
-package com.model.energySources.windmillFarm;
+package edu.model.energySources.windmillFarm;
 
 public class WindmillFarm
 {

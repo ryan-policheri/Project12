@@ -1,11 +1,10 @@
-package com.view;
+package edu.view;
 
 import javax.swing.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
-import com.model.batteries.BatteryGrid;
-import com.model.batteries.GravitationalBattery;
-import com.sun.codemodel.internal.JOp;
+import edu.model.batteries.BatteryGrid;
+import edu.model.batteries.GravitationalBattery;
 
 public class TestForm extends JFrame
 {

@@ -1,7 +1,7 @@
-package com.model.energySources.windmillFarm;
+package edu.model.energySources.windmillFarm;
 
-import com.model.EnergyCommander;
-import com.model.batteries.Surplus;
+import edu.model.EnergyCommander;
+import edu.model.batteries.Surplus;
 
 import java.util.Timer;
 import java.util.TimerTask;
