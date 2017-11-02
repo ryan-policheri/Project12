@@ -1,3 +1,5 @@
+import com.forms.TestForm;
+
 import java.util.Scanner;
 
 public class UserInputDriver 
@@ -10,6 +12,8 @@ public class UserInputDriver
 		// TO DO
 		showStartMessage();
 		displayInputs();
+
+		TestForm t = new TestForm();
 		
 		// used for gathering user input
 		String userInput = "";
