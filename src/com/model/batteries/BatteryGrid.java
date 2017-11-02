@@ -1,9 +1,5 @@
 package com.model.batteries;
 
-import com.model.batteries.Demand;
-import com.model.batteries.GravitationalBattery;
-import com.model.batteries.Surplus;
-
 import java.util.ArrayList;
 
 public class BatteryGrid

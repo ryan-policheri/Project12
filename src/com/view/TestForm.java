@@ -3,6 +3,9 @@ package com.view;
 import javax.swing.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import com.model.batteries.BatteryGrid;
+import com.model.batteries.GravitationalBattery;
+import com.sun.codemodel.internal.JOp;
 
 public class TestForm extends JFrame
 {
@@ -19,9 +22,10 @@ public class TestForm extends JFrame
 	private JLabel lblMass;
 	private JTextField txtName;
 	private JTextField txtMass;
-	private JTextField textHeight;
+	private JTextField txtHeight;
 
 	// Model
+	private BatteryGrid grid = new BatteryGrid();
 
 	public TestForm()
 	{
@@ -33,7 +37,15 @@ public class TestForm extends JFrame
 			@Override
 			public void actionPerformed(ActionEvent e)
 			{
+				// Add the gravitational battery to the grid
+				GravitationalBattery battery = new GravitationalBattery(txtName.getText(),
+						Double.parseDouble(txtMass.getText()), Double.parseDouble(txtHeight.getText()));
+				grid.addGravitationalBattery(battery);
+				System.out.println("-----------------");
+
+				grid.displayGrid();
 				JOptionPane.showMessageDialog(null, txtName.getText() + " added to grid.");
+				JOptionPane.showMessageDialog(null, "Check console");
 			}
 		});
 	}

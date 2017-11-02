@@ -1,7 +1,5 @@
 package com.model.batteries;
 
-import com.model.batteries.Battery;
-
 import java.util.Timer;
 import java.util.TimerTask;
 
@@ -139,7 +137,7 @@ public class GravitationalBattery extends Battery
 	
 	public void displayBattery()
 	{
-		String batteryDisplay = "com.model.batteries.Battery: " + this.batteryName + " - Current Storage in Joules: " + Double.toString(this.currentPotentialEnergyInJoules);
+		String batteryDisplay = "Battery: " + this.batteryName + " - Current Storage in Joules: " + Double.toString(this.currentPotentialEnergyInJoules);
 		System.out.println(batteryDisplay);
 	}
 	
