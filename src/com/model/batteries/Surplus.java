@@ -1,3 +1,4 @@
+package com.model.batteries;
 
 public class Surplus
 {	

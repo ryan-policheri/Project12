@@ -1,4 +1,8 @@
-import com.forms.TestForm;
+package com.controllers;
+
+import com.model.batteries.Demand;
+import com.model.batteries.Surplus;
+import com.model.batteries.BatteryGrid;
 
 import java.util.Scanner;
 
@@ -12,8 +16,6 @@ public class UserInputDriver
 		// TO DO
 		showStartMessage();
 		displayInputs();
-
-		TestForm t = new TestForm();
 		
 		// used for gathering user input
 		String userInput = "";
@@ -72,7 +74,7 @@ public class UserInputDriver
 		System.out.println("Add a gravitational battery to the battery grid: -addBattery");
 		System.out.println("Remove a battery from the battery grid: -removeBattery");
 		System.out.println("Add energy to the battery grid: -addEnergy");
-		System.out.println("Demand energy from the battery grid: -demandEnergy");
+		System.out.println("com.model.batteries.Demand energy from the battery grid: -demandEnergy");
 		System.out.println("Display current battery stats: -displayBatteryStats");
 		System.out.println("Show this message again: -help");
 		System.out.println("Terminate the program: -done");
@@ -89,7 +91,7 @@ public class UserInputDriver
 		System.out.println("Enter the battery's maximum height in meters: ");
 		double batteryHeightInMeters = scanner.nextDouble();
 		
-		// GravitationalBattery battery = new GravitationalBattery("Name", 10, batteryHeightInMeters);
+		// com.model.batteries.GravitationalBattery battery = new com.model.batteries.GravitationalBattery("Name", 10, batteryHeightInMeters);
 		// grid.addGravitationalBattery(battery);
 		
 		System.out.println("Name" + " added to the battery grid.");
@@ -121,7 +123,7 @@ public class UserInputDriver
 		System.out.println("Enter how long the demand is needed in seconds: ");
 		double timeDemandIsNeededInSeconds = scanner.nextDouble();
 		
-		Demand demand = new Demand(energyDemandInWatts, timeDemandIsNeededInSeconds);
+		com.model.batteries.Demand demand = new com.model.batteries.Demand(energyDemandInWatts, timeDemandIsNeededInSeconds);
 		
 		grid.allocateEnergyDemand(demand);
 	}

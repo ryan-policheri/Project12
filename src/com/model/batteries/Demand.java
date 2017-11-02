@@ -1,3 +1,5 @@
+package com.model.batteries;
+
 public class Demand
 {
 	double energyNeededInWatts;

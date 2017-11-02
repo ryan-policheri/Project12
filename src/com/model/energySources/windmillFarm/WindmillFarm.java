@@ -1,3 +1,4 @@
+package com.model.energySources.windmillFarm;
 
 public class WindmillFarm
 {

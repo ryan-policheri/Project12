@@ -1,3 +1,9 @@
+package com.model.batteries;
+
+import com.model.batteries.Demand;
+import com.model.batteries.GravitationalBattery;
+import com.model.batteries.Surplus;
+
 import java.util.ArrayList;
 
 public class BatteryGrid
@@ -49,7 +55,7 @@ public class BatteryGrid
 			}
 			else
 			{
-				System.out.println("Surplus succesfully allocated");
+				System.out.println("com.model.batteries.Surplus succesfully allocated");
 			}
 		}
 	}
@@ -88,7 +94,7 @@ public class BatteryGrid
 			}
 			else
 			{
-				System.out.println("Demand succesfully allocated");
+				System.out.println("com.model.batteries.Demand succesfully allocated");
 			}
 		}
 		

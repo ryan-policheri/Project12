@@ -1,3 +1,7 @@
+package com.model;
+
+import com.model.batteries.Demand;
+
 import java.sql.Time;
 import java.util.ArrayList;
 import java.util.List;

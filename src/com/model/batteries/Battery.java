@@ -1,4 +1,4 @@
-// Source Control Test : Ryan Policheri
+package com.model.batteries;// Source Control Test : Ryan Policheri
 
 public class Battery 
 {

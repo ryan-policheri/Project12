@@ -1,7 +1,6 @@
-package com.forms;
+package com.view;
 
 import javax.swing.*;
-import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 
@@ -21,7 +20,6 @@ public class TestForm extends JFrame
 	private JTextField txtName;
 	private JTextField txtMass;
 	private JTextField textHeight;
-	private JButton btnMSG;
 
 	// Model
 
@@ -29,12 +27,13 @@ public class TestForm extends JFrame
 	{
 		super("Main Panel");
 
-		btnMSG.addActionListener(new ActionListener()
+		// Listeners
+		btnAdd.addActionListener(new ActionListener()
 		{
 			@Override
 			public void actionPerformed(ActionEvent e)
 			{
-				JOptionPane.showMessageDialog(null, "Hello World!");
+				JOptionPane.showMessageDialog(null, txtName.getText() + " added to grid.");
 			}
 		});
 	}

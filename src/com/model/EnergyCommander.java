@@ -1,3 +1,7 @@
+package com.model;
+
+import com.model.batteries.BatteryGrid;
+import com.model.batteries.Surplus;
 
 public class EnergyCommander
 {
