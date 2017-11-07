@@ -135,15 +135,22 @@ public class ProgramDriver
 		batteryGrid.displayGrid();
 		TimeUnit.SECONDS.sleep(11);*/
 		
-		RotationalBattery rotBat = new RotationalBattery("RB_1", 450, 10.72);
+		double densityOfCarbonFiberInKilogramsMetersCubed = 1799;
+		double tensileStressOfCarbonFiberInPascals = 4000000000.0;
+		FlywheelMaterial carbonFiber = new FlywheelMaterial("Carbon Fiber", densityOfCarbonFiberInKilogramsMetersCubed, tensileStressOfCarbonFiberInPascals);
+		
+		double percentFrictionalLossPerSecondForStandardMecahnicalBearing = 0.000034722222222222222222; //number derived from 25 percent / 7200
+		FlywheelBearing mechanicalBearing = new FlywheelBearing("Mechanical Bearing", percentFrictionalLossPerSecondForStandardMecahnicalBearing);
+		
+		RotationalBattery rotBat = new RotationalBattery("RB_1", 450, 10.72, carbonFiber, mechanicalBearing);
 		rotBat.displayBattery();
 		rotBat.storeEnergy(new Surplus(50013574,10));
 		rotBat.displayBattery();
 		TimeUnit.SECONDS.sleep(11);
-		rotBat.releaseEnergy(new Demand(37445006,10));
+		//rotBat.releaseEnergy(new Demand(37445006,10));
 		rotBat.displayBattery();
 		TimeUnit.SECONDS.sleep(11);
-		rotBat.releaseEnergy(new Demand(29744500,10));
+		//rotBat.releaseEnergy(new Demand(29744500,10));
 		rotBat.displayBattery();
 
 		
