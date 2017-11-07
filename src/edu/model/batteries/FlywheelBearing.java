@@ -1,3 +1,4 @@
+package edu.model.batteries;
 
 public class FlywheelBearing
 {

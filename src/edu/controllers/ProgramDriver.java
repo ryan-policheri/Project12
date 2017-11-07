@@ -3,6 +3,8 @@ package edu.controllers;
 import edu.model.batteries.Demand;
 import edu.model.batteries.RotationalBattery;
 import edu.model.batteries.Surplus;
+import edu.model.batteries.FlywheelBearing;
+import edu.model.batteries.FlywheelMaterial;
 
 import java.util.concurrent.TimeUnit;
 

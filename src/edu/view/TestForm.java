@@ -6,7 +6,6 @@ import java.awt.event.ActionListener;
 import edu.model.batteries.BatteryGrid;
 import edu.model.batteries.GravitationalBattery;
 import edu.controllers.Controller;
-import oracle.jvm.hotspot.jfr.JFR;
 
 public class TestForm extends JFrame
 {
