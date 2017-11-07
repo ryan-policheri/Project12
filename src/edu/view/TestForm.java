@@ -5,17 +5,19 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import edu.model.batteries.BatteryGrid;
 import edu.model.batteries.GravitationalBattery;
+import edu.controllers.Controller;
+import oracle.jvm.hotspot.jfr.JFR;
 
 public class TestForm extends JFrame
 {
-	// View
+	//region Form items
 	private JPanel panelMain;
 	private JPanel panelLeft;
 	private JPanel panelRight;
 	private JPanel panelBottom;
-	private JButton btnAdd;
-	private JButton btnEdit;
-	private JButton btnDelete;
+	private JButton btnBattery;
+	private JButton btnShowGrid;
+	private JButton btnEnergy;
 	private JLabel lblName;
 	private JLabel lblHeight;
 	private JLabel lblMass;
@@ -23,38 +25,67 @@ public class TestForm extends JFrame
 	private JTextField txtMass;
 	private JTextField txtHeight;
 
-	// Model
-	private BatteryGrid grid = new BatteryGrid();
+	private static JFrame frame = new JFrame("TestForm");
+	private static JFrame newTestForm = new JFrame("NewTestForm");
+	//endregion
 
 	public TestForm()
 	{
 		super("Main Panel");
 
-		// Listeners
-		btnAdd.addActionListener(new ActionListener()
+		//region Listeners
+		btnBattery.addActionListener(new ActionListener()
 		{
 			@Override
 			public void actionPerformed(ActionEvent e)
 			{
 				// Add the gravitational battery to the grid
-				GravitationalBattery battery = new GravitationalBattery(txtName.getText(),
-						Double.parseDouble(txtMass.getText()), Double.parseDouble(txtHeight.getText()));
-				grid.addGravitationalBattery(battery);
-				System.out.println("-----------------");
+				Controller.addBattery(txtName.getText(), Double.parseDouble(txtMass.getText()), Double.parseDouble
+						(txtHeight.getText()));
 
-				grid.displayGrid();
-				JOptionPane.showMessageDialog(null, txtName.getText() + " added to grid.");
-				JOptionPane.showMessageDialog(null, "Check console");
+				//TODO: Add update() functionality
+			}
+		});
+
+		btnShowGrid.addActionListener(new ActionListener()
+		{
+			@Override
+			public void actionPerformed(ActionEvent e)
+			{
+
+			}
+		});
+		//endregion
+		btnEnergy.addActionListener(new ActionListener()
+		{
+			@Override
+			public void actionPerformed(ActionEvent e)
+			{
+				frame.setContentPane(new NewTestForm().panelMain);
+				frame.pack();
 			}
 		});
 	}
 
+	//region Methods
+	private static void update()
+	{
+
+	}
+	//endregion
+
 	public static void main(String[] args)
 	{
-		JFrame frame = new JFrame("TestForm");
+		// TestForm JFrame
 		frame.setContentPane(new TestForm().panelMain);
 		frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 		frame.pack();
 		frame.setVisible(true);
+
+		// Other JFrames
+//		newTestForm.setContentPane(new NewTestForm().panelMain);
+//		newTestForm.setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
+//		newTestForm.pack();
+//		newTestForm.setVisible(true);
 	}
 }
