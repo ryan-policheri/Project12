@@ -5,6 +5,7 @@ import java.util.ArrayList;
 public class BatteryGrid
 {
 	ArrayList<GravitationalBattery> gravitationalBatteries = new ArrayList<GravitationalBattery>();
+	ArrayList<RotationalBattery> rotationalBatteries = new ArrayList<RotationalBattery>();
 	
 	// CONSTRUCTORS
 	public BatteryGrid() 
@@ -14,6 +15,11 @@ public class BatteryGrid
 	public void addGravitationalBattery(GravitationalBattery gravitationalBattery)
 	{
 		this.gravitationalBatteries.add(gravitationalBattery);
+	}
+	
+	public void addRotationalBattery(RotationalBattery rotationalBattery)
+	{
+		this.rotationalBatteries.add(rotationalBattery);
 	}
 	
 	public void allocateEnergySurplus(Surplus surplus)
