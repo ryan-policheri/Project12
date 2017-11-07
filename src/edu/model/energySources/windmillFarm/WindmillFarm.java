@@ -1,3 +1,4 @@
+package edu.model.energySources.windmillFarm;
 
 public class WindmillFarm
 {

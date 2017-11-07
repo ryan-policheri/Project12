@@ -1,3 +1,5 @@
+package edu.model.batteries;
+
 import java.util.ArrayList;
 
 public class BatteryGrid

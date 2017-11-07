@@ -1,7 +1,9 @@
+package edu.model.batteries;
+
 import java.util.Timer;
 import java.util.TimerTask;
 
-public class GravitationalBattery extends Battery 
+public class GravitationalBattery extends Battery
 {
 	// ATTRIBUTES
 	String batteryName;

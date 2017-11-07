@@ -1,3 +1,9 @@
+package edu.controllers;
+
+import edu.model.batteries.Demand;
+import edu.model.batteries.Surplus;
+import edu.model.batteries.BatteryGrid;
+
 import java.util.Scanner;
 
 public class UserInputDriver 

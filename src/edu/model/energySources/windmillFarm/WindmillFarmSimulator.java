@@ -1,3 +1,8 @@
+package edu.model.energySources.windmillFarm;
+
+import edu.model.EnergyCommander;
+import edu.model.batteries.Surplus;
+
 import java.util.Timer;
 import java.util.TimerTask;
 import java.text.DateFormat;
