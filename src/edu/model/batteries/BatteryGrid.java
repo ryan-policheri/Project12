@@ -6,6 +6,8 @@ public class BatteryGrid
 {
 	ArrayList<GravitationalBattery> gravitationalBatteries = new ArrayList<GravitationalBattery>();
 	ArrayList<RotationalBattery> rotationalBatteries = new ArrayList<RotationalBattery>();
+
+	double lowTimeThresholdInSeconds = 2.5; // this would be a 15 minutes in our simulation
 	
 	// CONSTRUCTORS
 	public BatteryGrid() 
@@ -26,10 +28,10 @@ public class BatteryGrid
 	{
 		double incomingEnergyInWatts = surplus.getEnergyAvailableInWatts();
 		double timeIncomingEnergyLastsInSeconds = surplus.getTimeAvailableInSeconds();
-		
+
 		double highestJoules = -1;
 		int highestJoulesPosition = -1;
-		
+
 		for (int x = 0; x < gravitationalBatteries.size(); x++)
 		{
 			double tempJoulesInBattery = gravitationalBatteries.get(x).getCurrentEnergyInJoules();
@@ -61,12 +63,12 @@ public class BatteryGrid
 			}
 		}
 	}
-	
-	public void allocateEnergyDemand(Demand demand)
+
+public void allocateEnergyDemand(Demand demand)
 	{
 		double energyDemandInWatts = demand.getEnergyNeededInWatts();
 		double timeDemandIsNeededInSeconds = demand.getTimeNeededInSeconds();
-		
+
 		double lowestJoules = Double.MAX_VALUE;
 		int lowestJoulesPosition = -1;
 		
@@ -107,6 +109,11 @@ public class BatteryGrid
 		for (GravitationalBattery gravitationalBattery : this.gravitationalBatteries)
 		{
 			gravitationalBattery.displayBattery();
+		}
+
+		for (RotationalBattery rotationalBattery : this.rotationalBatteries)
+		{
+			rotationalBattery.displayBattery();
 		}
 	}
 	
