@@ -98,6 +98,12 @@
           </component>
         </children>
       </grid>
+      <grid id="69a0" binding="panelMain2" layout-manager="BorderLayout" hgap="0" vgap="0">
+        <constraints border-constraint="Center"/>
+        <properties/>
+        <border type="none"/>
+        <children/>
+      </grid>
     </children>
   </grid>
 </form>

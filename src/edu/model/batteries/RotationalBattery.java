@@ -44,6 +44,9 @@ public class RotationalBattery
 		startFrictionalLossUpdate();	
 	}
 	
+	//Puts energy in an individual battery. If the incoming energy plus the already stored energy is greater than the max capacity
+	//of the battery then the battery will be filled up and the remainder will be sent back to the grid. If the incoming energy
+	//plus the already stored energy is less than the max capacity then the battery will charge and there will be no remainder.
 	public Surplus storeEnergy(Surplus surplus)
 	{
 		double incomingEnergyInWatts = surplus.getEnergyAvailableInWatts();
@@ -183,6 +186,21 @@ public class RotationalBattery
 	private void markBatteryNotInUse()
 	{
 		this.inUse = false;
+	}
+	
+	public boolean isBatteryInUse()
+	{
+		return this.inUse;
+	}
+	
+	public boolean isBatteryFull()
+	{
+		return this.maxJoulesStorage == this.currentEnergyInJoules;
+	}
+	
+	public double getCurrentEnergyInJoules()
+	{
+		return this.currentEnergyInJoules;
 	}
 	
 	public void displayBattery()

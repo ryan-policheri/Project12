@@ -1,10 +1,12 @@
 package edu.controllers;
 
+import edu.model.batteries.BatteryGrid;
 import edu.model.batteries.Demand;
 import edu.model.batteries.RotationalBattery;
 import edu.model.batteries.Surplus;
 import edu.model.batteries.FlywheelBearing;
 import edu.model.batteries.FlywheelMaterial;
+import edu.model.batteries.GravitationalBattery;
 
 import java.util.concurrent.TimeUnit;
 
@@ -143,7 +145,7 @@ public class ProgramDriver
 		batteryGrid.displayGrid();
 		TimeUnit.SECONDS.sleep(11);*/
 		
-		double densityOfCarbonFiberInKilogramsMetersCubed = 1799;
+/*		double densityOfCarbonFiberInKilogramsMetersCubed = 1799;
 		double tensileStressOfCarbonFiberInPascals = 4000000000.0;
 		FlywheelMaterial carbonFiber = new FlywheelMaterial("Carbon Fiber", densityOfCarbonFiberInKilogramsMetersCubed, tensileStressOfCarbonFiberInPascals);
 		
@@ -159,9 +161,48 @@ public class ProgramDriver
 		rotBat.displayBattery();
 		TimeUnit.SECONDS.sleep(11);
 		//rotBat.releaseEnergy(new Demand(29744500,10));
-		rotBat.displayBattery();
-
+		rotBat.displayBattery();*/
 		
+		double densityOfCarbonFiberInKilogramsMetersCubed = 1799;
+		double tensileStressOfCarbonFiberInPascals = 4000000000.0;
+		FlywheelMaterial carbonFiber = new FlywheelMaterial("Carbon Fiber", densityOfCarbonFiberInKilogramsMetersCubed, tensileStressOfCarbonFiberInPascals);
+		
+		double percentFrictionalLossPerSecondForStandardMecahnicalBearing = 0.000034722222222222222222; //number derived from 25 percent / 7200
+		FlywheelBearing mechanicalBearing = new FlywheelBearing("Mechanical Bearing", percentFrictionalLossPerSecondForStandardMecahnicalBearing);
+		
+		BatteryGrid batteryGrid = new BatteryGrid();
+		
+		batteryGrid.addGravitationalBattery(new GravitationalBattery("GB_1",1000,30));
+		batteryGrid.addGravitationalBattery(new GravitationalBattery("GB_2",5000,10));
+		batteryGrid.addGravitationalBattery(new GravitationalBattery("GB_3",500,50));
+		batteryGrid.addGravitationalBattery(new GravitationalBattery("GB_4",2000,20));
+		batteryGrid.addGravitationalBattery(new GravitationalBattery("GB_5",2500,20));
+		batteryGrid.addRotationalBattery(new RotationalBattery("RB_1", 100, 5, carbonFiber, mechanicalBearing));
+		batteryGrid.addRotationalBattery(new RotationalBattery("RB_2", 150, 7.5, carbonFiber, mechanicalBearing));
+		batteryGrid.addRotationalBattery(new RotationalBattery("RB_3", 250, 2, carbonFiber, mechanicalBearing));
+		batteryGrid.addRotationalBattery(new RotationalBattery("RB_4", 150, 5, carbonFiber, mechanicalBearing));
+		batteryGrid.addRotationalBattery(new RotationalBattery("RB_5", 50, 5, carbonFiber, mechanicalBearing));
+		
+		batteryGrid.displayGrid();
+		batteryGrid.allocateEnergySurplus(new Surplus(100000,5));
+		batteryGrid.displayGrid();
+		batteryGrid.allocateEnergySurplus(new Surplus(50000,2));
+		batteryGrid.displayGrid();
+		batteryGrid.allocateEnergySurplus(new Surplus(100000,5));
+		batteryGrid.displayGrid();
+		batteryGrid.allocateEnergySurplus(new Surplus(20000,2));
+		batteryGrid.displayGrid();
+		batteryGrid.allocateEnergySurplus(new Surplus(20000,2));
+		batteryGrid.displayGrid();
+		TimeUnit.SECONDS.sleep(4);
+		batteryGrid.allocateEnergySurplus(new Surplus(20000,2));
+		batteryGrid.displayGrid();
+		TimeUnit.SECONDS.sleep(5);
+		batteryGrid.allocateEnergyDemand(new Demand(20000,0.5));
+		batteryGrid.displayGrid();
+		TimeUnit.SECONDS.sleep(5);
+		batteryGrid.allocateEnergyDemand(new Demand(1000000,10));
+		batteryGrid.displayGrid();
 	}
 
 }
