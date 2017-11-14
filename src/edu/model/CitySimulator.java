@@ -60,7 +60,7 @@ public class CitySimulator
 		
 		for (int i = 0; i < hoursInDay; i++)
 		{
-			desMoines.addDemand(new Demand((desMoines.calculateCityDemand(randomHour)), Math.random() * 100 ), (long)(Math.random() * desMoines.millisecondsInDay));
+			desMoines.addDemand(new Demand((desMoines.calculateCityDemand(randomHour)), Math.random() * 10 ), (long)(Math.random() * desMoines.millisecondsInDay));
 			
 		}
 	}
