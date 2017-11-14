@@ -1,51 +1,62 @@
 package edu.model;
 
-import edu.model.batteries.Demand;
-
 import java.sql.Time;
+import java.text.DateFormat;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Calendar;
+import java.util.Collections;
+import java.util.Date;
 import java.util.List;
+import java.util.Timer;
+import java.util.TimerTask;
 
 public class City 
 {
 	//ATTRIBUTES
-	//make private
-	String cityName;
-	int estimatedLandAvailableInAcres;
-	int cityPopulation;
-	int statePopulation;
-	double cityEnergyConsumedYearly;
-	double cityEnergyProducedYearly;
-	double cityRenewableEnergyProducedYearly;
+	//Do we even need these?
+	//Keeping just in case
+	private String cityName;
+	private int estimatedLandAvailableInAcres;
+	private int cityPopulation;
+	private int statePopulation;
+	private int demandsThroughOutADay;
+	private double cityEnergyConsumedYearly;
+	private double cityEnergyProducedYearly;
+	private double cityRenewableEnergyProducedYearly;
 	private double powerDemand;
 	private int lowestPowerDemand = 50000;
+	long millisecondsInDay = (long) (8640000000L);
+	long randomMillisecondInDay = (long)(Math.random() * millisecondsInDay);
+	
 	
 	//parallel array
 	List<Demand> dailyDemand= new ArrayList<Demand>();
-	List<Time> dailyDemandTimesOfDay = new ArrayList<Time>();
+    List<Double> dailyDemandTimesOfDayInMilliseconds = new ArrayList<Double>();
 	
 	//CONSTRUCTORS
 	public City(String cityName)
-	{
+	{	
 		this.cityName = cityName;
+		
 	}
 	
 	//FUNTIONS
-
 	
-	public void addDemand(Demand dailyDemand, Time dailyDemandTimesOfDay)
+	public void addDemand(Demand dailyDemand, double dailyDemandTimesOfDayInMilliseconds)
 	{
 		this.dailyDemand.add(dailyDemand);
-		this.dailyDemandTimesOfDay.add(dailyDemandTimesOfDay);
+		this.dailyDemandTimesOfDayInMilliseconds.add(dailyDemandTimesOfDayInMilliseconds);
 	}
 	
-	public void removeDemand(Demand dailyDemand, Time dailyDemandTimesOfDay)
+	public void removeDemand(Demand dailyDemand, long dailyDemandTimesOfDayInMilliseconds)
 	{
 		this.dailyDemand.remove(dailyDemand);
-		this.dailyDemandTimesOfDay.remove(dailyDemandTimesOfDay);
+		this.dailyDemandTimesOfDayInMilliseconds.remove(dailyDemandTimesOfDayInMilliseconds);
 	}
 	
-	public double powerNeed(double energyNeededInWatts, double amountOfTimeInSeconds)
+/*	public double powerNeed(double energyNeededInWatts, double amountOfTimeInSeconds)
 	{
 		// Get energy to Megawatts    multiplied    by how many hours.
 		double energyInMegawattHours = (energyNeededInWatts / 1000000) * (3600 / amountOfTimeInSeconds);
@@ -53,6 +64,7 @@ public class City
 		//double energyInJoules = energyNeededInWatts * amountOfTimeInSeconds;
 		return energyInMegawattHours;
 	}
+	*/
 	
 	public double calculateCityDemand(int hourOfDay)
 	{
@@ -100,4 +112,7 @@ public class City
 			this.powerDemand = 0;
 		}
 	}
+	
+
+	
 }
