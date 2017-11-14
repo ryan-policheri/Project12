@@ -324,6 +324,11 @@ public class BatteryGrid
 			rotationalBattery.displayBattery();
 		}
 	}
+
+	public ArrayList<GravitationalBattery> getGravitationalBatteries()
+	{
+		return gravitationalBatteries;
+	}
 	
 	
 	
