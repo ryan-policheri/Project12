@@ -51,4 +51,9 @@ public class Controller
 	{
 		grid.displayGrid();
 	}
+
+	public static BatteryGrid getGrid()
+	{
+		return grid;
+	}
 }

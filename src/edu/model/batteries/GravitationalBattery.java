@@ -155,4 +155,9 @@ public class GravitationalBattery extends Battery
 	{
 		this.inUse = false;
 	}
+
+	public String getBatteryName()
+	{
+		return batteryName;
+	}
 }
