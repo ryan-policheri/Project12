@@ -32,8 +32,8 @@ public class City
 	
 	
 	//parallel array
-	List<Demand> dailyDemand= new ArrayList<Demand>();
-    List<Double> dailyDemandTimesOfDayInMilliseconds = new ArrayList<Double>();
+	private List<Demand> dailyDemand= new ArrayList<Demand>();
+    private List<Double> dailyDemandTimesOfDayInMilliseconds = new ArrayList<Double>();
 	
 	//CONSTRUCTORS
 	public City(String cityName)
@@ -43,6 +43,16 @@ public class City
 	}
 	
 	//FUNTIONS
+	
+	public List<Demand> getDailyDemand()
+	{
+		return dailyDemand;
+	}
+	
+	public List<Double> getDailyDemandTimesOfDayInMilliseconds()
+	{
+		return dailyDemandTimesOfDayInMilliseconds;
+	}
 	
 	public void addDemand(Demand dailyDemand, double dailyDemandTimesOfDayInMilliseconds)
 	{
