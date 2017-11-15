@@ -1,3 +1,8 @@
+package edu.model;
+
+import edu.model.City;
+import edu.model.batteries.Demand;
+
 import java.util.Timer;
 import java.util.TimerTask;
 import java.text.DateFormat;
@@ -26,11 +31,11 @@ public class CitySimulator
 		simulate();
 		buildHoursOfDayArray();
 		
-		for (int i = 0; i < desMoines.dailyDemand.size(); i++)
+		/*for (int i = 0; i < desMoines.dailyDemand.size(); i++)
 		{
 			System.out.println("Needs " + desMoines.dailyDemand.get(i) + " at the " +
 					desMoines.dailyDemandTimesOfDayInMilliseconds.get(i) + " millisecond time of day");
-		}
+		}*/
 	}
 	
 	public void simulate()
@@ -66,8 +71,9 @@ public class CitySimulator
 		
 		for (int i = 0; i < hoursInDay; i++)
 		{
+			/*
 			desMoines.addDemand(new Demand((Math.random() * 1000000), desMoines.calculateCityDemand(randomHour)), (long)(Math.random() * desMoines.millisecondsInDay));
-			
+			*/
 		}
 	}
 
