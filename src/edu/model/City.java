@@ -1,5 +1,7 @@
 package edu.model;
 
+import edu.model.batteries.Demand;
+
 import java.sql.Time;
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;

@@ -8,7 +8,6 @@ import edu.model.batteries.BatteryGrid;
 import edu.model.energySources.windmillFarm.WindmillFarmSimulator;
 
 import javax.swing.*;
-import javax.xml.transform.sax.SAXSource;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 //endregion
@@ -17,21 +16,51 @@ public class MainUserGUI
 {
 	//region Initialize swing elements
 	private JPanel panelMain;
+
 	//region Welcome panel
 	private JPanel panelWelcome;
-	private JLabel lblWelcome;
-	private JButton btnBatteries;
-	private JButton btnEnergy;
+	private JButton btnStartNewSimulation;
+	private JButton btnWindmillFarm;
+	private JButton btnExit;
 	//endregion
+
+	//region Pick City panel
+	private JPanel panelPickCity;
+	private JList listCities;
+	private JLabel lblPickCityEnergyProduction;
+	private JLabel lblPickCityEnergyConsumption;
+	private JLabel lblPickCitySurplus;
+	private JLabel lblPickCitySquareMilage;
+	private JLabel lblPickCitySelectedCityName;
+	private JButton btnPickCityBack;
+	private JButton btnPickCityNext;
+	//endregion
+
 	//region Energy panel
 	private JPanel panelEnergy;
-	private JLabel lblEnergy;
-	private JButton btnRunWFS;
-	private JButton btnEnergyCancel;
+	private JButton btnEnergyProductionEdit;
+	private JButton btnEnergyConsumptionEdit;
+	private JButton btnEnergyBack;
+	private JButton btnEnergyNext;
 	//endregion
+
 	//region Batteries panel
-	private JList listBatteries;
 	private JPanel panelBatteries;
+	private JList listBatteries;
+	private JLabel lblBatteriesSelectedBatteryName;
+	private JButton btnBatteriesAdd;
+	private JButton btnBatteriesRemove;
+	private JButton btnBatteriesBack;
+	private JButton btnBatteriesNext;
+	//endregion
+
+	//region Place Batteries panel
+	private JPanel panelPlaceBatteries;
+	private JList listPlaceBatteries;
+	private JLabel lblPlaceBatteriesCityName;
+	private JButton btnPlaceBatteriesBack;
+	private JButton btnPlaceBatteriesSimulate;
+	//endregion
 	//endregion
 
 	//region Initialize attributes
@@ -40,17 +69,16 @@ public class MainUserGUI
 
 	public MainUserGUI()
 	{
-		//TODO: find a way to automatically update the model... make model static?
 		//TODO: Research how to use the different layouts
-		listBatteries.setModel(model);
 
 		//region Button listeners
-		btnBatteries.addActionListener(new ActionListener()
+		/*btnBatteries.addActionListener(new ActionListener()
 		{
 			@Override
 			public void actionPerformed(ActionEvent e)
 			{
-				createNewJFrame(new FormAddBattery().getPanelMain(), "Add Battery", JFrame.DISPOSE_ON_CLOSE);
+				String title = "Add Battery";
+				createNewJFrame(new FormAddBattery().getPanelMain(), title, JFrame.DISPOSE_ON_CLOSE);
 			}
 		});
 
@@ -59,7 +87,7 @@ public class MainUserGUI
 			@Override
 			public void actionPerformed(ActionEvent e)
 			{
-				changePanels(panelEnergy);
+				switchToPanel(panelEnergy);
 			}
 		});
 
@@ -68,7 +96,7 @@ public class MainUserGUI
 			@Override
 			public void actionPerformed(ActionEvent e)
 			{
-				changePanels(panelWelcome);
+				switchToPanel(panelWelcome);
 			}
 		});
 
@@ -79,8 +107,74 @@ public class MainUserGUI
 			{
 				createNewWindmillFarmSimulator();
 			}
-		});
+		});*/
 		//endregion
+
+		btnStartNewSimulation.addActionListener(new ActionListener()
+		{
+			@Override
+			public void actionPerformed(ActionEvent e)
+			{
+				switchToPanel(panelPickCity);
+			}
+		});
+		btnPickCityBack.addActionListener(new ActionListener()
+		{
+			@Override
+			public void actionPerformed(ActionEvent e)
+			{
+				switchToPanel(panelWelcome);
+			}
+		});
+		btnPickCityNext.addActionListener(new ActionListener()
+		{
+			@Override
+			public void actionPerformed(ActionEvent e)
+			{
+				switchToPanel(panelEnergy);
+			}
+		});
+		btnEnergyBack.addActionListener(new ActionListener()
+		{
+			@Override
+			public void actionPerformed(ActionEvent e)
+			{
+				switchToPanel(panelPickCity);
+			}
+		});
+		btnEnergyNext.addActionListener(new ActionListener()
+		{
+			@Override
+			public void actionPerformed(ActionEvent e)
+			{
+				switchToPanel(panelBatteries);
+			}
+		});
+		btnBatteriesBack.addActionListener(new ActionListener()
+		{
+			@Override
+			public void actionPerformed(ActionEvent e)
+			{
+				switchToPanel(panelEnergy);
+			}
+		});
+		btnBatteriesNext.addActionListener(new ActionListener()
+		{
+			@Override
+			public void actionPerformed(ActionEvent e)
+			{
+				switchToPanel(panelPlaceBatteries);
+			}
+		});
+		btnPlaceBatteriesBack.addActionListener(new ActionListener()
+		{
+			@Override
+			public void actionPerformed(ActionEvent e)
+			{
+				switchToPanel(panelBatteries);
+			}
+		});
+
 	}
 
 	private void createNewWindmillFarmSimulator()
@@ -100,7 +194,7 @@ public class MainUserGUI
 		frame.setVisible(true);
 	}
 
-	private void changePanels(JPanel panel)
+	private void switchToPanel(JPanel panel)
 	{
 		panelMain.removeAll();
 		panelMain.add(panel);
@@ -112,13 +206,14 @@ public class MainUserGUI
 	//region Update functions
 	public static void update()
 	{
-
+		updateListModel();
 	}
 
 	// updates the list's model according to the Controller's battery lists
 	private static void updateListModel()
 	{
 		model.clear();
+		System.out.println("Grid has been cleared.");
 
 		BatteryGrid grid = Controller.getGrid();
 
@@ -129,15 +224,18 @@ public class MainUserGUI
 			System.out.println(battery.toString() + "was added to the battery grid.");
 		}
 
+		// add rotational batteries
 		for (Battery battery : grid.getRotationalBatteries())
 		{
 			model.addElement(battery);
 			System.out.println(battery.toString() + "was added to the battery grid.");
 		}
 	}
+	//endregion
 
 	public static void main(String[] args)
 	{
-		createNewJFrame(new MainUserGUI().panelMain, "Project 12", JFrame.EXIT_ON_CLOSE);
+		String title = "Project 12";
+		createNewJFrame(new MainUserGUI().panelMain, title, JFrame.EXIT_ON_CLOSE);
 	}
 }
