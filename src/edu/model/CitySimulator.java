@@ -12,6 +12,12 @@ public class CitySimulator
 	private int randomHour = (int) (Math.random() * 24);
 	
 	private City desMoines = new City("Des Moines");
+	
+	
+	//parallel array
+	List<Demand> dailyDemand= new ArrayList<Demand>();
+    List<Double> dailyDemandTimesOfDayInMilliseconds = new ArrayList<Double>();
+	
 	private String[] hoursOfDay = new String[this.hoursInDay];
 	
 	
@@ -20,10 +26,10 @@ public class CitySimulator
 		simulate();
 		buildHoursOfDayArray();
 		
-		for (int i = 0; i < desMoines.getDailyDemand().size(); i++)
+		for (int i = 0; i < desMoines.dailyDemand.size(); i++)
 		{
-			System.out.println("Needs " + desMoines.getDailyDemand().get(i) + " at the " +
-					desMoines.getDailyDemandTimesOfDayInMilliseconds().get(i) + " millisecond time of day");
+			System.out.println("Needs " + desMoines.dailyDemand.get(i) + " at the " +
+					desMoines.dailyDemandTimesOfDayInMilliseconds.get(i) + " millisecond time of day");
 		}
 	}
 	
@@ -60,7 +66,7 @@ public class CitySimulator
 		
 		for (int i = 0; i < hoursInDay; i++)
 		{
-			desMoines.addDemand(new Demand((desMoines.calculateCityDemand(randomHour)), Math.random() * 10 ), (long)(Math.random() * desMoines.millisecondsInDay));
+			desMoines.addDemand(new Demand((Math.random() * 1000000), desMoines.calculateCityDemand(randomHour)), (long)(Math.random() * desMoines.millisecondsInDay));
 			
 		}
 	}

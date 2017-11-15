@@ -325,11 +325,15 @@ public class BatteryGrid
 		}
 	}
 
+	//region Getters
 	public ArrayList<GravitationalBattery> getGravitationalBatteries()
 	{
 		return gravitationalBatteries;
 	}
-	
-	
-	
+
+	public ArrayList<RotationalBattery> getRotationalBatteries()
+	{
+		return rotationalBatteries;
+	}
+	//endregion
 }

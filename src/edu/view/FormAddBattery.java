@@ -47,6 +47,7 @@ public class FormAddBattery
 	{
 		Controller.addBattery(txtName.getText(), Double.parseDouble(txtMass.getText()),
 				Double.parseDouble(txtHeight.getText()));
+		JOptionPane.showMessageDialog(null, txtName.getText() + " added successfully.");
 	}
 
 	private boolean checkValidInputs()

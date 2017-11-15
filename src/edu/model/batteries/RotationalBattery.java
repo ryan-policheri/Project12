@@ -5,10 +5,9 @@ import java.util.TimerTask;
 
 //Useful site on flywheels http://large.stanford.edu/courses/2010/ph240/wheeler1/
 
-public class RotationalBattery
+public class RotationalBattery extends Battery
 {
 	// ATTRIBUTES
-	private String batteryName;
 	private final double massInKilograms;
 	private final double radiusInMeters;
 	private final FlywheelMaterial material;

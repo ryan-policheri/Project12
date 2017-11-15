@@ -49,12 +49,6 @@
               </component>
             </children>
           </grid>
-          <component id="1cb06" class="javax.swing.JList" binding="listBatteries">
-            <constraints border-constraint="Center"/>
-            <properties>
-              <model/>
-            </properties>
-          </component>
         </children>
       </grid>
       <grid id="b6e39" binding="panelBatteries" layout-manager="GridLayoutManager" row-count="1" column-count="1" same-size-horizontally="false" same-size-vertically="false" hgap="-1" vgap="-1">

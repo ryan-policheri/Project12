@@ -6,7 +6,6 @@ import java.util.TimerTask;
 public class GravitationalBattery extends Battery
 {
 	// ATTRIBUTES
-	String batteryName;
 	double massInKilograms;
 	double maxHeightInMeters;
 	

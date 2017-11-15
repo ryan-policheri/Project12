@@ -4,9 +4,11 @@ package edu.view;
 import edu.controllers.Controller;
 import edu.model.EnergyCommander;
 import edu.model.batteries.Battery;
+import edu.model.batteries.BatteryGrid;
 import edu.model.energySources.windmillFarm.WindmillFarmSimulator;
 
 import javax.swing.*;
+import javax.xml.transform.sax.SAXSource;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 //endregion
@@ -15,25 +17,31 @@ public class MainUserGUI
 {
 	//region Initialize swing elements
 	private JPanel panelMain;
+	//region Welcome panel
 	private JPanel panelWelcome;
 	private JLabel lblWelcome;
 	private JButton btnBatteries;
 	private JButton btnEnergy;
-	private JList listBatteries;
-	private JPanel panelBatteries;
+	//endregion
+	//region Energy panel
 	private JPanel panelEnergy;
 	private JLabel lblEnergy;
 	private JButton btnRunWFS;
 	private JButton btnEnergyCancel;
 	//endregion
+	//region Batteries panel
+	private JList listBatteries;
+	private JPanel panelBatteries;
+	//endregion
 
 	//region Initialize attributes
-	private DefaultListModel<Battery> model = new DefaultListModel<>();
+	private static DefaultListModel<Battery> model = new DefaultListModel<>();
 	//endregion
 
 	public MainUserGUI()
 	{
 		//TODO: find a way to automatically update the model... make model static?
+		//TODO: Research how to use the different layouts
 		listBatteries.setModel(model);
 
 		//region Button listeners
@@ -100,6 +108,33 @@ public class MainUserGUI
 		panelMain.revalidate();
 	}
 	//endregion
+
+	//region Update functions
+	public static void update()
+	{
+
+	}
+
+	// updates the list's model according to the Controller's battery lists
+	private static void updateListModel()
+	{
+		model.clear();
+
+		BatteryGrid grid = Controller.getGrid();
+
+		// add gravitational batteries
+		for (Battery battery : grid.getGravitationalBatteries())
+		{
+			model.addElement(battery);
+			System.out.println(battery.toString() + "was added to the battery grid.");
+		}
+
+		for (Battery battery : grid.getRotationalBatteries())
+		{
+			model.addElement(battery);
+			System.out.println(battery.toString() + "was added to the battery grid.");
+		}
+	}
 
 	public static void main(String[] args)
 	{
