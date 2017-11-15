@@ -71,53 +71,12 @@ public class MainUserGUI
 	{
 		//TODO: Research how to use the different layouts
 
+		// make the two battery lists have the same model
+		listBatteries.setModel(model);
+		listPlaceBatteries.setModel(model);
+
 		//region Button listeners
-		/*btnBatteries.addActionListener(new ActionListener()
-		{
-			@Override
-			public void actionPerformed(ActionEvent e)
-			{
-				String title = "Add Battery";
-				createNewJFrame(new FormAddBattery().getPanelMain(), title, JFrame.DISPOSE_ON_CLOSE);
-			}
-		});
-
-		btnEnergy.addActionListener(new ActionListener()
-		{
-			@Override
-			public void actionPerformed(ActionEvent e)
-			{
-				switchToPanel(panelEnergy);
-			}
-		});
-
-		btnEnergyCancel.addActionListener(new ActionListener()
-		{
-			@Override
-			public void actionPerformed(ActionEvent e)
-			{
-				switchToPanel(panelWelcome);
-			}
-		});
-
-		btnRunWFS.addActionListener(new ActionListener()
-		{
-			@Override
-			public void actionPerformed(ActionEvent e)
-			{
-				createNewWindmillFarmSimulator();
-			}
-		});*/
-		//endregion
-
-		btnStartNewSimulation.addActionListener(new ActionListener()
-		{
-			@Override
-			public void actionPerformed(ActionEvent e)
-			{
-				switchToPanel(panelPickCity);
-			}
-		});
+		//region Switching between panels
 		btnPickCityBack.addActionListener(new ActionListener()
 		{
 			@Override
@@ -174,7 +133,43 @@ public class MainUserGUI
 				switchToPanel(panelBatteries);
 			}
 		});
+		//endregion
 
+		//region Welcome screen buttons
+		btnStartNewSimulation.addActionListener(new ActionListener()
+		{
+			@Override
+			public void actionPerformed(ActionEvent e)
+			{
+				switchToPanel(panelPickCity);
+			}
+		});
+		btnWindmillFarm.addActionListener(new ActionListener()
+		{
+			@Override
+			public void actionPerformed(ActionEvent e)
+			{
+				createNewWindmillFarmSimulator();
+			}
+		});
+		//endregion
+
+		//region Energy screen buttons
+		//endregion
+
+		//region Batteries screen buttons
+		btnBatteriesAdd.addActionListener(new ActionListener()
+		{
+			@Override
+			public void actionPerformed(ActionEvent e)
+			{
+				String title = "Add Battery";
+				createNewJFrame(new FormAddBattery().getPanelMain(), title, JFrame.DISPOSE_ON_CLOSE);
+			}
+		});
+		//endregion
+
+		//endregion
 	}
 
 	private void createNewWindmillFarmSimulator()

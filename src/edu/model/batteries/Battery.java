@@ -18,8 +18,6 @@ public class Battery
 	@Override
 	public String toString()
 	{
-		return "Battery{" +
-				"batteryName='" + batteryName + '\'' +
-				'}';
+		return "Battery: " + batteryName;
 	}
 }

@@ -17,6 +17,7 @@ public class Controller
 		GravitationalBattery battery = new GravitationalBattery(batteryName, massInKilograms, maxHeightInMeters);
 		grid.addGravitationalBattery(battery);
 
+		// update the view
 		MainUserGUI.update();
 	}
 
