@@ -1,7 +1,5 @@
 package edu.model;
 
-import edu.model.batteries.Demand;
-
 import java.sql.Time;
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
@@ -13,6 +11,8 @@ import java.util.Date;
 import java.util.List;
 import java.util.Timer;
 import java.util.TimerTask;
+
+import edu.model.batteries.Demand;
 
 public class City 
 {
@@ -40,8 +40,7 @@ public class City
 	//CONSTRUCTORS
 	public City(String cityName)
 	{	
-		this.cityName = cityName;
-		
+		this.cityName = cityName;	
 	}
 	
 	//FUNTIONS
