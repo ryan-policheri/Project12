@@ -12,6 +12,8 @@ import java.util.List;
 import java.util.Timer;
 import java.util.TimerTask;
 
+import edu.model.batteries.Demand;
+
 public class City 
 {
 	//ATTRIBUTES

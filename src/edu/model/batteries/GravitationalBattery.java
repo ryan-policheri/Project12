@@ -42,7 +42,12 @@ public class GravitationalBattery extends Battery
 		double timeIncomingEnergyLastsInSeconds = surplus.getTimeAvailableInSeconds();
 		
 		double incomingEnergyInJoules = incomingEnergyInWatts * timeIncomingEnergyLastsInSeconds;
+		
+		//hypothetically how much total energy is involved and hypothetically how high could the weight raise with that energy
+		//double totalSystemEnergyInJoules = this.currentPotentialEnergyInJoules + incomingEnergyInJoules;		
 		double massMultipliedByGravity = this.massInKilograms * this.forceOfGravity;
+		//double potentialHeightRaisedInMeters = totalSystemEnergyInJoules / massMultipliedByGravity;
+		
 		double heightRaisedInMeters = incomingEnergyInJoules / massMultipliedByGravity;
 		heightRaisedInMeters *= this.efficiencyModifierForStoring;
 		

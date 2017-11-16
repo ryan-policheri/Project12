@@ -1,5 +1,10 @@
+package edu.model;
+
 import java.util.Timer;
 import java.util.TimerTask;
+
+import edu.model.batteries.Demand;
+
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
