@@ -16,6 +16,13 @@ public class Demand
 		return this.energyNeededInWatts;
 	}
 	
+	//Make toString method.
+	
+	public String toString()
+	{
+		return this.energyNeededInWatts + " watts over " + this.timeNeededInSeconds + " seconds";
+	}
+	
 	public double getTimeNeededInSeconds()
 	{
 		return this.timeNeededInSeconds;

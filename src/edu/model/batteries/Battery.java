@@ -7,10 +7,17 @@ public class Battery
 	float currentStorage;
 	float efficiency;
 	int size;
+	String batteryName;
 	
 	// CONSTRUCTORS
 	public Battery()
 	{
 		
+	}
+
+	@Override
+	public String toString()
+	{
+		return "Battery: " + batteryName;
 	}
 }

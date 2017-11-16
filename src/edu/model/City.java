@@ -40,8 +40,7 @@ public class City
 	//CONSTRUCTORS
 	public City(String cityName)
 	{	
-		this.cityName = cityName;
-		
+		this.cityName = cityName;	
 	}
 	
 	//FUNTIONS

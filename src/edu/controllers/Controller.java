@@ -4,6 +4,8 @@ import edu.model.batteries.BatteryGrid;
 import edu.model.batteries.Demand;
 import edu.model.batteries.GravitationalBattery;
 import edu.model.batteries.Surplus;
+import edu.view.MainUserGUI;
+
 import java.util.Scanner;
 
 public class Controller
@@ -14,6 +16,9 @@ public class Controller
 	{
 		GravitationalBattery battery = new GravitationalBattery(batteryName, massInKilograms, maxHeightInMeters);
 		grid.addGravitationalBattery(battery);
+
+		// update the view
+		MainUserGUI.update();
 	}
 
 	private static void removeBattery()
