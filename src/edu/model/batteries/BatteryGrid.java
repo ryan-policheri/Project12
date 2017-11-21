@@ -4,8 +4,8 @@ import java.util.ArrayList;
 
 public class BatteryGrid
 {
-	private ArrayList<GravitationalBattery> gravitationalBatteries = new ArrayList<GravitationalBattery>();
-	private ArrayList<RotationalBattery> rotationalBatteries = new ArrayList<RotationalBattery>();
+	private ArrayList<VolatileBattery> gravitationalBatteries = new ArrayList<VolatileBattery>();
+	private ArrayList<VolatileBattery> rotationalBatteries = new ArrayList<VolatileBattery>();
 	
 	private double totalRotationalEnergyInJoules;
 	private double totalGravitationalEnergyInJoules;
@@ -36,12 +36,12 @@ public class BatteryGrid
 		//rotational batteries are first choice
 		if (timeIncomingEnergyLastsInSeconds <= this.shortTimeThresholdInSeconds)
 		{
-			Surplus tempSurplus = giveEnergyToRotationalBatteries(surplus);
+			Surplus tempSurplus = giveEnergyToBatteries(surplus, this.rotationalBatteries);
 			
 			//give to gravitational batteries if there is still surplus left
 			if (tempSurplus.isSurplusGone() == false)
 			{
-				tempSurplus = giveEnergyToGravitationalBatteries(tempSurplus);
+				tempSurplus = giveEnergyToBatteries(tempSurplus, this.gravitationalBatteries);
 				
 				if (tempSurplus.isSurplusGone() == false)
 				{
@@ -53,12 +53,12 @@ public class BatteryGrid
 		//gravitational batteries are first choice
 		else
 		{
-			Surplus tempSurplus = giveEnergyToGravitationalBatteries(surplus);
+			Surplus tempSurplus = giveEnergyToBatteries(surplus, this.gravitationalBatteries);
 			
 			//give to rotational batteries if there is still surplus left
 			if (tempSurplus.isSurplusGone() == false)
 			{
-				tempSurplus = giveEnergyToRotationalBatteries(tempSurplus);
+				tempSurplus = giveEnergyToBatteries(tempSurplus, this.rotationalBatteries);
 				
 				if (tempSurplus.isSurplusGone() == false)
 				{
@@ -76,12 +76,12 @@ public class BatteryGrid
 		//rotational batteries are first choice
 		if (timeDemandIsNeededInSeconds <= this.shortTimeThresholdInSeconds)
 		{
-			Demand tempDemand = takeEnergyFromRotationalBatteries(demand);
+			Demand tempDemand = takeEnergyFromBatteries(demand, this.rotationalBatteries);
 			
 			//give to gravitational batteries if there is still demand left
 			if (tempDemand.isDemandGone() == false)
 			{
-				tempDemand = takeEnergyFromRotationalBatteries(tempDemand);
+				tempDemand = takeEnergyFromBatteries(tempDemand, this.gravitationalBatteries);
 				
 				if (tempDemand.isDemandGone() == false)
 				{
@@ -93,12 +93,12 @@ public class BatteryGrid
 		//gravitational batteries are first choice
 		else
 		{
-			Demand tempDemand = takeEnergyFromGravitationalBatteries(demand);
+			Demand tempDemand = takeEnergyFromBatteries(demand, this.gravitationalBatteries);
 			
-			//give to rotational batteries if there is still surplus left
+			//give to rotational batteries if there is still demand left
 			if (tempDemand.isDemandGone() == false)
 			{
-				tempDemand = takeEnergyFromRotationalBatteries(tempDemand);
+				tempDemand = takeEnergyFromBatteries(tempDemand, this.rotationalBatteries);
 				
 				if (tempDemand.isDemandGone() == false)
 				{
@@ -109,7 +109,7 @@ public class BatteryGrid
 		
 	}
 	
-	private Surplus giveEnergyToGravitationalBatteries(Surplus surplus)
+	private Surplus giveEnergyToBatteries(Surplus surplus, ArrayList<VolatileBattery> batteries)
 	{
 		//double incomingEnergyInWatts = surplus.getEnergyAvailableInWatts();
 		//double timeIncomingEnergyLastsInSeconds = surplus.getTimeAvailableInSeconds();
@@ -117,15 +117,15 @@ public class BatteryGrid
 		double highestJoules = -1;
 		int highestJoulesPosition = -1;
 
-		for (int x = 0; x < gravitationalBatteries.size(); x++)
+		for (int x = 0; x < batteries.size(); x++)
 		{
-			double tempJoulesInBattery = gravitationalBatteries.get(x).getCurrentEnergyInJoules();
-			boolean tempIsBatteryFull = gravitationalBatteries.get(x).isBatteryFull();
-			boolean tempIsBatteryInUse = gravitationalBatteries.get(x).isBatteryInUse();
+			double tempJoulesInBattery = batteries.get(x).getCurrentEnergyInJoules();
+			boolean tempIsBatteryFull = batteries.get(x).isBatteryFull();
+			boolean tempIsBatteryInUse = batteries.get(x).isBatteryInUse();
 			
 			if(tempJoulesInBattery > highestJoules && tempIsBatteryFull == false && tempIsBatteryInUse == false)
 			{
-				highestJoules = gravitationalBatteries.get(x).getCurrentEnergyInJoules();
+				highestJoules = batteries.get(x).getCurrentEnergyInJoules();
 				highestJoulesPosition = x;
 			}
 		}
@@ -139,12 +139,12 @@ public class BatteryGrid
 		//there was at least one available battery that was not completely full
 		else
 		{
-			Surplus remainingSurplus = gravitationalBatteries.get(highestJoulesPosition).storeEnergy(surplus);
+			Surplus remainingSurplus = batteries.get(highestJoulesPosition).storeEnergy(surplus);
 		
 			//if there is a remaining surplus, see if there is another gravitational battery to charge
 			if (remainingSurplus.isSurplusGone() == false)
 			{
-				return giveEnergyToGravitationalBatteries(remainingSurplus);
+				return giveEnergyToBatteries(remainingSurplus, batteries);
 			}
 			//all of the surplus has been used, return the empty surplus so the grid knows that
 			else
@@ -155,54 +155,7 @@ public class BatteryGrid
 		}
 	}
 	
-	
-	private Surplus giveEnergyToRotationalBatteries(Surplus surplus)
-	{
-		//double incomingEnergyInWatts = surplus.getEnergyAvailableInWatts();
-		//double timeIncomingEnergyLastsInSeconds = surplus.getTimeAvailableInSeconds();
-
-		double highestJoules = -1;
-		int highestJoulesPosition = -1;
-
-		for (int x = 0; x < rotationalBatteries.size(); x++)
-		{
-			double tempJoulesInBattery = rotationalBatteries.get(x).getCurrentEnergyInJoules();
-			boolean tempIsBatteryFull = rotationalBatteries.get(x).isBatteryFull();
-			boolean tempIsBatteryInUse = rotationalBatteries.get(x).isBatteryInUse();
-			
-			if(tempJoulesInBattery > highestJoules && tempIsBatteryFull == false && tempIsBatteryInUse == false)
-			{
-				highestJoules = rotationalBatteries.get(x).getCurrentEnergyInJoules();
-				highestJoulesPosition = x;
-			}
-		}
-		
-		//there were no available batteries or they were all full, return the surplus as is
-		if(highestJoulesPosition == -1)
-		{
-			return surplus;
-		}
-		
-		//there was at least one available battery that was not completely full
-		else
-		{
-			Surplus remainingSurplus = rotationalBatteries.get(highestJoulesPosition).storeEnergy(surplus);
-		
-			//if there is a remaining surplus, see if there is another rotational battery to charge
-			if (remainingSurplus.isSurplusGone() == false)
-			{
-				return giveEnergyToRotationalBatteries(remainingSurplus);
-			}
-			//all of the surplus has been used, return the empty surplus so the grid knows that
-			else
-			{
-				//System.out.println("Surplus successfully allocated");
-				return remainingSurplus;
-			}
-		}
-	}
-	
-	private Demand takeEnergyFromGravitationalBatteries(Demand demand)
+	private Demand takeEnergyFromBatteries(Demand demand, ArrayList<VolatileBattery> batteries)
 	{
 		//double energyDemandInWatts = demand.getEnergyNeededInWatts();
 		//double timeDemandIsNeededInSeconds = demand.getTimeNeededInSeconds();
@@ -210,14 +163,14 @@ public class BatteryGrid
 		double lowestJoules = Double.MAX_VALUE;
 		int lowestJoulesPosition = -1;
 		
-		for (int x = 0; x < gravitationalBatteries.size(); x++)
+		for (int x = 0; x < batteries.size(); x++)
 		{
-			double tempJoulesInBattery = gravitationalBatteries.get(x).getCurrentEnergyInJoules();
-			boolean tempIsBatteryInUse = gravitationalBatteries.get(x).isBatteryInUse();
+			double tempJoulesInBattery = batteries.get(x).getCurrentEnergyInJoules();
+			boolean tempIsBatteryInUse = batteries.get(x).isBatteryInUse();
 			
 			if(tempJoulesInBattery < lowestJoules && tempJoulesInBattery > 0 && tempIsBatteryInUse == false)
 			{
-				lowestJoules = gravitationalBatteries.get(x).getCurrentEnergyInJoules();
+				lowestJoules = batteries.get(x).getCurrentEnergyInJoules();
 				lowestJoulesPosition = x;
 			}
 		}
@@ -229,55 +182,12 @@ public class BatteryGrid
 		}
 		else
 		{
-			Demand remainingDemand = gravitationalBatteries.get(lowestJoulesPosition).releaseEnergy(demand);
+			Demand remainingDemand = batteries.get(lowestJoulesPosition).releaseEnergy(demand);
 		
 			//if there is a remaining demand, see if there is another gravitational battery that can take it
 			if (remainingDemand.isDemandGone() == false)
 			{
-				return takeEnergyFromGravitationalBatteries(remainingDemand);
-			}
-			//all of the demand has been allocated, return the empty demand so the grid knows that
-			else
-			{
-				//System.out.println("Demand successfully allocated");
-				return remainingDemand;
-			}
-		}	
-	}
-	
-	private Demand takeEnergyFromRotationalBatteries(Demand demand)
-	{
-		//double energyDemandInWatts = demand.getEnergyNeededInWatts();
-		//double timeDemandIsNeededInSeconds = demand.getTimeNeededInSeconds();
-
-		double lowestJoules = Double.MAX_VALUE;
-		int lowestJoulesPosition = -1;
-		
-		for (int x = 0; x < rotationalBatteries.size(); x++)
-		{
-			double tempJoulesInBattery = rotationalBatteries.get(x).getCurrentEnergyInJoules();
-			boolean tempIsBatteryInUse = rotationalBatteries.get(x).isBatteryInUse();
-			
-			if(tempJoulesInBattery < lowestJoules && tempJoulesInBattery > 0 && tempIsBatteryInUse == false)
-			{
-				lowestJoules = rotationalBatteries.get(x).getCurrentEnergyInJoules();
-				lowestJoulesPosition = x;
-			}
-		}
-		
-		//there were no available batteries or they were all empty, return the demand as is
-		if(lowestJoulesPosition == -1)
-		{
-			return demand;
-		}
-		else
-		{
-			Demand remainingDemand = rotationalBatteries.get(lowestJoulesPosition).releaseEnergy(demand);
-		
-			//if there is a remaining demand, see if there is another rotational battery that can take it
-			if (remainingDemand.isDemandGone() == false)
-			{
-				return takeEnergyFromRotationalBatteries(remainingDemand);
+				return takeEnergyFromBatteries(remainingDemand, batteries);
 			}
 			//all of the demand has been allocated, return the empty demand so the grid knows that
 			else
@@ -292,7 +202,7 @@ public class BatteryGrid
 	{
 		double totalRotationalEnergyInJoules = 0;
 		
-		for (RotationalBattery rotBat : rotationalBatteries)
+		for (VolatileBattery rotBat : rotationalBatteries)
 		{
 			totalRotationalEnergyInJoules += rotBat.getCurrentEnergyInJoules();
 		}
@@ -304,7 +214,7 @@ public class BatteryGrid
 	{
 		double totalGravitationalEnergyInJoules = 0;
 		
-		for (GravitationalBattery gravBat : gravitationalBatteries)
+		for (VolatileBattery gravBat : gravitationalBatteries)
 		{
 			totalRotationalEnergyInJoules += gravBat.getCurrentEnergyInJoules();
 		}
@@ -314,24 +224,24 @@ public class BatteryGrid
 	
 	public void displayGrid()
 	{
-		for (GravitationalBattery gravitationalBattery : this.gravitationalBatteries)
+		for (VolatileBattery gravitationalBattery : this.gravitationalBatteries)
 		{
 			gravitationalBattery.displayBattery();
 		}
 
-		for (RotationalBattery rotationalBattery : this.rotationalBatteries)
+		for (VolatileBattery rotationalBattery : this.rotationalBatteries)
 		{
 			rotationalBattery.displayBattery();
 		}
 	}
 
 	//region Getters
-	public ArrayList<GravitationalBattery> getGravitationalBatteries()
+	public ArrayList<VolatileBattery> getGravitationalBatteries()
 	{
 		return gravitationalBatteries;
 	}
 
-	public ArrayList<RotationalBattery> getRotationalBatteries()
+	public ArrayList<VolatileBattery> getRotationalBatteries()
 	{
 		return rotationalBatteries;
 	}

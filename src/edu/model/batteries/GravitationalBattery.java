@@ -3,22 +3,24 @@ package edu.model.batteries;
 import java.util.Timer;
 import java.util.TimerTask;
 
-public class GravitationalBattery extends Battery
+public class GravitationalBattery extends VolatileBattery
 {
 	// ATTRIBUTES
-	double massInKilograms;
-	double maxHeightInMeters;
+	private String batteryName;
+	private final double massInKilograms;
+	private final double maxHeightInMeters;
 	
-	double forceOfGravity = 9.81;
-	double efficiencyModifierForStoring = 0.9;
-	double efficiencyModifierForReleasing = 0.75;
+	private final double forceOfGravity;
 	
-	double currentPotentialEnergyInJoules = 0;
-	double currentHeightInMeters = 0;
+	//double efficiencyModifierForStoring; may use later
+	//double efficiencyModifierForReleasing; may use later
 	
-	//double maxCapacityInJoules = this.massInKilograms * this.forceOfGravity * this.maxHeightInMeters;
+	private final double maxJoulesStorage;
+	
+	private double currentEnergyInJoules;
+	private double currentHeightInMeters;
 			
-	boolean inUse = false;
+	private boolean inUse;
 	
 	// CONSTRUCTORS
 	public GravitationalBattery(String batteryName, double massInKilograms, double maxHeightInMeters) 
@@ -26,96 +28,118 @@ public class GravitationalBattery extends Battery
 		this.batteryName = batteryName;
 		this.massInKilograms = massInKilograms;
 		this.maxHeightInMeters = maxHeightInMeters;
+		
+		this.forceOfGravity = 9.81;
+		
+		this.maxJoulesStorage = this.massInKilograms * this.forceOfGravity * this.maxHeightInMeters;
+		
+		this.currentEnergyInJoules = 0;
+		this.currentHeightInMeters = 0;
+				
+		this.inUse = false;
 	}
 	
 	// FUNCTIONS
+	
+	//Puts energy in an individual battery. If the incoming energy plus the already stored energy is greater than the max capacity
+	//of the battery then the battery will be filled up and the remainder will be sent back to the grid. If the incoming energy
+	//plus the already stored energy is less than the max capacity then the battery will charge and there will be no remainder.
 	public Surplus storeEnergy(Surplus surplus)
-	{
-		//There is a bug here. When the battery fills and there is an excess amount of incoming power,
-		//that excess power really should not be subject to the efficiency modifier. In fact I am not so
-		//that the remaining seconds are accurate here. must reinvestigate.
-		
-		//Ok I thought I fixed this bug but I later found out that it still is not right. I put it back to its original version
-		
+	{		
 		double incomingEnergyInWatts = surplus.getEnergyAvailableInWatts();
 		double timeIncomingEnergyLastsInSeconds = surplus.getTimeAvailableInSeconds();
 		
 		double incomingEnergyInJoules = incomingEnergyInWatts * timeIncomingEnergyLastsInSeconds;
 		
 		//hypothetically how much total energy is involved and hypothetically how high could the weight raise with that energy
-		//double totalSystemEnergyInJoules = this.currentPotentialEnergyInJoules + incomingEnergyInJoules;		
-		double massMultipliedByGravity = this.massInKilograms * this.forceOfGravity;
-		//double potentialHeightRaisedInMeters = totalSystemEnergyInJoules / massMultipliedByGravity;
+		double totalSystemEnergyInJoules = this.currentEnergyInJoules + incomingEnergyInJoules;
 		
-		double heightRaisedInMeters = incomingEnergyInJoules / massMultipliedByGravity;
-		heightRaisedInMeters *= this.efficiencyModifierForStoring;
+		//calculate the hypothetical height using: PE = M * g * h
+		//where PE = totalSystemEnergyInJoules, M = this.massInKilograms, g = this.forceOfGravity, h is height (unknown)
+		double potentialHeightInMeters = totalSystemEnergyInJoules / (this.massInKilograms * this.forceOfGravity);
 		
 		double remainingTimeOfIncomingEnergy;
 		
-		if (this.currentHeightInMeters + heightRaisedInMeters <= this.maxHeightInMeters)
+		//the battery can hold the entire surplus, entire surplus is stored and there is none left
+		if (potentialHeightInMeters <= this.maxHeightInMeters)
 		{
-			this.currentHeightInMeters += heightRaisedInMeters;
+			this.currentHeightInMeters = potentialHeightInMeters;
 			remainingTimeOfIncomingEnergy = 0;
 		}
+		//the battery cannot hold the entire surplus, the battery is filled and the remaining surplus is returned
 		else
 		{
-			double remainingHeight = heightRaisedInMeters + this.currentHeightInMeters - this.maxHeightInMeters;
-			double remainingJoules = remainingHeight * this.massInKilograms * this.forceOfGravity;
-			remainingTimeOfIncomingEnergy = remainingJoules / incomingEnergyInWatts;
-			
 			this.currentHeightInMeters = this.maxHeightInMeters;
+			
+			double remainingJoules = totalSystemEnergyInJoules - this.maxJoulesStorage;
+			remainingTimeOfIncomingEnergy = remainingJoules / incomingEnergyInWatts;
 		}
 		
-		this.currentPotentialEnergyInJoules = this.massInKilograms * this.forceOfGravity * this.currentHeightInMeters;
+		//find the new energy based on the new height
+		this.currentEnergyInJoules = this.calculateCurrentEnergyInJoules();
+		//this is simply for recalibration
+		this.currentHeightInMeters = this.calculateCurrentHeightInMeters();
 		
-		this.inUse = true;
 		double timeInUseInSeconds = timeIncomingEnergyLastsInSeconds - remainingTimeOfIncomingEnergy;
-		long timeInUseInMilliseconds = (long) (timeInUseInSeconds * 1000);
-		
-		Timer timer = new Timer();
-		timer.schedule(new TimerTask() {
-										  @Override
-										  public void run()
-										  {
-											  markBatteryNotInUse();
-											  timer.cancel();
-										  }
-									   }
-						, timeInUseInMilliseconds);
+		this.startInUseTimer(timeInUseInSeconds);
 		
 		Surplus returnSurplus = new Surplus(incomingEnergyInWatts, remainingTimeOfIncomingEnergy);
 		
 		return returnSurplus;
 		
 	}
-	
+
+	//Takes energy from an individual battery. If the energy needed is less than the energy stored, the battery handles
+	//the entire demand and an empty demand is sent back to the grid. If the energy needed is more than the energy stored, 
+	//the battery gives all it has to the demand and the remaining demand is sent back to the grid to be reallocated.
 	public Demand releaseEnergy(Demand demand)
 	{
 		double energyDemandInWatts = demand.getEnergyNeededInWatts();
 		double timeDemandIsNeededInSeconds = demand.getTimeNeededInSeconds();
 				
-		double secondsDemandCanBeProvided = (this.currentPotentialEnergyInJoules * this.efficiencyModifierForReleasing) / energyDemandInWatts;
+		//this is how you would do it if you had an efficiency modifier:
+		//double secondsDemandCanBeProvided = (this.currentEnergyInJoules * this.efficiencyModifierForReleasing) / energyDemandInWatts;
+		//since we don't, do it like so:
+		double secondsDemandCanBeProvided = this.currentEnergyInJoules / energyDemandInWatts;
+		
 		double secondsLeftWattageIsNeeded;
 		
+		//the battery could handle the entire demand, there is no remaining demand
 		if (timeDemandIsNeededInSeconds <= secondsDemandCanBeProvided)
 		{
-			double joulesNeeded = energyDemandInWatts * timeDemandIsNeededInSeconds;
-			double heightLowered = joulesNeeded / (this.massInKilograms * this.forceOfGravity);
-			heightLowered += heightLowered - (heightLowered * this.efficiencyModifierForReleasing);
-			this.currentHeightInMeters -= heightLowered;
+			double joulesNeededBeforeEfficiencyModifier = energyDemandInWatts * timeDemandIsNeededInSeconds;
+			//this is how you would do it if you had an efficiency modifier:
+			//double joulesNeeded = joulesNeededBeforeEfficiencyModifier * (1 + (1 - this.efficiencyModifierForReleasing));
+			//this.currentEnergyInJoules -= joulesNeeded;
+			//since we don't, do it like so:
+			this.currentEnergyInJoules -= joulesNeededBeforeEfficiencyModifier;
 			
-			this.currentPotentialEnergyInJoules = this.massInKilograms * this.forceOfGravity * this.currentHeightInMeters;
+			//find the new height based on the new energy
+			this.currentHeightInMeters = this.calculateCurrentHeightInMeters();
+			//this is simply for recalibration
+			this.currentEnergyInJoules = this.calculateCurrentEnergyInJoules();
+
 			secondsLeftWattageIsNeeded = 0;
 		}
+		//the battery could not handle the entire demand, battery is empty and remaining demand is returned
 		else
 		{
-			this.currentPotentialEnergyInJoules = 0;
+			this.currentEnergyInJoules = 0;
 			this.currentHeightInMeters = 0;
 			secondsLeftWattageIsNeeded = timeDemandIsNeededInSeconds - secondsDemandCanBeProvided;
 		}
 		
-		this.inUse = true;
 		double timeInUseInSeconds = secondsDemandCanBeProvided;
+		this.startInUseTimer(timeInUseInSeconds);
+		
+		Demand returnDemand = new Demand(energyDemandInWatts, secondsLeftWattageIsNeeded);
+		
+		return returnDemand;
+	}
+	
+	private void startInUseTimer(double timeInUseInSeconds)
+	{
+		this.inUse = true;
 		long timeInUseInMilliseconds = (long) (timeInUseInSeconds * 1000);
 		
 		Timer timer = new Timer();
@@ -128,20 +152,16 @@ public class GravitationalBattery extends Battery
 										  }
 									   }
 						, timeInUseInMilliseconds);
-		
-		Demand returnDemand = new Demand(energyDemandInWatts, secondsLeftWattageIsNeeded);
-		
-		return returnDemand;
 	}
 	
 	public double getCurrentEnergyInJoules()
 	{
-		return this.currentPotentialEnergyInJoules;
+		return this.currentEnergyInJoules;
 	}
 	
 	public void displayBattery()
 	{
-		String batteryDisplay = "Battery: " + this.batteryName + " - Current Storage in Joules: " + Double.toString(this.currentPotentialEnergyInJoules);
+		String batteryDisplay = "Battery: " + this.batteryName + " - Current Storage in Joules: " + Double.toString(this.currentEnergyInJoules);
 		System.out.println(batteryDisplay);
 	}
 	
@@ -155,13 +175,28 @@ public class GravitationalBattery extends Battery
 		return this.maxHeightInMeters == this.currentHeightInMeters;
 	}
 	
-	public void markBatteryNotInUse()
+	//Equation for calculations: PE = M * g * h
+	private double calculateCurrentEnergyInJoules()
+	{
+		double energyInJoules = this.massInKilograms * this.forceOfGravity * this.currentHeightInMeters;
+		
+		return energyInJoules;
+	}
+	
+	private double calculateCurrentHeightInMeters()
+	{
+		double heightInMeters = this.currentEnergyInJoules / (this.massInKilograms * this.forceOfGravity);
+		
+		return heightInMeters;
+	}
+	
+	private void markBatteryNotInUse()
 	{
 		this.inUse = false;
 	}
 
 	public String getBatteryName()
 	{
-		return batteryName;
+		return this.batteryName;
 	}
 }

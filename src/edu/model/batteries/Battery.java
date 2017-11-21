@@ -1,13 +1,9 @@
-package edu.model.batteries;// Source Control Test : Ryan Policheri
+package edu.model.batteries;
 
 public class Battery 
 {
 	// ATTRIBUTES
-	float maximumStorage;
-	float currentStorage;
-	float efficiency;
-	int size;
-	String batteryName;
+	private String batteryName;
 	
 	// CONSTRUCTORS
 	public Battery()
@@ -15,9 +11,5 @@ public class Battery
 		
 	}
 
-	@Override
-	public String toString()
-	{
-		return "Battery: " + batteryName;
-	}
+	// FUNCTIONS
 }
