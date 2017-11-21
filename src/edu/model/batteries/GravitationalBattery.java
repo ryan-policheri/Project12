@@ -199,4 +199,10 @@ public class GravitationalBattery extends VolatileBattery
 	{
 		return this.batteryName;
 	}
+
+	@Override
+	public String toString()
+	{
+		return "GravitationalBattery: " + this.batteryName;
+	}
 }

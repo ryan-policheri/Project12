@@ -12,4 +12,9 @@ public class Battery
 	}
 
 	// FUNCTIONS
+	@Override
+	public String toString()
+	{
+		return "Battery: " + this.batteryName;
+	}
 }

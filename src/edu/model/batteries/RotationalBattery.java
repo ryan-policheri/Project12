@@ -226,5 +226,11 @@ public class RotationalBattery extends VolatileBattery
 		String batteryDisplay = "Battery: " + this.batteryName + " - Current Storage in Joules: " + Double.toString(this.currentEnergyInJoules);
 		System.out.println(batteryDisplay);
 	}
+
+	@Override
+	public String toString()
+	{
+		return "RotationalBattery: " + this.batteryName;
+	}
 	
 }
