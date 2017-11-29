@@ -33,10 +33,6 @@ public class City
 	long randomMillisecondInDay = (long)(Math.random() * millisecondsInDay);
 	
 	
-	//parallel array
-	private List<Demand> dailyDemand= new ArrayList<Demand>();
-    private List<Double> dailyDemandTimesOfDayInMilliseconds = new ArrayList<Double>();
-	
 	//CONSTRUCTORS
 	public City(String cityName)
 	{	
@@ -45,27 +41,7 @@ public class City
 	
 	//FUNTIONS
 	
-	public List<Demand> getDailyDemand()
-	{
-		return dailyDemand;
-	}
-	
-	public List<Double> getDailyDemandTimesOfDayInMilliseconds()
-	{
-		return dailyDemandTimesOfDayInMilliseconds;
-	}
-	
-	public void addDemand(Demand dailyDemand, double dailyDemandTimesOfDayInMilliseconds)
-	{
-		this.dailyDemand.add(dailyDemand);
-		this.dailyDemandTimesOfDayInMilliseconds.add(dailyDemandTimesOfDayInMilliseconds);
-	}
-	
-	public void removeDemand(Demand dailyDemand, long dailyDemandTimesOfDayInMilliseconds)
-	{
-		this.dailyDemand.remove(dailyDemand);
-		this.dailyDemandTimesOfDayInMilliseconds.remove(dailyDemandTimesOfDayInMilliseconds);
-	}
+
 	
 /*	public double powerNeed(double energyNeededInWatts, double amountOfTimeInSeconds)
 	{
