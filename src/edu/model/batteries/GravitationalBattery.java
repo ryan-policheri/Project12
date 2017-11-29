@@ -6,16 +6,16 @@ import java.util.TimerTask;
 public class GravitationalBattery extends VolatileBattery
 {
 	// ATTRIBUTES
-	private String batteryName;
+	//private String batteryName;
 	private final double massInKilograms;
 	private final double maxHeightInMeters;
 	
-	private final double forceOfGravity;
+	//private final double forceOfGravity;
 	
 	//double efficiencyModifierForStoring; may use later
 	//double efficiencyModifierForReleasing; may use later
 	
-	private final double maxJoulesStorage;
+	//private final double maxEnergyInJoules;
 	
 	private double currentEnergyInJoules;
 	private double currentHeightInMeters;
@@ -25,13 +25,15 @@ public class GravitationalBattery extends VolatileBattery
 	// CONSTRUCTORS
 	public GravitationalBattery(String batteryName, double massInKilograms, double maxHeightInMeters) 
 	{
-		this.batteryName = batteryName;
+		//this.batteryName = batteryName;
+		super(batteryName, massInKilograms);
 		this.massInKilograms = massInKilograms;
 		this.maxHeightInMeters = maxHeightInMeters;
 		
-		this.forceOfGravity = 9.81;
+		//this.forceOfGravity = 9.81;
 		
-		this.maxJoulesStorage = this.massInKilograms * this.forceOfGravity * this.maxHeightInMeters;
+		//this.maxEnergyInJoules = this.massInKilograms * this.forceOfGravity * this.maxHeightInMeters;
+		this.initializeMaxEnergyInJoulesForGravitationalBattery(this.maxHeightInMeters);
 		
 		this.currentEnergyInJoules = 0;
 		this.currentHeightInMeters = 0;
@@ -71,7 +73,7 @@ public class GravitationalBattery extends VolatileBattery
 		{
 			this.currentHeightInMeters = this.maxHeightInMeters;
 			
-			double remainingJoules = totalSystemEnergyInJoules - this.maxJoulesStorage;
+			double remainingJoules = totalSystemEnergyInJoules - this.maxEnergyInJoules;
 			remainingTimeOfIncomingEnergy = remainingJoules / incomingEnergyInWatts;
 		}
 		
@@ -159,10 +161,10 @@ public class GravitationalBattery extends VolatileBattery
 		return this.currentEnergyInJoules;
 	}
 	
-	public void displayBattery()
+	public String displayBattery()
 	{
-		String batteryDisplay = "Battery: " + this.batteryName + " - Current Storage in Joules: " + Double.toString(this.currentEnergyInJoules);
-		System.out.println(batteryDisplay);
+		String batteryDisplay = "Battery: " + this.getBatteryName() + " - Current Storage in Joules: " + Double.toString(this.currentEnergyInJoules);
+		return batteryDisplay;
 	}
 	
 	public boolean isBatteryInUse()
@@ -197,6 +199,7 @@ public class GravitationalBattery extends VolatileBattery
 
 	public String getBatteryName()
 	{
-		return this.batteryName;
+		return super.displayBattery();
 	}
+	
 }

@@ -8,7 +8,7 @@ import java.util.TimerTask;
 public class RotationalBattery extends VolatileBattery
 {
 	// ATTRIBUTES
-	private String batteryName;
+	//private String batteryName;
 	private final double massInKilograms;
 	private final double radiusInMeters;
 	private final FlywheelMaterial material;
@@ -20,7 +20,7 @@ public class RotationalBattery extends VolatileBattery
 	private final double radiusSquared;
 	private final double maxAngularVelocity;
 	private final double momentOfIntertia;
-	private final double maxJoulesStorage;
+	//private final double maxEnergyInJoules;
 	
 	private double currentAngularVelocity;
 	private double currentEnergyInJoules;
@@ -30,7 +30,8 @@ public class RotationalBattery extends VolatileBattery
 	// CONSTRUCTORS
 	public RotationalBattery(String batteryName, double massInKilograms, double radiusInMeters, FlywheelMaterial material, FlywheelBearing bearingType) 
 	{
-		this.batteryName = batteryName;
+		//this.batteryName = batteryName;
+		super(batteryName, massInKilograms);
 		this.massInKilograms = massInKilograms;
 		this.radiusInMeters = radiusInMeters;
 		this.material = material;
@@ -40,7 +41,8 @@ public class RotationalBattery extends VolatileBattery
 		this.momentOfIntertia = this.radiusSquared * this.massInKilograms;
 		
 		this.maxAngularVelocity = material.calculateMaxAngularVelocity(this.radiusInMeters);
-		this.maxJoulesStorage = (this.momentOfIntertia / 2) * (this.maxAngularVelocity * this.maxAngularVelocity);
+		//this.maxEnergyInJoules = (this.momentOfIntertia / 2) * (this.maxAngularVelocity * this.maxAngularVelocity);
+		this.initializeMaxEnergyInJoulesForRotationalBattery(this.momentOfIntertia, this.maxAngularVelocity);
 		
 		this.currentAngularVelocity = 0;
 		this.currentEnergyInJoules = 0;
@@ -84,7 +86,7 @@ public class RotationalBattery extends VolatileBattery
 		{
 			this.currentAngularVelocity = this.maxAngularVelocity;
 			
-			double remainingJoules = totalSystemEnergyInJoules - this.maxJoulesStorage;
+			double remainingJoules = totalSystemEnergyInJoules - this.maxEnergyInJoules;
 			remainingTimeOfIncomingEnergy = remainingJoules / incomingEnergyInWatts;
 		}
 		
@@ -213,7 +215,7 @@ public class RotationalBattery extends VolatileBattery
 	
 	public boolean isBatteryFull()
 	{
-		return this.maxJoulesStorage == this.currentEnergyInJoules;
+		return this.maxEnergyInJoules == this.currentEnergyInJoules;
 	}
 	
 	public double getCurrentEnergyInJoules()
@@ -221,10 +223,15 @@ public class RotationalBattery extends VolatileBattery
 		return this.currentEnergyInJoules;
 	}
 	
-	public void displayBattery()
+	public String displayBattery()
 	{
-		String batteryDisplay = "Battery: " + this.batteryName + " - Current Storage in Joules: " + Double.toString(this.currentEnergyInJoules);
-		System.out.println(batteryDisplay);
+		String batteryDisplay = "Battery: " + this.getBatteryName() + " - Current Storage in Joules: " + Double.toString(this.currentEnergyInJoules);
+		return batteryDisplay;
+	}
+	
+	public String getBatteryName()
+	{
+		return super.displayBattery();
 	}
 	
 }

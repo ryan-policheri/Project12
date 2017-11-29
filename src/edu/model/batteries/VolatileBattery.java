@@ -1,13 +1,13 @@
 package edu.model.batteries;
 
-public class VolatileBattery extends Battery
+abstract class VolatileBattery extends Battery
 {
 	// ATTRIBUTES
 	
 	// CONSTRUCTORS
-	public VolatileBattery()
+	public VolatileBattery(String batteryName, double massInKilograms)
 	{
-		super();
+		super(batteryName, massInKilograms);
 	}
 
 	// FUNCTIONS
@@ -36,8 +36,8 @@ public class VolatileBattery extends Battery
 		return null;
 	}
 
-	public void displayBattery()
+	public String displayBattery()
 	{
-		
+		return super.displayBattery();
 	}
 }

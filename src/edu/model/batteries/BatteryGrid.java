@@ -226,12 +226,12 @@ public class BatteryGrid
 	{
 		for (VolatileBattery gravitationalBattery : this.gravitationalBatteries)
 		{
-			gravitationalBattery.displayBattery();
+			System.out.println(gravitationalBattery.displayBattery());
 		}
 
 		for (VolatileBattery rotationalBattery : this.rotationalBatteries)
 		{
-			rotationalBattery.displayBattery();
+			System.out.println(rotationalBattery.displayBattery());
 		}
 	}
 
