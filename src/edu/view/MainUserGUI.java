@@ -76,6 +76,7 @@ public class MainUserGUI
 	private static DefaultListModel<Battery> model = new DefaultListModel<>();
 	//endregion
 
+	//region Methods
 	public MainUserGUI()
 	{
 		// make the two battery lists have the same model
@@ -175,14 +176,25 @@ public class MainUserGUI
 			}
 		});
 		//endregion
-
 		//endregion
+
+		//TODO: Continue testing remove functionality
+		btnBatteriesRemove.addActionListener(new ActionListener()
+		{
+			@Override
+			public void actionPerformed(ActionEvent e)
+			{
+				int selectedBatteryIndex = listBatteries.getSelectedIndex();
+
+				Controller.removeGravitationalBattery(selectedBatteryIndex);
+			}
+		});
 	}
 
 	private void createNewWindmillFarmSimulator()
 	{
 		WindmillFarmSimulator windmillFarmSimulator = new WindmillFarmSimulator();
-		EnergyCommander energyCommander = new EnergyCommander(Controller.getGrid()); // TODO: Ask Poli, is this static?
+		EnergyCommander energyCommander = new EnergyCommander(Controller.getGrid());
 		windmillFarmSimulator.simulate();
 	}
 
@@ -240,4 +252,5 @@ public class MainUserGUI
 		String title = "Project 12";
 		createNewJFrame(new MainUserGUI().panelMain, title, JFrame.EXIT_ON_CLOSE);
 	}
+	//endregion
 }

@@ -1,6 +1,6 @@
 package edu.model.batteries;
 
-public class Battery 
+public class Battery
 {
 	// ATTRIBUTES
 	private String batteryName;

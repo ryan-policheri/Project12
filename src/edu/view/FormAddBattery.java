@@ -63,6 +63,7 @@ public class FormAddBattery
 	//region Info panel
 	private JPanel panelInfo;
 	//endregion
+	//endregion
 
 	//region Initialize attributes
 	private static DefaultListModel<String> model = new DefaultListModel<>();
@@ -74,6 +75,7 @@ public class FormAddBattery
 	private final int rotationalBatterySelectedIndex = 1;
 	//endregion
 
+	//region Methods
 	public FormAddBattery()
 	{
 		//TODO: make panelInfo provide info based on what's added in the text fields (ex: total storage capacity of
@@ -98,6 +100,7 @@ public class FormAddBattery
 
 
 		//region Listeners
+		//region Button click listeners
 		btnAdd.addActionListener(new ActionListener()
 		{
 			@Override
@@ -132,6 +135,9 @@ public class FormAddBattery
 				frameMain.setVisible(false);
 			}
 		});
+		//endregion
+
+		//region Switch selection listeners
 		// switch the attributes panel based on the selected index
 		listBatteryTypes.addListSelectionListener(new ListSelectionListener()
 		{
@@ -152,48 +158,7 @@ public class FormAddBattery
 			}
 		});
 		//endregion
-	}
-
-	private String findSelectedFlywheelMaterial()
-	{
-		String materialName = "";
-		if (rbRotMaterialTitanium.isSelected())
-		{
-			materialName = "Titanium";
-		}
-		else if (rbRotMaterialCarbonFiber.isSelected())
-		{
-			materialName = "Carbon Fiber";
-		}
-		else if (rbRotMaterialSteel.isSelected())
-		{
-			materialName = "Steel";
-		}
-		else
-		{
-			materialName = "Aluminum";
-		}
-
-		return materialName;
-	}
-
-	private String findSelectedFlywheelBearing()
-	{
-		String bearingName = "";
-		if (rbRotBearingMechanical.isSelected())
-		{
-			bearingName = "Mechanical";
-		}
-		else if (rbRotBearingMagnetic.isSelected())
-		{
-			bearingName = "Magnetic";
-		}
-		else
-		{
-			bearingName = "Super";
-		}
-
-		return bearingName;
+		//endregion
 	}
 
 	private void switchAttributesPanelTo(JPanel panel)
@@ -204,6 +169,12 @@ public class FormAddBattery
 		panelAttributes.revalidate();
 	}
 
+	private boolean checkValidInputs()
+	{
+		return true;
+	}
+
+	//region Add batteries to the Controller's battery grid
 	private void addGravitationalBattery()
 	{
 		GravitationalBattery battery = new GravitationalBattery(txtGravName.getText(), Double.parseDouble(txtGravMass.getText()),
@@ -213,14 +184,19 @@ public class FormAddBattery
 		JOptionPane.showMessageDialog(null, txtGravName.getText() + " added successfully.");
 	}
 
-	private boolean checkValidInputs()
-	{
-		return true;
-	}
-
-	//TODO: continue updating this class along with the addGravitationalBattery form. After that, edit the FormEdit forms
 	private void addRotationalBattery(String material, String bearing)
 	{
+		String batteryName = txtRotName.getText();
+		double massInKilograms = Double.parseDouble(txtRotMass.getText());
+		double radiusInMeters = Double.parseDouble(txtRotRadius.getText());
+		FlywheelMaterial flywheelMaterial = new FlywheelMaterial(material);
+		FlywheelBearing flywheelBearing = new FlywheelBearing(bearing);
+
+		RotationalBattery battery = new RotationalBattery(batteryName, massInKilograms, radiusInMeters,
+				flywheelMaterial, flywheelBearing);
+
+		Controller.addRotationalBattery(battery);
+
 		//region OLD CODE
 		//String materialName;
 		//double materialDensity;
@@ -273,21 +249,60 @@ public class FormAddBattery
 
 		//FlywheelMaterial material = new FlywheelMaterial(materialName, materialDensity, materialTensileStress);
 		//FlywheelBearing bearing = new FlywheelBearing(bearingName, bearingLoss);
+
+		// RotationalBattery battery = new RotationalBattery(txtRotName.getText(), Double.parseDouble(txtRotMass.getText()),
+		// 		Double.parseDouble(txtRotRadius.getText()), flywheelMaterial, flywheelBearing);
+
+		// Controller.addRotationalBattery(battery);
 		//endregion
-
-		String batteryName = txtRotName.getText();
-		double massInKilograms = Double.parseDouble(txtRotMass.getText());
-		double radiusInMeters = Double.parseDouble(txtRotRadius.getText());
-		FlywheelMaterial flywheelMaterial = new FlywheelMaterial(material);
-		FlywheelBearing flywheelBearing = new FlywheelBearing(bearing);
-
-		RotationalBattery battery = new RotationalBattery(batteryName, massInKilograms, radiusInMeters,
-				flywheelMaterial, flywheelBearing);
-
-		Controller.addRotationalBattery(battery);
 
 		JOptionPane.showMessageDialog(null, txtRotName.getText() + " added successfully.");
 	}
+	//endregion
+
+	//region Find selected radio buttons
+	private String findSelectedFlywheelMaterial()
+	{
+		String materialName = "";
+		if (rbRotMaterialTitanium.isSelected())
+		{
+			materialName = "Titanium";
+		}
+		else if (rbRotMaterialCarbonFiber.isSelected())
+		{
+			materialName = "Carbon Fiber";
+		}
+		else if (rbRotMaterialSteel.isSelected())
+		{
+			materialName = "Steel";
+		}
+		else
+		{
+			materialName = "Aluminum";
+		}
+
+		return materialName;
+	}
+
+	private String findSelectedFlywheelBearing()
+	{
+		String bearingName = "";
+		if (rbRotBearingMechanical.isSelected())
+		{
+			bearingName = "Mechanical";
+		}
+		else if (rbRotBearingMagnetic.isSelected())
+		{
+			bearingName = "Magnetic";
+		}
+		else
+		{
+			bearingName = "Super";
+		}
+
+		return bearingName;
+	}
+	//endregion
 
 	//region Getters/Setters
 	public JPanel getPanelMain()
@@ -304,4 +319,5 @@ public class FormAddBattery
 		frameMain.pack();
 		frameMain.setVisible(true);
 	}
+	//endregion
 }

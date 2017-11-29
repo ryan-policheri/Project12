@@ -1,9 +1,14 @@
 package edu.model.batteries;
 
+import edu.view.MainUserGUI;
+
+import javax.swing.*;
 import java.util.ArrayList;
 
 public class BatteryGrid
 {
+	//TODO: Find a way to sort these lists - use the Comparable library, maybe?
+	//TODO: Why can't this just be one list? Ask Poli
 	private ArrayList<VolatileBattery> gravitationalBatteries = new ArrayList<VolatileBattery>();
 	private ArrayList<VolatileBattery> rotationalBatteries = new ArrayList<VolatileBattery>();
 	
@@ -18,7 +23,7 @@ public class BatteryGrid
 		totalRotationalEnergyInJoules = 0;
 		totalGravitationalEnergyInJoules = 0;
 	}
-	
+
 	public void addGravitationalBattery(GravitationalBattery gravitationalBattery)
 	{
 		this.gravitationalBatteries.add(gravitationalBattery);
@@ -27,6 +32,22 @@ public class BatteryGrid
 	public void addRotationalBattery(RotationalBattery rotationalBattery)
 	{
 		this.rotationalBatteries.add(rotationalBattery);
+	}
+
+	//TODO: HIGH PRIORITY: Add remove functionality, clean it up. Remove rotational batteries as well
+	public void removeGravitationalBattery(int index)
+	{
+		VolatileBattery batteryToRemove = this.gravitationalBatteries.get(index);
+
+		if (this.gravitationalBatteries.contains(batteryToRemove))
+		{
+			this.gravitationalBatteries.remove(batteryToRemove);
+			JOptionPane.showMessageDialog(null, batteryToRemove.toString() + " was removed");
+		}
+		else
+		{
+			JOptionPane.showMessageDialog(null, "Cannot do that.");
+		}
 	}
 		
 	public void allocateEnergySurplus(Surplus surplus)
@@ -238,12 +259,12 @@ public class BatteryGrid
 	//region Getters
 	public ArrayList<VolatileBattery> getGravitationalBatteries()
 	{
-		return gravitationalBatteries;
+		return this.gravitationalBatteries;
 	}
 
 	public ArrayList<VolatileBattery> getRotationalBatteries()
 	{
-		return rotationalBatteries;
+		return this.rotationalBatteries;
 	}
 	//endregion
 }

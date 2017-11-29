@@ -7,6 +7,7 @@ import java.util.Scanner;
 
 public class Controller
 {
+	//TODO: Implement the CitySimulator for a full-fledged simulation
 	private static BatteryGrid grid = new BatteryGrid();
 
 	public static void addGravitationalBattery(GravitationalBattery battery)
@@ -25,9 +26,12 @@ public class Controller
 		MainUserGUI.update();
 	}
 
-	private static void removeBattery()
+	public static void removeGravitationalBattery(int index)
 	{
+		grid.removeGravitationalBattery(index);
 
+		//update the view
+		MainUserGUI.update();
 	}
 
 	private static void addEnergySurplus()
