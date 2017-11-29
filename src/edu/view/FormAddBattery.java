@@ -67,6 +67,9 @@ public class FormAddBattery
 	//region Initialize attributes
 	private static DefaultListModel<String> model = new DefaultListModel<>();
 
+	private static ButtonGroup rbGroupRotMaterial = new ButtonGroup();
+	private static ButtonGroup rbGroupRotBearing = new ButtonGroup();
+
 	private final int gravitationalBatterySelectedIndex = 0;
 	private final int rotationalBatterySelectedIndex = 1;
 	//endregion
@@ -83,19 +86,40 @@ public class FormAddBattery
 		listBatteryTypes.setModel(model);
 		listBatteryTypes.setSelectedIndex(0);
 
+		// add radio buttons to their respective groups
+		rbGroupRotMaterial.add(rbRotMaterialTitanium);
+		rbGroupRotMaterial.add(rbRotMaterialCarbonFiber);
+		rbGroupRotMaterial.add(rbRotMaterialSteel);
+		rbGroupRotMaterial.add(rbRotMaterialAluminum);
+
+		rbGroupRotBearing.add(rbRotBearingMechanical);
+		rbGroupRotBearing.add(rbRotBearingMagnetic);
+		rbGroupRotBearing.add(rbRotBearingSuper);
+
+
 		//region Listeners
 		btnAdd.addActionListener(new ActionListener()
 		{
 			@Override
 			public void actionPerformed(ActionEvent e)
 			{
-				if (checkValidInputs() && listBatteryTypes.getSelectedIndex() == gravitationalBatterySelectedIndex)
+				if (checkValidInputs())
 				{
-					addGravitationalBattery();
-				}
-				else if (checkValidInputs() && listBatteryTypes.getSelectedIndex() == rotationalBatterySelectedIndex)
-				{
-					addRotationalBattery();
+					switch (listBatteryTypes.getSelectedIndex())
+					{
+						case gravitationalBatterySelectedIndex:
+							addGravitationalBattery();
+							break;
+						case rotationalBatterySelectedIndex:
+							String flywheelMaterial = findSelectedFlywheelMaterial();
+							String flywheelBearing = findSelectedFlywheelBearing();
+							addRotationalBattery(flywheelMaterial, flywheelBearing);
+
+							// TESTING
+							System.out.println(flywheelMaterial.toString());
+							System.out.println(flywheelBearing.toString());
+							break;
+					}
 				}
 			}
 		});
@@ -130,6 +154,48 @@ public class FormAddBattery
 		//endregion
 	}
 
+	private String findSelectedFlywheelMaterial()
+	{
+		String materialName = "";
+		if (rbRotMaterialTitanium.isSelected())
+		{
+			materialName = "Titanium";
+		}
+		else if (rbRotMaterialCarbonFiber.isSelected())
+		{
+			materialName = "Carbon Fiber";
+		}
+		else if (rbRotMaterialSteel.isSelected())
+		{
+			materialName = "Steel";
+		}
+		else
+		{
+			materialName = "Aluminum";
+		}
+
+		return materialName;
+	}
+
+	private String findSelectedFlywheelBearing()
+	{
+		String bearingName = "";
+		if (rbRotBearingMechanical.isSelected())
+		{
+			bearingName = "Mechanical";
+		}
+		else if (rbRotBearingMagnetic.isSelected())
+		{
+			bearingName = "Magnetic";
+		}
+		else
+		{
+			bearingName = "Super";
+		}
+
+		return bearingName;
+	}
+
 	private void switchAttributesPanelTo(JPanel panel)
 	{
 		panelAttributes.removeAll();
@@ -153,63 +219,70 @@ public class FormAddBattery
 	}
 
 	//TODO: continue updating this class along with the addGravitationalBattery form. After that, edit the FormEdit forms
-	private void addRotationalBattery()
+	private void addRotationalBattery(String material, String bearing)
 	{
-		String materialName;
-		double materialDensity;
-		double materialTensileStress;
-		String bearingName;
-		double bearingLoss;
-
-		//TODO: put these in their own Flywheel classes
-		//region Checking which materials are selected
-		if (rbRotMaterialTitanium.isSelected())
-		{
-			materialName = "Titanium";
-			materialDensity = 4506;
-			materialTensileStress = 8.8 * java.lang.Math.pow(10, 8);
-		}
-		else if (rbRotMaterialCarbonFiber.isSelected())
-		{
-			materialName = "Carbon Fiber";
-			materialDensity = 1799;
-			materialTensileStress = 4000000000.0;
-		}
-		else if (rbRotMaterialSteel.isSelected())
-		{
-			materialName = "Steel";
-			materialDensity = 8050;
-			materialTensileStress = 6.9 * java.lang.Math.pow(10, 8);
-		}
-		else
-		{
-			materialName = "Aluminum";
-			materialDensity = 2700;
-			materialTensileStress = 5 * java.lang.Math.pow(10, 8);
-		}
-
-		if (rbRotBearingMechanical.isSelected())
-		{
-			bearingName = "Mechanical";
-			bearingLoss = 3.472222222 * java.lang.Math.pow(10, -5);
-		}
-		else if (rbRotBearingMagnetic.isSelected())
-		{
-			bearingName = "Magnetic";
-			bearingLoss = 4.166666667 * java.lang.Math.pow(10, -6);
-		}
-		else
-		{
-			bearingName = "Super";
-			bearingLoss = 6.944444444 * java.lang.Math.pow(10, -8);
-		}
+		//region OLD CODE
+		//String materialName;
+		//double materialDensity;
+		//double materialTensileStress;
+		//String bearingName;
+		//double bearingLoss;
+		//
+		////region Checking which materials are selected
+		//if (rbRotMaterialTitanium.isSelected())
+		//{
+		//	materialName = "Titanium";
+		//	materialDensity = 4506;
+		//	materialTensileStress = 8.8 * java.lang.Math.pow(10, 8);
+		//}
+		//else if (rbRotMaterialCarbonFiber.isSelected())
+		//{
+		//	materialName = "Carbon Fiber";
+		//	materialDensity = 1799;
+		//	materialTensileStress = 4000000000.0;
+		//}
+		//else if (rbRotMaterialSteel.isSelected())
+		//{
+		//	materialName = "Steel";
+		//	materialDensity = 8050;
+		//	materialTensileStress = 6.9 * java.lang.Math.pow(10, 8);
+		//}
+		//else
+		//{
+		//	materialName = "Aluminum";
+		//	materialDensity = 2700;
+		//	materialTensileStress = 5 * java.lang.Math.pow(10, 8);
+		//}
+		//
+		//if (rbRotBearingMechanical.isSelected())
+		//{
+		//	bearingName = "Mechanical";
+		//	bearingLoss = 3.472222222 * java.lang.Math.pow(10, -5);
+		//}
+		//else if (rbRotBearingMagnetic.isSelected())
+		//{
+		//	bearingName = "Magnetic";
+		//	bearingLoss = 4.166666667 * java.lang.Math.pow(10, -6);
+		//}
+		//else
+		//{
+		//	bearingName = "Super";
+		//	bearingLoss = 6.944444444 * java.lang.Math.pow(10, -8);
+		//}
 		//endregion
 
-		FlywheelMaterial material = new FlywheelMaterial(materialName, materialDensity, materialTensileStress);
-		FlywheelBearing bearing = new FlywheelBearing(bearingName, bearingLoss);
+		//FlywheelMaterial material = new FlywheelMaterial(materialName, materialDensity, materialTensileStress);
+		//FlywheelBearing bearing = new FlywheelBearing(bearingName, bearingLoss);
+		//endregion
 
-		RotationalBattery battery = new RotationalBattery(txtRotName.getText(), Double.parseDouble(txtRotMass.getText
-				()), Double.parseDouble(txtRotRadius.getText()), material, bearing);
+		String batteryName = txtRotName.getText();
+		double massInKilograms = Double.parseDouble(txtRotMass.getText());
+		double radiusInMeters = Double.parseDouble(txtRotRadius.getText());
+		FlywheelMaterial flywheelMaterial = new FlywheelMaterial(material);
+		FlywheelBearing flywheelBearing = new FlywheelBearing(bearing);
+
+		RotationalBattery battery = new RotationalBattery(batteryName, massInKilograms, radiusInMeters,
+				flywheelMaterial, flywheelBearing);
 
 		Controller.addRotationalBattery(battery);
 
