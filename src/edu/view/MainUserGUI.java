@@ -14,6 +14,12 @@ import java.awt.event.ActionListener;
 
 public class MainUserGUI
 {
+
+	//Elements are sorted by:
+	//	1) Order in which they appear in-program
+	//	2) Grouped by their container panels (top down, left to right)
+	//	3) Sorted in the order they appear in those panels (top down)
+
 	//region Initialize swing elements
 	private JPanel panelMain;
 
@@ -26,18 +32,20 @@ public class MainUserGUI
 
 	//region Pick City panel
 	private JPanel panelPickCity;
+
 	private JList listCities;
+	private JLabel lblPickCitySelectedCityName;
 	private JLabel lblPickCityEnergyProduction;
 	private JLabel lblPickCityEnergyConsumption;
 	private JLabel lblPickCitySurplus;
 	private JLabel lblPickCitySquareMilage;
-	private JLabel lblPickCitySelectedCityName;
 	private JButton btnPickCityBack;
 	private JButton btnPickCityNext;
 	//endregion
 
 	//region Energy panel
 	private JPanel panelEnergy;
+
 	private JButton btnEnergyProductionEdit;
 	private JButton btnEnergyConsumptionEdit;
 	private JButton btnEnergyBack;
@@ -46,10 +54,11 @@ public class MainUserGUI
 
 	//region Batteries panel
 	private JPanel panelBatteries;
+
 	private JList listBatteries;
-	private JLabel lblBatteriesSelectedBatteryName;
 	private JButton btnBatteriesAdd;
 	private JButton btnBatteriesRemove;
+	private JLabel lblBatteriesSelectedBatteryName;
 	private JButton btnBatteriesBack;
 	private JButton btnBatteriesNext;
 	//endregion
@@ -69,8 +78,6 @@ public class MainUserGUI
 
 	public MainUserGUI()
 	{
-		//TODO: Research how to use the different layouts
-
 		// make the two battery lists have the same model
 		listBatteries.setModel(model);
 		listPlaceBatteries.setModel(model);
@@ -216,14 +223,14 @@ public class MainUserGUI
 		for (Battery battery : grid.getGravitationalBatteries())
 		{
 			model.addElement(battery);
-			System.out.println(battery.toString() + "was added to the battery grid.");
+			System.out.println(battery.toString() + " was added to the battery grid.");
 		}
 
 		// add rotational batteries
 		for (Battery battery : grid.getRotationalBatteries())
 		{
 			model.addElement(battery);
-			System.out.println(battery.toString() + "was added to the battery grid.");
+			System.out.println(battery.toString() + " was added to the battery grid.");
 		}
 	}
 	//endregion

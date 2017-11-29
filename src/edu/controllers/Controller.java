@@ -1,9 +1,6 @@
 package edu.controllers;
 
-import edu.model.batteries.BatteryGrid;
-import edu.model.batteries.Demand;
-import edu.model.batteries.GravitationalBattery;
-import edu.model.batteries.Surplus;
+import edu.model.batteries.*;
 import edu.view.MainUserGUI;
 
 import java.util.Scanner;
@@ -12,10 +9,17 @@ public class Controller
 {
 	private static BatteryGrid grid = new BatteryGrid();
 
-	public static void addBattery(String batteryName, double massInKilograms, double maxHeightInMeters)
+	public static void addGravitationalBattery(GravitationalBattery battery)
 	{
-		GravitationalBattery battery = new GravitationalBattery(batteryName, massInKilograms, maxHeightInMeters);
 		grid.addGravitationalBattery(battery);
+
+		// update the view
+		MainUserGUI.update();
+	}
+
+	public static void addRotationalBattery(RotationalBattery battery)
+	{
+		grid.addRotationalBattery(battery);
 
 		// update the view
 		MainUserGUI.update();

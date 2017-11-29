@@ -40,7 +40,7 @@ public class UserInputDriver
 			case "-help":
 				displayInputs();
 				break;
-			case "-addBattery":
+			case "-addGravitationalBattery":
 				addBattery();
 				break;
 			case "-removeBattery":
@@ -71,7 +71,7 @@ public class UserInputDriver
 	
 	private static void displayInputs()
 	{
-		System.out.println("Add a gravitational battery to the battery grid: -addBattery");
+		System.out.println("Add a gravitational battery to the battery grid: -addGravitationalBattery");
 		System.out.println("Remove a battery from the battery grid: -removeBattery");
 		System.out.println("Add energy to the battery grid: -addEnergy");
 		System.out.println("Demand energy from the battery grid: -demandEnergy");
