@@ -55,3 +55,6 @@ fabric.properties
 *.iml
 .idea/compiler.xml
 .idea/inspectionProfiles/
+
+# JDK info
+.idea/misc.xml
