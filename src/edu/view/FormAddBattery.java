@@ -78,8 +78,7 @@ public class FormAddBattery
 	//region Methods
 	public FormAddBattery()
 	{
-		//TODO: make panelInfo provide info based on what's added in the text fields (ex: total storage capacity of
-		// battery)
+		//TODO: make panelInfo provide info based on what's added in the text fields (ex: total battery capacity)
 
 		// add batteries to the model/list, then change the selected index to the first item
 		model.clear();
@@ -88,7 +87,7 @@ public class FormAddBattery
 		listBatteryTypes.setModel(model);
 		listBatteryTypes.setSelectedIndex(0);
 
-		// add radio buttons to their respective groups
+		// add radio buttons to their respective groups and make the first radio button in each group selected
 		rbGroupRotMaterial.add(rbRotMaterialTitanium);
 		rbGroupRotMaterial.add(rbRotMaterialCarbonFiber);
 		rbGroupRotMaterial.add(rbRotMaterialSteel);
@@ -98,6 +97,8 @@ public class FormAddBattery
 		rbGroupRotBearing.add(rbRotBearingMagnetic);
 		rbGroupRotBearing.add(rbRotBearingSuper);
 
+		rbRotMaterialTitanium.setSelected(true);
+		rbRotBearingMechanical.setSelected(true);
 
 		//region Listeners
 		//region Button click listeners
@@ -177,11 +178,14 @@ public class FormAddBattery
 	//region Add batteries to the Controller's battery grid
 	private void addGravitationalBattery()
 	{
-		GravitationalBattery battery = new GravitationalBattery(txtGravName.getText(), Double.parseDouble(txtGravMass.getText()),
-				Double.parseDouble(txtGravHeight.getText()));
+		String batteryName = txtGravName.getText();
+		double massInKilograms = Double.parseDouble(txtGravMass.getText());
+		double maxHeightInMeters = Double.parseDouble(txtGravHeight.getText());
+
+		GravitationalBattery battery = new GravitationalBattery(batteryName, massInKilograms, maxHeightInMeters);
 		Controller.addGravitationalBattery(battery);
 
-		JOptionPane.showMessageDialog(null, txtGravName.getText() + " added successfully.");
+		JOptionPane.showMessageDialog(null, batteryName + " added successfully.");
 	}
 
 	private void addRotationalBattery(String material, String bearing)
@@ -194,7 +198,6 @@ public class FormAddBattery
 
 		RotationalBattery battery = new RotationalBattery(batteryName, massInKilograms, radiusInMeters,
 				flywheelMaterial, flywheelBearing);
-
 		Controller.addRotationalBattery(battery);
 
 		//region OLD CODE
@@ -256,7 +259,7 @@ public class FormAddBattery
 		// Controller.addRotationalBattery(battery);
 		//endregion
 
-		JOptionPane.showMessageDialog(null, txtRotName.getText() + " added successfully.");
+		JOptionPane.showMessageDialog(null, batteryName + " added successfully.");
 	}
 	//endregion
 

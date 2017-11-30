@@ -79,16 +79,16 @@ public class MainUserGUI
 	//region Methods
 	public MainUserGUI()
 	{
-		//// TESTING FOR REMOVE FUNCTIONALITY
-		//for (int i = 0; i < 10; i++)
-		//{
-		//	GravitationalBattery gravitationalBattery = new GravitationalBattery("GRAV_" + i, 100, 100);
-		//	Controller.addGravitationalBattery(gravitationalBattery);
-		//
-		//	RotationalBattery rotationalBattery = new RotationalBattery("ROT_" + i, 100, 100,
-		//			new FlywheelMaterial("Titanium"), new FlywheelBearing("Mechanical"));
-		//	Controller.addRotationalBattery(rotationalBattery);
-		//}
+		// TESTING FOR REMOVE FUNCTIONALITY
+		for (int i = 0; i < 10; i++)
+		{
+			GravitationalBattery gravitationalBattery = new GravitationalBattery("GRAV_" + i, 100, 100);
+			Controller.addGravitationalBattery(gravitationalBattery);
+
+			RotationalBattery rotationalBattery = new RotationalBattery("ROT_" + i, 100, 100,
+					new FlywheelMaterial("Titanium"), new FlywheelBearing("Mechanical"));
+			Controller.addRotationalBattery(rotationalBattery);
+		}
 
 		// make the two battery lists have the same model
 		listBatteries.setModel(model);
@@ -174,6 +174,24 @@ public class MainUserGUI
 		//endregion
 
 		//region Energy screen buttons
+		btnEnergyProductionEdit.addActionListener(new ActionListener()
+		{
+			@Override
+			public void actionPerformed(ActionEvent e)
+			{
+				String title = "Edit Energy Production";
+				createNewJFrame(new FormEditEnergyProduction().getPanelMain(), title, JFrame.DISPOSE_ON_CLOSE);
+			}
+		});
+		btnEnergyConsumptionEdit.addActionListener(new ActionListener()
+		{
+			@Override
+			public void actionPerformed(ActionEvent e)
+			{
+				String title = "Edit Energy Consumption";
+				createNewJFrame(new FormEditEnergyConsumption().getPanelMain(), title, JFrame.DISPOSE_ON_CLOSE);
+			}
+		});
 		//endregion
 
 		//region Batteries screen buttons
