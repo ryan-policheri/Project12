@@ -26,11 +26,11 @@ public class Controller
 		MainUserGUI.update();
 	}
 
-	public static void removeGravitationalBattery(int index)
+	public static void removeBattery(int index)
 	{
-		grid.removeGravitationalBattery(index);
+		grid.removeBattery(index);
 
-		//update the view
+		// update the view
 		MainUserGUI.update();
 	}
 

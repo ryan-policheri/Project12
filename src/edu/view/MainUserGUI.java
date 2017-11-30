@@ -3,13 +3,13 @@ package edu.view;
 //region Imports
 import edu.controllers.Controller;
 import edu.model.EnergyCommander;
-import edu.model.batteries.Battery;
-import edu.model.batteries.BatteryGrid;
+import edu.model.batteries.*;
 import edu.model.energySources.windmillFarm.WindmillFarmSimulator;
 
 import javax.swing.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.util.ArrayList;
 //endregion
 
 public class MainUserGUI
@@ -79,6 +79,17 @@ public class MainUserGUI
 	//region Methods
 	public MainUserGUI()
 	{
+		//// TESTING FOR REMOVE FUNCTIONALITY
+		//for (int i = 0; i < 10; i++)
+		//{
+		//	GravitationalBattery gravitationalBattery = new GravitationalBattery("GRAV_" + i, 100, 100);
+		//	Controller.addGravitationalBattery(gravitationalBattery);
+		//
+		//	RotationalBattery rotationalBattery = new RotationalBattery("ROT_" + i, 100, 100,
+		//			new FlywheelMaterial("Titanium"), new FlywheelBearing("Mechanical"));
+		//	Controller.addRotationalBattery(rotationalBattery);
+		//}
+
 		// make the two battery lists have the same model
 		listBatteries.setModel(model);
 		listPlaceBatteries.setModel(model);
@@ -175,10 +186,6 @@ public class MainUserGUI
 				createNewJFrame(new FormAddBattery().getPanelMain(), title, JFrame.DISPOSE_ON_CLOSE);
 			}
 		});
-		//endregion
-		//endregion
-
-		//TODO: Continue testing remove functionality
 		btnBatteriesRemove.addActionListener(new ActionListener()
 		{
 			@Override
@@ -186,9 +193,16 @@ public class MainUserGUI
 			{
 				int selectedBatteryIndex = listBatteries.getSelectedIndex();
 
-				Controller.removeGravitationalBattery(selectedBatteryIndex);
+				if (selectedBatteryIndex != -1)
+				{
+					Controller.removeBattery(selectedBatteryIndex);
+				}
+
+				listBatteries.setSelectedIndex(selectedBatteryIndex);
 			}
 		});
+		//endregion
+		//endregion
 	}
 
 	private void createNewWindmillFarmSimulator()

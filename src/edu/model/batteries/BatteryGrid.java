@@ -34,19 +34,18 @@ public class BatteryGrid
 		this.rotationalBatteries.add(rotationalBattery);
 	}
 
-	//TODO: HIGH PRIORITY: Add remove functionality, clean it up. Remove rotational batteries as well
-	public void removeGravitationalBattery(int index)
+	public void removeBattery(int index)
 	{
-		VolatileBattery batteryToRemove = this.gravitationalBatteries.get(index);
-
-		if (this.gravitationalBatteries.contains(batteryToRemove))
+		if (index < this.gravitationalBatteries.size())
 		{
-			this.gravitationalBatteries.remove(batteryToRemove);
-			JOptionPane.showMessageDialog(null, batteryToRemove.toString() + " was removed");
+			System.out.println("Removing grav battery " + this.gravitationalBatteries.get(index) + " at index " + index);
+			this.gravitationalBatteries.remove(index);
 		}
 		else
 		{
-			JOptionPane.showMessageDialog(null, "Cannot do that.");
+			System.out.println("Removing rot battery " + this.rotationalBatteries.get(index -
+					this.gravitationalBatteries.size()) + " at index " + index);
+			this.rotationalBatteries.remove(index - this.gravitationalBatteries.size());
 		}
 	}
 		
