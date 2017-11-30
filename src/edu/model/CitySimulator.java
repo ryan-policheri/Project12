@@ -166,8 +166,7 @@ public class CitySimulator
 				if (currentMillisecond == getDailyDemandTimesOfDayInMilliseconds().get(0))
 				{
 					System.out.println("Removing " + getDailyDemand().get(0) + " at the " 
-							+ getDailyDemandTimesOfDayInMilliseconds().get(0) + " millisecond of day and " +
-							(getDailyDemandTimesOfDayInMilliseconds().get(0) / 10000) + " hour of day");
+							+ getDailyDemandTimesOfDayInMilliseconds().get(0) + " millisecond of day");
 
 					sendDemandThroughEnergyCommander();
 					
@@ -212,5 +211,4 @@ public class CitySimulator
 		}
 	}
 }
-
 
