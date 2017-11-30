@@ -17,4 +17,9 @@ public class Battery
 	{
 		return "Battery: " + this.batteryName;
 	}
+
+	public String getBatteryName()
+	{
+		return batteryName;
+	}
 }

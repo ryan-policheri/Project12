@@ -1,9 +1,8 @@
 package edu.model.batteries;
 
-import edu.view.MainUserGUI;
-
-import javax.swing.*;
 import java.util.ArrayList;
+import java.util.Collections;
+import java.util.Comparator;
 
 public class BatteryGrid
 {
@@ -27,11 +26,23 @@ public class BatteryGrid
 	public void addGravitationalBattery(GravitationalBattery gravitationalBattery)
 	{
 		this.gravitationalBatteries.add(gravitationalBattery);
+		sortBatteries();
 	}
 	
 	public void addRotationalBattery(RotationalBattery rotationalBattery)
 	{
 		this.rotationalBatteries.add(rotationalBattery);
+		sortBatteries();
+	}
+
+	private void sortBatteries()
+	{
+		sortGravitationalBatteries();
+	}
+
+	private void sortGravitationalBatteries()
+	{
+		Collections.sort(this.gravitationalBatteries, Comparator.comparing(VolatileBattery::getBatteryName));
 	}
 
 	public void removeBattery(int index)
