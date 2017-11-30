@@ -25,7 +25,8 @@ public class CitySimulator
 	private double oneSecondInSimTime = .0027;
 	private int simulatedHourLengthInSeconds = 10;
 	private int hoursInDay = 24;
-	private long millisecondsInDay = (long) (8640000000L);
+	private long millisecondsInDay = (long) (86400000L);
+	private long simulatedMillisecondsInDay = millisecondsInDay / 360; //* by scale
 	private String fileName = "..\\Project12\\src\\edu\\model\\CityDemandDayLog";
 	private File file = new File(fileName);
 	private City desMoines = new City("Des Moines");
@@ -98,14 +99,12 @@ public class CitySimulator
 
 		for (int i = 0; i < totalDemandsInDay; i++)
 		{
+			long randomMillisecondInDay = (long)(Math.random() * simulatedMillisecondsInDay);
+			int randomMillisecondInDayToHour = (int) ((randomMillisecondInDay / 10000));
 
-			long randomMillisecondInDay = (long)(Math.random() * millisecondsInDay);
-			int randomMillisecondInDayToHour = (int) ((randomMillisecondInDay / 1000 / 60 / 60) % 24);
-
-			addDemand(new Demand((desMoines.calculateCityDemand(randomMillisecondInDayToHour)
-					+ oneSecondInSimTime), Math.random() * 10 ), 
+			addDemand(new Demand((desMoines.calculateCityDemand(randomMillisecondInDayToHour)), 
+					Math.random() * 10 ), 
 					randomMillisecondInDay);
-
 		}
 
 		//Sort the parallel arrays created above
@@ -139,8 +138,8 @@ public class CitySimulator
 						getDailyDemandTimesOfDayInMilliseconds().get(i) + " millisecond time of day");
 
 				//For debugging purposes:
-			//	System.out.println("Needs " + getDailyDemand().get(i) + " at the " +
-			//			getDailyDemandTimesOfDayInMilliseconds().get(i) + " millisecond time of day");
+				//System.out.println("Needs " + getDailyDemand().get(i) + " at the " +
+					//	getDailyDemandTimesOfDayInMilliseconds().get(i) + " millisecond time of day and");
 			} 
 
 			catch (IOException e) 
@@ -161,14 +160,17 @@ public class CitySimulator
 			@Override
 			public void run()
 			{
-
+				currentMillisecond += 1;
+				
+				//Out of bounds error when array is done.
 				if (currentMillisecond == getDailyDemandTimesOfDayInMilliseconds().get(0))
 				{
-					System.out.println("Removing " + getDailyDemand().get(0) + " and " 
-							+ getDailyDemandTimesOfDayInMilliseconds().get(0)); 
+					System.out.println("Removing " + getDailyDemand().get(0) + " at the " 
+							+ getDailyDemandTimesOfDayInMilliseconds().get(0) + " millisecond of day and " +
+							(getDailyDemandTimesOfDayInMilliseconds().get(0) / 10000) + " hour of day");
 
 					sendDemandThroughEnergyCommander();
-
+					
 					System.out.println("Removed");
 				}
 			}
