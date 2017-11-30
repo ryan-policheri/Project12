@@ -1,4 +1,4 @@
-package edu.model;
+package edu.model.city;
 
 import java.sql.Time;
 import java.text.DateFormat;
@@ -52,7 +52,8 @@ public class City
 		return energyInMegawattHours;
 	}
 	*/
-	
+
+	//TODO: Implement 5 tiers
 	public double calculateCityDemand(int hourOfDay)
 	{
 		if((hourOfDay >= 0 && hourOfDay <= 5) || (hourOfDay >= 21 && hourOfDay <= 23))

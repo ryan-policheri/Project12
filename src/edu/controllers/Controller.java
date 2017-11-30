@@ -8,7 +8,11 @@ import java.util.Scanner;
 public class Controller
 {
 	//TODO: Implement the CitySimulator for a full-fledged simulation
+	//TODO: Add energy production and energy consumption arrays for graph functionality
 	private static BatteryGrid grid = new BatteryGrid();
+
+	private static final int NUM_OF_TIERS = 5;
+	private static final int MAJOR_TICK_SPACING = 1;
 
 	public static void addGravitationalBattery(GravitationalBattery battery)
 	{
@@ -68,5 +72,15 @@ public class Controller
 	public static BatteryGrid getGrid()
 	{
 		return grid;
+	}
+
+	public static int getnumOfTiers()
+	{
+		return NUM_OF_TIERS;
+	}
+
+	public static int getMajorTickSpacing()
+	{
+		return MAJOR_TICK_SPACING;
 	}
 }

@@ -1,23 +1,20 @@
-package edu.model;
+package edu.model.city;
 
 import java.util.Timer;
 import java.util.TimerTask;
 
 import edu.controllers.WriteToFile;
+import edu.model.EnergyCommander;
 import edu.model.batteries.Demand;
-import edu.model.batteries.Surplus;
 
 import java.io.File;
 import java.io.IOException;
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.Calendar;
-import java.util.Collections;
 import java.util.Date;
 import java.util.List;
-import java.util.ListIterator;
 
 public class CitySimulator
 {
