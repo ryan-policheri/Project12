@@ -79,18 +79,18 @@ public class MainUserGUI
 	//region Methods
 	public MainUserGUI()
 	{
-		//// TESTING FOR REMOVE FUNCTIONALITY
-		//for (int i = 10; i > 0; i--)
-		//{
-		//	int a = (int) Math.round(Math.random() * 1000);
-		//
-		//	GravitationalBattery gravitationalBattery = new GravitationalBattery("GRAV_" + a, 100, 100);
-		//	Controller.addGravitationalBattery(gravitationalBattery);
-		//
-		//	RotationalBattery rotationalBattery = new RotationalBattery("ROT_" + a, 100, 100,
-		//			new FlywheelMaterial("Titanium"), new FlywheelBearing("Mechanical"));
-		//	Controller.addRotationalBattery(rotationalBattery);
-		//}
+		// TESTING FOR REMOVE FUNCTIONALITY
+		for (int i = 10; i > 0; i--)
+		{
+			int a = (int) Math.round(Math.random() * 1000);
+
+			GravitationalBattery gravitationalBattery = new GravitationalBattery("GRAV_" + a, 100, 100);
+			Controller.addGravitationalBattery(gravitationalBattery);
+
+			RotationalBattery rotationalBattery = new RotationalBattery("ROT_" + a, 100, 100,
+					new FlywheelMaterial("Titanium"), new FlywheelBearing("Mechanical"));
+			Controller.addRotationalBattery(rotationalBattery);
+		}
 
 		// make the two battery lists have the same model
 		listBatteries.setModel(model);
