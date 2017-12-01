@@ -4,21 +4,26 @@ import java.util.ArrayList;
 
 public class BatteryGrid
 {
-	private ArrayList<VolatileBattery> gravitationalBatteries = new ArrayList<VolatileBattery>();
-	private ArrayList<VolatileBattery> rotationalBatteries = new ArrayList<VolatileBattery>();
+	//ATTRIBUTES
+	private ArrayList<VolatileBattery> gravitationalBatteries;
+	private ArrayList<VolatileBattery> rotationalBatteries;
 	
 	private double totalRotationalEnergyInJoules;
 	private double totalGravitationalEnergyInJoules;
 
-	double shortTimeThresholdInSeconds = 2.5; // this would be a 15 minutes in our simulation
+	private final double shortTimeThresholdInSeconds = 2.5; // this would be a 15 minutes in our simulation
 	
-	// CONSTRUCTORS
+	//CONSTRUCTORS
 	public BatteryGrid() 
 	{	
-		totalRotationalEnergyInJoules = 0;
-		totalGravitationalEnergyInJoules = 0;
+		gravitationalBatteries = new ArrayList<VolatileBattery>();
+		rotationalBatteries = new ArrayList<VolatileBattery>();
+		
+		this.totalRotationalEnergyInJoules = 0;
+		this.totalGravitationalEnergyInJoules= 0;
 	}
 	
+	//FUNCTIONS
 	public void addGravitationalBattery(GravitationalBattery gravitationalBattery)
 	{
 		this.gravitationalBatteries.add(gravitationalBattery);
@@ -66,7 +71,8 @@ public class BatteryGrid
 				}
 			}
 		}
-
+		
+		adjustEnergyStoredByBatteryType();
 	}
 
 	public void allocateEnergyDemand(Demand demand)
@@ -107,6 +113,7 @@ public class BatteryGrid
 			}
 		}
 		
+		adjustEnergyStoredByBatteryType();
 	}
 	
 	private Surplus giveEnergyToBatteries(Surplus surplus, ArrayList<VolatileBattery> batteries)
@@ -196,6 +203,12 @@ public class BatteryGrid
 				return remainingDemand;
 			}
 		}	
+	}
+	
+	private void adjustEnergyStoredByBatteryType()
+	{
+		this.totalGravitationalEnergyInJoules = this.calculateTotalGravitationalEnergyInJoules();
+		this.totalRotationalEnergyInJoules = this.calculateTotalRotationalEnergyInJoules();
 	}
 	
 	private double calculateTotalRotationalEnergyInJoules()
