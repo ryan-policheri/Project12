@@ -1,9 +1,10 @@
-package edu.model;
+package edu.model.city;
 
 import java.util.Timer;
 import java.util.TimerTask;
 
 import edu.controllers.WriteToFile;
+import edu.model.EnergyCommander;
 import edu.model.batteries.Demand;
 import edu.model.batteries.Surplus;
 
