@@ -1,12 +1,21 @@
 package edu.model.batteries;
 
 import java.util.ArrayList;
+import java.util.Collections;
+import java.util.Comparator;
 
 public class BatteryGrid
 {
+<<<<<<< HEAD
 	//ATTRIBUTES
 	private ArrayList<VolatileBattery> gravitationalBatteries;
 	private ArrayList<VolatileBattery> rotationalBatteries;
+=======
+	//TODO: Find a way to sort these lists - use the Comparable library, maybe?
+	//TODO: Why can't this just be one list? Ask Poli
+	private ArrayList<VolatileBattery> gravitationalBatteries = new ArrayList<VolatileBattery>();
+	private ArrayList<VolatileBattery> rotationalBatteries = new ArrayList<VolatileBattery>();
+>>>>>>> 00aa5f558b5dc9784ca4ad62cb14d8a5d5941ce9
 	
 	private double totalRotationalEnergyInJoules;
 	private double totalGravitationalEnergyInJoules;
@@ -22,16 +31,47 @@ public class BatteryGrid
 		this.totalRotationalEnergyInJoules = 0;
 		this.totalGravitationalEnergyInJoules= 0;
 	}
+<<<<<<< HEAD
 	
 	//FUNCTIONS
+=======
+
+>>>>>>> 00aa5f558b5dc9784ca4ad62cb14d8a5d5941ce9
 	public void addGravitationalBattery(GravitationalBattery gravitationalBattery)
 	{
 		this.gravitationalBatteries.add(gravitationalBattery);
+		sortBatteries();
 	}
 	
 	public void addRotationalBattery(RotationalBattery rotationalBattery)
 	{
 		this.rotationalBatteries.add(rotationalBattery);
+		sortBatteries();
+	}
+
+	private void sortBatteries()
+	{
+		sortGravitationalBatteries();
+	}
+
+	private void sortGravitationalBatteries()
+	{
+		Collections.sort(this.gravitationalBatteries, Comparator.comparing(VolatileBattery::getBatteryName));
+	}
+
+	public void removeBattery(int index)
+	{
+		if (index < this.gravitationalBatteries.size())
+		{
+			System.out.println("Removing grav battery " + this.gravitationalBatteries.get(index) + " at index " + index);
+			this.gravitationalBatteries.remove(index);
+		}
+		else
+		{
+			System.out.println("Removing rot battery " + this.rotationalBatteries.get(index -
+					this.gravitationalBatteries.size()) + " at index " + index);
+			this.rotationalBatteries.remove(index - this.gravitationalBatteries.size());
+		}
 	}
 		
 	public void allocateEnergySurplus(Surplus surplus)
@@ -251,12 +291,12 @@ public class BatteryGrid
 	//region Getters
 	public ArrayList<VolatileBattery> getGravitationalBatteries()
 	{
-		return gravitationalBatteries;
+		return this.gravitationalBatteries;
 	}
 
 	public ArrayList<VolatileBattery> getRotationalBatteries()
 	{
-		return rotationalBatteries;
+		return this.rotationalBatteries;
 	}
 	//endregion
 }

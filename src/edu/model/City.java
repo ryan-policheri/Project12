@@ -113,15 +113,11 @@ public class City
 	
 	private void randomizeLowDemand()
 	{
-		int minimumDemand = 0; //NOTHING
+		int minimumDemand = 10; //DON'T WANT LOWER
 		int maximumDemand = 500000; //0.5 MW
 		
 		this.powerDemand = minimumDemand + (Math.random() * ((maximumDemand - minimumDemand) + 1));
 		
-		if (this.powerDemand < this.lowestPowerDemand)
-		{
-			this.powerDemand = 0;
-		}
 	}
 	
 

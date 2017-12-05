@@ -53,3 +53,5 @@ fabric.properties
 
 # .iml files
 *.iml
+.idea/compiler.xml
+.idea/inspectionProfiles/
