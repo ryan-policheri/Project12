@@ -6,16 +6,11 @@ import java.util.Comparator;
 
 public class BatteryGrid
 {
-<<<<<<< HEAD
 	//ATTRIBUTES
-	private ArrayList<VolatileBattery> gravitationalBatteries;
-	private ArrayList<VolatileBattery> rotationalBatteries;
-=======
 	//TODO: Find a way to sort these lists - use the Comparable library, maybe?
 	//TODO: Why can't this just be one list? Ask Poli
 	private ArrayList<VolatileBattery> gravitationalBatteries = new ArrayList<VolatileBattery>();
 	private ArrayList<VolatileBattery> rotationalBatteries = new ArrayList<VolatileBattery>();
->>>>>>> 00aa5f558b5dc9784ca4ad62cb14d8a5d5941ce9
 	
 	private double totalRotationalEnergyInJoules;
 	private double totalGravitationalEnergyInJoules;
@@ -31,12 +26,8 @@ public class BatteryGrid
 		this.totalRotationalEnergyInJoules = 0;
 		this.totalGravitationalEnergyInJoules= 0;
 	}
-<<<<<<< HEAD
-	
-	//FUNCTIONS
-=======
 
->>>>>>> 00aa5f558b5dc9784ca4ad62cb14d8a5d5941ce9
+	//FUNCTIONS
 	public void addGravitationalBattery(GravitationalBattery gravitationalBattery)
 	{
 		this.gravitationalBatteries.add(gravitationalBattery);

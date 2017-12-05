@@ -1,10 +1,6 @@
 package edu.model.batteries;
 
-<<<<<<< HEAD
-abstract class Battery 
-=======
-public class Battery
->>>>>>> 00aa5f558b5dc9784ca4ad62cb14d8a5d5941ce9
+abstract class Battery
 {
 	//ATTRIBUTES
 	protected static final double forceOfGravity = 9.81; //CONSTANT
@@ -62,7 +58,6 @@ public class Battery
 	{
 		this.currentEnergyInJoules = 0;
 	}
-<<<<<<< HEAD
 	
 	//functions about the state of the object
 	public boolean isBatteryFull()
@@ -97,12 +92,4 @@ public class Battery
 		String batteryDisplay = "Battery: " + this.batteryName + " - Current Storage in Joules: " + Double.toString(this.currentEnergyInJoules);
 		return batteryDisplay;
 	}
-	
-=======
-
-	public String getBatteryName()
-	{
-		return batteryName;
-	}
->>>>>>> 00aa5f558b5dc9784ca4ad62cb14d8a5d5941ce9
 }
