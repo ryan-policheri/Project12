@@ -1,20 +1,23 @@
-package edu.model.city;
+package edu.model;
 
 import java.util.Timer;
 import java.util.TimerTask;
 
 import edu.controllers.WriteToFile;
-import edu.model.EnergyCommander;
 import edu.model.batteries.Demand;
+import edu.model.batteries.Surplus;
 
 import java.io.File;
 import java.io.IOException;
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Calendar;
+import java.util.Collections;
 import java.util.Date;
 import java.util.List;
+import java.util.ListIterator;
 
 public class CitySimulator
 {
@@ -22,7 +25,8 @@ public class CitySimulator
 	private double oneSecondInSimTime = .0027;
 	private int simulatedHourLengthInSeconds = 10;
 	private int hoursInDay = 24;
-	private long millisecondsInDay = (long) (8640000000L);
+	private long millisecondsInDay = (long) (86400000L);
+	private long simulatedMillisecondsInDay = millisecondsInDay / 360; //* by scale
 	private String fileName = "..\\Project12\\src\\edu\\model\\CityDemandDayLog";
 	private File file = new File(fileName);
 	private City desMoines = new City("Des Moines");
@@ -95,17 +99,15 @@ public class CitySimulator
 
 		for (int i = 0; i < totalDemandsInDay; i++)
 		{
+			long randomMillisecondInDay = (long)(Math.random() * simulatedMillisecondsInDay);
+			int randomMillisecondInDayToHour = (int) ((randomMillisecondInDay / 10000));
 
-			long randomMillisecondInDay = (long)(Math.random() * millisecondsInDay);
-			int randomMillisecondInDayToHour = (int) ((randomMillisecondInDay / 1000 / 60 / 60) % 24);
-
-			addDemand(new Demand((desMoines.calculateCityDemand(randomMillisecondInDayToHour)
-					+ oneSecondInSimTime), Math.random() * 10 ), 
+			addDemand(new Demand((desMoines.calculateCityDemand(randomMillisecondInDayToHour)), 
+					Math.random() * 10 ), 
 					randomMillisecondInDay);
-
 		}
 
-		//Sort the parallel arrays created above
+		//Sorts the parallel arrays created above
 		doSelectionSort(dailyDemandTimesOfDayInMilliseconds, dailyDemand);
 
 		//Write to CityDemandDayLog
@@ -136,8 +138,8 @@ public class CitySimulator
 						getDailyDemandTimesOfDayInMilliseconds().get(i) + " millisecond time of day");
 
 				//For debugging purposes:
-			//	System.out.println("Needs " + getDailyDemand().get(i) + " at the " +
-			//			getDailyDemandTimesOfDayInMilliseconds().get(i) + " millisecond time of day");
+				//System.out.println("Needs " + getDailyDemand().get(i) + " at the " +
+					//	getDailyDemandTimesOfDayInMilliseconds().get(i) + " millisecond time of day and");
 			} 
 
 			catch (IOException e) 
@@ -158,15 +160,25 @@ public class CitySimulator
 			@Override
 			public void run()
 			{
+				currentMillisecond += 1;
 
-				if (currentMillisecond == getDailyDemandTimesOfDayInMilliseconds().get(0))
+				if (!dailyDemandTimesOfDayInMilliseconds.isEmpty())
 				{
-					System.out.println("Removing " + getDailyDemand().get(0) + " and " 
-							+ getDailyDemandTimesOfDayInMilliseconds().get(0)); 
+					//Out of bounds error when array is done.
+					if (currentMillisecond == getDailyDemandTimesOfDayInMilliseconds().get(0))
+					{
+						System.out.println("Removing " + getDailyDemand().get(0) + " at the " 
+								+ getDailyDemandTimesOfDayInMilliseconds().get(0) + " millisecond of day");
 
-					sendDemandThroughEnergyCommander();
+						sendDemandThroughEnergyCommander();
 
-					System.out.println("Removed");
+						System.out.println("Removed");
+					}
+				}
+				else
+				{
+					//System.out.println("Done");
+					timer.cancel();
 				}
 			}
 		}
