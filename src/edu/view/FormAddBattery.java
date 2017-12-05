@@ -49,7 +49,7 @@ public class FormAddBattery
 	private JRadioButton rbRotMaterialAluminum;
 	private JRadioButton rbRotBearingMechanical;
 	private JRadioButton rbRotBearingMagnetic;
-	private JRadioButton rbRotBearingSuper;
+	private JRadioButton rbRotBearingModern;
 	//endregion
 	//endregion
 
@@ -95,7 +95,7 @@ public class FormAddBattery
 
 		rbGroupRotBearing.add(rbRotBearingMechanical);
 		rbGroupRotBearing.add(rbRotBearingMagnetic);
-		rbGroupRotBearing.add(rbRotBearingSuper);
+		rbGroupRotBearing.add(rbRotBearingModern);
 
 		rbRotMaterialTitanium.setSelected(true);
 		rbRotBearingMechanical.setSelected(true);
@@ -301,6 +301,7 @@ public class FormAddBattery
 	private String findSelectedFlywheelBearing()
 	{
 		String bearingName = "";
+
 		if (rbRotBearingMechanical.isSelected())
 		{
 			bearingName = "Mechanical";
@@ -311,7 +312,7 @@ public class FormAddBattery
 		}
 		else
 		{
-			bearingName = "Super";
+			bearingName = "Modern";
 		}
 
 		return bearingName;

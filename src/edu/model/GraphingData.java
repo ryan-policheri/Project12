@@ -5,6 +5,7 @@ import java.awt.font.*;
 import java.awt.geom.*;
 import javax.swing.*;
 
+//TODO: Implement this in the energy consumption/production forms
 public class GraphingData extends JPanel
 {
 	int[] data =
@@ -12,7 +13,7 @@ public class GraphingData extends JPanel
 		21, 14, 18, 03, 86, 88, 74, 87, 54, 77,
 		61, 55, 48, 60, 49, 36, 38, 27, 20, 18
 	};
-	final int PAD = 20;
+	final int PAD = 24;
 
 	protected void paintComponent(Graphics g)
 	{

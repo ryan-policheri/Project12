@@ -1,6 +1,7 @@
 package edu.view;
 
 import edu.controllers.Controller;
+import edu.model.GraphingData;
 import edu.model.city.City;
 
 import javax.swing.*;
@@ -48,6 +49,7 @@ public class FormEditEnergyConsumption
 	private JPanel panelButtons;
 	private JButton btnSave;
 	private JButton btnCancel;
+	private JPanel previousGraphPanel;
 	//endregion
 	//endregion
 
@@ -73,7 +75,7 @@ public class FormEditEnergyConsumption
 			sliders.get(i).setValue(city.getEnergyConsumptionTiers()[i]);
 		}
 
-		System.out.println("Done");
+		previousGraphPanel.add(new GraphingData());
 	}
 
 	private void addSlidersToSliderList()
