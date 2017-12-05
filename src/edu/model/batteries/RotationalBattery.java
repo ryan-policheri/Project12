@@ -7,67 +7,58 @@ import java.util.TimerTask;
 
 public class RotationalBattery extends VolatileBattery
 {
-	// ATTRIBUTES
-	private String batteryName;
-	private final double massInKilograms;
-	private final double radiusInMeters;
+	//ATTRIBUTES
 	private final FlywheelMaterial material;
 	private final FlywheelBearing bearingType;
+	
+	private final double radiusInMeters;
+	private final double radiusSquared;
+	private final double momentOfInertia;
+	
+	private final double maxAngularVelocity;
+	private double currentAngularVelocity;
 	
 	//double efficiencyModifierForStoring; may use later
 	//double efficiencyModifierForReleasing; may use later
 	
-	private final double radiusSquared;
-	private final double maxAngularVelocity;
-	private final double momentOfIntertia;
-	private final double maxJoulesStorage;
-	
-	private double currentAngularVelocity;
-	private double currentEnergyInJoules;
-	
-	private boolean inUse;
-	
-	// CONSTRUCTORS
+	//CONSTRUCTORS
 	public RotationalBattery(String batteryName, double massInKilograms, double radiusInMeters, FlywheelMaterial material, FlywheelBearing bearingType) 
 	{
-		this.batteryName = batteryName;
-		this.massInKilograms = massInKilograms;
-		this.radiusInMeters = radiusInMeters;
+		super(batteryName, massInKilograms);
+		
 		this.material = material;
 		this.bearingType = bearingType;
 		
+		this.radiusInMeters = radiusInMeters;
 		this.radiusSquared = this.radiusInMeters * this.radiusInMeters;
-		this.momentOfIntertia = this.radiusSquared * this.massInKilograms;
+		this.momentOfInertia = this.radiusSquared * this.getMassInKilograms();
 		
 		this.maxAngularVelocity = material.calculateMaxAngularVelocity(this.radiusInMeters);
-		this.maxJoulesStorage = (this.momentOfIntertia / 2) * (this.maxAngularVelocity * this.maxAngularVelocity);
+		this.initializeMaxEnergyInJoulesForRotationalBattery(this.momentOfInertia, this.maxAngularVelocity);
 		
 		this.currentAngularVelocity = 0;
-		this.currentEnergyInJoules = 0;
-		
-		this.inUse = false;
-		
-		this.startFrictionalLossUpdate();	
 	}
 	
-	// FUNCTIONS
+	//FUNCTIONS
 	
 	//Puts energy in an individual battery. If the incoming energy plus the already stored energy is greater than the max capacity
 	//of the battery then the battery will be filled up and the remainder will be sent back to the grid. If the incoming energy
 	//plus the already stored energy is less than the max capacity then the battery will charge and there will be no remainder.
 	public Surplus storeEnergy(Surplus surplus)
 	{
+		double currentEnergyStoredInJoulesBeforeSurplusIsAdded = this.getCurrentEnergyInJoules();
+		
 		double incomingEnergyInWatts = surplus.getEnergyAvailableInWatts();
 		double timeIncomingEnergyLastsInSeconds = surplus.getTimeAvailableInSeconds();
 		
 		double incomingEnergyInJoules = incomingEnergyInWatts * timeIncomingEnergyLastsInSeconds;
 		
 		//hypothetically how much total energy is involved
-		double totalSystemEnergyInJoules = this.currentEnergyInJoules + incomingEnergyInJoules;
+		double totalSystemEnergyInJoules = this.getCurrentEnergyInJoules() + incomingEnergyInJoules;
 		
 		//calculate the hypothetical angular velocity using: KE =  I/2 * W^2
 		//where KE = totalSystemEnergyInJoules, I = this.momentOfIntertia, W is angular velocity (unknown)
-		double potentialAngularVelocitySquared = totalSystemEnergyInJoules / (this.momentOfIntertia / 2);
+		double potentialAngularVelocitySquared = totalSystemEnergyInJoules / (this.momentOfInertia / 2);
 		double potentialAngularVelocity = Math.sqrt(potentialAngularVelocitySquared);
 		
 		double remainingTimeOfIncomingEnergy;
@@ -76,7 +67,6 @@ public class RotationalBattery extends VolatileBattery
 		if (potentialAngularVelocity <= this.maxAngularVelocity)
 		{
 			this.currentAngularVelocity = potentialAngularVelocity;
-			this.currentEnergyInJoules = totalSystemEnergyInJoules; //it used to be += ? dont know why
 			remainingTimeOfIncomingEnergy = 0;
 		}
 		//the battery cannot hold the entire surplus, the battery is filled and the remaining surplus is returned
@@ -84,19 +74,25 @@ public class RotationalBattery extends VolatileBattery
 		{
 			this.currentAngularVelocity = this.maxAngularVelocity;
 			
-			double remainingJoules = totalSystemEnergyInJoules - this.maxJoulesStorage;
+			double remainingJoules = totalSystemEnergyInJoules - this.getMaxEnergyInJoules();
 			remainingTimeOfIncomingEnergy = remainingJoules / incomingEnergyInWatts;
 		}
 		
 		//find the new energy based on the new angular velocity
-		this.currentEnergyInJoules = this.calculateCurrentEnergy();
+		this.adjustCurrentEnergyInJoulesForRotationalBattery(this.momentOfInertia, this.currentAngularVelocity);
 		//this is simply for recalibration
-		this.currentAngularVelocity = this.calculateCurrentAngularVelocity();
+		this.currentAngularVelocity = this.calculateCurrentAngularVelocity(this.getCurrentEnergyInJoules());
 		
 		double timeInUseInSeconds = timeIncomingEnergyLastsInSeconds - remainingTimeOfIncomingEnergy;
 		this.startInUseTimer(timeInUseInSeconds);
 		
 		Surplus returnSurplus = new Surplus(incomingEnergyInWatts, remainingTimeOfIncomingEnergy);
+		
+		//there was no energy before we started and we just put energy in. Need to start frictional loss update
+		if (currentEnergyStoredInJoulesBeforeSurplusIsAdded == 0)
+		{
+			this.startFrictionalLossUpdate();
+		}
 		
 		return returnSurplus;
 	}
@@ -109,30 +105,34 @@ public class RotationalBattery extends VolatileBattery
 		double energyDemandInWatts = demand.getEnergyNeededInWatts();
 		double timeDemandIsNeededInSeconds = demand.getTimeNeededInSeconds();
 		
-		double secondsDemandCanBeProvided = this.currentEnergyInJoules / energyDemandInWatts;
+		double secondsDemandCanBeProvided = this.getCurrentEnergyInJoules() / energyDemandInWatts;
+		
 		double remainingSecondsWattageIsNeeded;
+		double timeInUseInSeconds;
 		
 		//the battery could handle the entire demand, there is no remaining demand
 		if (timeDemandIsNeededInSeconds <= secondsDemandCanBeProvided)
 		{
 			double joulesNeeded = energyDemandInWatts * timeDemandIsNeededInSeconds;
-			this.currentEnergyInJoules -= joulesNeeded;
+			double newCurrentEnergyInJoules = this.getCurrentEnergyInJoules() - joulesNeeded;
+			
 			//find the new angular velocity based on the new energy
-			this.currentAngularVelocity = this.calculateCurrentAngularVelocity();
+			this.currentAngularVelocity = this.calculateCurrentAngularVelocity(newCurrentEnergyInJoules);
 			//this is simply for recalibration
-			this.currentEnergyInJoules = this.calculateCurrentEnergy();
+			this.adjustCurrentEnergyInJoulesForRotationalBattery(this.momentOfInertia, this.currentAngularVelocity);
 			
 			remainingSecondsWattageIsNeeded = 0;
+			timeInUseInSeconds = timeDemandIsNeededInSeconds;
 		}
 		//the battery could not handle the entire demand, battery is empty and remaining demand is returned
 		else
 		{
-			this.currentEnergyInJoules = 0;
+			this.setCurrentEnergyInJoulesToZero();
 			this.currentAngularVelocity = 0;
 			remainingSecondsWattageIsNeeded = timeDemandIsNeededInSeconds - secondsDemandCanBeProvided;
+			timeInUseInSeconds = secondsDemandCanBeProvided;
 		}
 		
-		double timeInUseInSeconds = secondsDemandCanBeProvided;
 		this.startInUseTimer(timeInUseInSeconds);
 		
 		Demand returnDemand = new Demand(energyDemandInWatts, remainingSecondsWattageIsNeeded);
@@ -151,86 +151,39 @@ public class RotationalBattery extends VolatileBattery
 										            public void run()
 										            {
 										            	computeFrictionalLoss();
+										            	if (getCurrentEnergyInJoules() == 0)
+										            	{
+										            		timer.cancel();
+										            	}
 										            }
 									              }
 									, 0, intervalInMilliseconds);
-	}
-	
-	private void startInUseTimer(double timeInUseInSeconds)
-	{
-		this.inUse = true;
-		long timeInUseInMilliseconds = (long) (timeInUseInSeconds * 1000);
-		
-		Timer timer = new Timer();
-		timer.schedule(new TimerTask() {
-										  @Override
-										  public void run()
-										  {
-											  markBatteryNotInUse();
-											  timer.cancel();
-										  }
-									   }
-						, timeInUseInMilliseconds);
 	}
 	
 	private void computeFrictionalLoss()
 	{
 		if (this.currentAngularVelocity > 0)
 		{
-			this.currentEnergyInJoules = this.bearingType.computeFrictionalLoss(this.currentEnergyInJoules);
+			this.adjustForFrictionalLossOnRotationalBattery(this.bearingType);
 			
-			calculateCurrentAngularVelocity();
-			calculateCurrentEnergy();
+			this.currentAngularVelocity = this.calculateCurrentAngularVelocity(this.getCurrentEnergyInJoules());
+			this.adjustCurrentEnergyInJoulesForRotationalBattery(this.momentOfInertia, this.currentAngularVelocity);
 		}
 		
 	}
 	
-	//Equation for calculations: KE =  I/2 * W^2
-	private double calculateCurrentEnergy()
+	//Equation: KE =  I/2 * W^2
+	private double calculateCurrentAngularVelocity(double currentEnergyInJoules)
 	{
-		double energyInJoules = (this.momentOfIntertia / 2) * (this.currentAngularVelocity * this.currentAngularVelocity);
-	
-		return energyInJoules;
-	}
-	
-	private double calculateCurrentAngularVelocity()
-	{
-		double currentEnergyInJoulesDividedByIntertiaDividedByTwo = this.currentEnergyInJoules / (this.momentOfIntertia / 2);
+		double currentEnergyInJoulesDividedByIntertiaDividedByTwo = currentEnergyInJoules / (this.momentOfInertia / 2);
 		double angularVelocity = Math.sqrt(currentEnergyInJoulesDividedByIntertiaDividedByTwo);
 		
 		return angularVelocity;
 	}
-	
-	private void markBatteryNotInUse()
-	{
-		this.inUse = false;
-	}
-	
-	public boolean isBatteryInUse()
-	{
-		return this.inUse;
-	}
-	
-	public boolean isBatteryFull()
-	{
-		return this.maxJoulesStorage == this.currentEnergyInJoules;
-	}
-	
-	public double getCurrentEnergyInJoules()
-	{
-		return this.currentEnergyInJoules;
-	}
-	
-	public void displayBattery()
-	{
-		String batteryDisplay = "Battery: " + this.batteryName + " - Current Storage in Joules: " + Double.toString(this.currentEnergyInJoules);
-		System.out.println(batteryDisplay);
-	}
 
-	@Override
 	public String toString()
 	{
-		return "RotationalBattery: " + this.batteryName;
+		return "RotationalBattery: " + this.getBatteryName();
 	}
 	
 }

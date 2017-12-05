@@ -6,23 +6,37 @@ import java.util.Comparator;
 
 public class BatteryGrid
 {
+<<<<<<< HEAD
+	//ATTRIBUTES
+	private ArrayList<VolatileBattery> gravitationalBatteries;
+	private ArrayList<VolatileBattery> rotationalBatteries;
+=======
 	//TODO: Find a way to sort these lists - use the Comparable library, maybe?
 	//TODO: Why can't this just be one list? Ask Poli
 	private ArrayList<VolatileBattery> gravitationalBatteries = new ArrayList<VolatileBattery>();
 	private ArrayList<VolatileBattery> rotationalBatteries = new ArrayList<VolatileBattery>();
+>>>>>>> 00aa5f558b5dc9784ca4ad62cb14d8a5d5941ce9
 	
 	private double totalRotationalEnergyInJoules;
 	private double totalGravitationalEnergyInJoules;
 
-	double shortTimeThresholdInSeconds = 2.5; // this would be a 15 minutes in our simulation
+	private final double shortTimeThresholdInSeconds = 2.5; // this would be a 15 minutes in our simulation
 	
-	// CONSTRUCTORS
+	//CONSTRUCTORS
 	public BatteryGrid() 
 	{	
-		totalRotationalEnergyInJoules = 0;
-		totalGravitationalEnergyInJoules = 0;
+		gravitationalBatteries = new ArrayList<VolatileBattery>();
+		rotationalBatteries = new ArrayList<VolatileBattery>();
+		
+		this.totalRotationalEnergyInJoules = 0;
+		this.totalGravitationalEnergyInJoules= 0;
 	}
+<<<<<<< HEAD
+	
+	//FUNCTIONS
+=======
 
+>>>>>>> 00aa5f558b5dc9784ca4ad62cb14d8a5d5941ce9
 	public void addGravitationalBattery(GravitationalBattery gravitationalBattery)
 	{
 		this.gravitationalBatteries.add(gravitationalBattery);
@@ -97,7 +111,8 @@ public class BatteryGrid
 				}
 			}
 		}
-
+		
+		adjustEnergyStoredByBatteryType();
 	}
 
 	public void allocateEnergyDemand(Demand demand)
@@ -138,6 +153,7 @@ public class BatteryGrid
 			}
 		}
 		
+		adjustEnergyStoredByBatteryType();
 	}
 	
 	private Surplus giveEnergyToBatteries(Surplus surplus, ArrayList<VolatileBattery> batteries)
@@ -229,6 +245,12 @@ public class BatteryGrid
 		}	
 	}
 	
+	private void adjustEnergyStoredByBatteryType()
+	{
+		this.totalGravitationalEnergyInJoules = this.calculateTotalGravitationalEnergyInJoules();
+		this.totalRotationalEnergyInJoules = this.calculateTotalRotationalEnergyInJoules();
+	}
+	
 	private double calculateTotalRotationalEnergyInJoules()
 	{
 		double totalRotationalEnergyInJoules = 0;
@@ -257,12 +279,12 @@ public class BatteryGrid
 	{
 		for (VolatileBattery gravitationalBattery : this.gravitationalBatteries)
 		{
-			gravitationalBattery.displayBattery();
+			System.out.println(gravitationalBattery.displayBattery());
 		}
 
 		for (VolatileBattery rotationalBattery : this.rotationalBatteries)
 		{
-			rotationalBattery.displayBattery();
+			System.out.println(rotationalBattery.displayBattery());
 		}
 	}
 

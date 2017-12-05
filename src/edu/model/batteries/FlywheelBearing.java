@@ -33,7 +33,7 @@ public class FlywheelBearing
 		}
 	}
 	
-	public double computeFrictionalLoss(double energyStoredInJoules)
+	public double calculateFrictionalLoss(double energyStoredInJoules)
 	{
 		double remainingJoulesStored = energyStoredInJoules * (1 - this.percentFrictionalLossPerSecond);
 		
