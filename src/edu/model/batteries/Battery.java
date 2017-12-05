@@ -65,7 +65,7 @@ public abstract class Battery
 		return this.maxEnergyInJoules == this.currentEnergyInJoules;
 	}
 	
-	//getters
+	//region Getters/Setters
 	public double getCurrentEnergyInJoules()
 	{
 		return this.currentEnergyInJoules;
@@ -85,6 +85,7 @@ public abstract class Battery
 	{
 		return this.batteryName;
 	}
+	//endregion
 	
 	//display functions
 	public String displayBattery()

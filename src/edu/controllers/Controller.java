@@ -15,14 +15,15 @@ public class Controller
 	private static final int NUM_OF_TIERS = 5;
 	private static final int MAJOR_TICK_SPACING = 1;
 
-
 	//region Default Cities
+	private static City selectedCity = new City("Default");
+
 	//region Des Moines
-	private int[] energyConsumptionTiersDesMoines = {
+	private static int[] energyConsumptionTiersDesMoines = {
 			1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1};
-	private int[] energyProductionTiersDesMoines = {
+	private static int[] energyProductionTiersDesMoines = {
 			1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1};
-	private City desMoines = new City("Des Moines", energyConsumptionTiersDesMoines,
+	private static City desMoines = new City("Des Moines", energyConsumptionTiersDesMoines,
 			energyProductionTiersDesMoines);
 
 	//endregion
@@ -88,7 +89,8 @@ public class Controller
 		return grid;
 	}
 
-	public static int getnumOfTiers()
+	//region Getters/Setters
+	public static int getNumOfTiers()
 	{
 		return NUM_OF_TIERS;
 	}
@@ -97,4 +99,20 @@ public class Controller
 	{
 		return MAJOR_TICK_SPACING;
 	}
+
+	public static City getSelectedCity()
+	{
+		return selectedCity;
+	}
+
+	public static void setSelectedCity(City newCity)
+	{
+		selectedCity = newCity;
+	}
+
+	public static City getDesMoines()
+	{
+		return desMoines;
+	}
+	//endregion
 }

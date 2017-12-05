@@ -79,7 +79,8 @@ public class MainUserGUI
 	//region Methods
 	public MainUserGUI()
 	{
-		// TESTING FOR REMOVE FUNCTIONALITY
+		//region TESTING FOR REMOVE FUNCTIONALITY
+		// Adding 20 batteries total with random names
 		for (int i = 10; i > 0; i--)
 		{
 			int a = (int) Math.round(Math.random() * 1000);
@@ -91,10 +92,16 @@ public class MainUserGUI
 					new FlywheelMaterial("Titanium"), new FlywheelBearing("Mechanical"));
 			Controller.addRotationalBattery(rotationalBattery);
 		}
+		//endregion
 
-		// make the two battery lists have the same model
+		// Make the two battery lists have the same model
 		listBatteries.setModel(model);
 		listPlaceBatteries.setModel(model);
+
+		//region TESTING FOR SELECTED CITY FUNCTIONALITY
+		Controller.setSelectedCity(Controller.getDesMoines());
+		System.out.println(Controller.getSelectedCity().toString());
+		//endregion
 
 		//region Button listeners
 		//region Switching between panels

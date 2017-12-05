@@ -17,8 +17,8 @@ public class FlywheelMaterial
 	{
 		this.materialName = materialName;
 
-		// give the material values based on the name of the material
-		switch (materialName)
+		// Give the material values based on the name of the material
+		switch (this.materialName)
 		{
 			case "Titanium":
 				this.densityOfMaterialInKilogramMetersCubed = 4506;
@@ -46,7 +46,6 @@ public class FlywheelMaterial
 	public double calculateMaxAngularVelocity(double radiusInMeters)
 	{
 		//Equation at http://large.stanford.edu/courses/2010/ph240/wheeler1/
-		
 		double radiusSquared = radiusInMeters * radiusInMeters;
 		double radiusSquaredMultipliedByDensity = radiusSquared * this.densityOfMaterialInKilogramMetersCubed;
 		double tensileStressDividedRadiusSquaredMultipliedByDensity = this.tensileStressOfMaterialInPascals / radiusSquaredMultipliedByDensity;

@@ -31,6 +31,9 @@ public class FlywheelBearing
 				this.percentFrictionalLossPerSecond = 0;
 				break;
 		}
+
+		// Convert to simulation time
+		this.percentFrictionalLossPerSecond = this.percentFrictionalLossPerSecond * 360;
 	}
 	
 	public double calculateFrictionalLoss(double energyStoredInJoules)

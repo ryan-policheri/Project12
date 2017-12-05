@@ -80,14 +80,14 @@ public class FormAddBattery
 	{
 		//TODO: make panelInfo provide info based on what's added in the text fields (ex: total battery capacity)
 
-		// add batteries to the model/list, then change the selected index to the first item
+		// Add batteries to the model/list, then change the selected index to the first item
 		model.clear();
 		model.addElement("Gravitational Battery");
 		model.addElement("Rotational Battery");
 		listBatteryTypes.setModel(model);
 		listBatteryTypes.setSelectedIndex(0);
 
-		// add radio buttons to their respective groups and make the first radio button in each group selected
+		// Add radio buttons to their respective groups and make the first radio button in each group selected
 		rbGroupRotMaterial.add(rbRotMaterialTitanium);
 		rbGroupRotMaterial.add(rbRotMaterialCarbonFiber);
 		rbGroupRotMaterial.add(rbRotMaterialSteel);
@@ -99,6 +99,17 @@ public class FormAddBattery
 
 		rbRotMaterialTitanium.setSelected(true);
 		rbRotBearingMechanical.setSelected(true);
+
+		// Set reasonable default values for the batteries
+		String defaultGravMass = "100";
+		String defaultGravHeight = "10";
+		txtGravMass.setText(defaultGravMass);
+		txtGravHeight.setText(defaultGravHeight);
+
+		String defaultRotMass = "100";
+		String defaultRotRadius = ".5";
+		txtRotMass.setText(defaultRotMass);
+		txtRotRadius.setText(defaultRotRadius);
 
 		//region Listeners
 		//region Button click listeners

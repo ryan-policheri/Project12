@@ -51,7 +51,7 @@ public class FormEditEnergyProduction
 	//endregion
 
 	private static ArrayList<JSlider> sliders = new ArrayList<>();
-	private static final int NUM_OF_TIERS = Controller.getnumOfTiers();
+	private static final int NUM_OF_TIERS = Controller.getNumOfTiers();
 	private static final int MAJOR_TICK_SPACING = Controller.getMajorTickSpacing();
 
 	public FormEditEnergyProduction()

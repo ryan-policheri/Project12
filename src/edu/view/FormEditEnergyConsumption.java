@@ -1,6 +1,7 @@
 package edu.view;
 
 import edu.controllers.Controller;
+import edu.model.city.City;
 
 import javax.swing.*;
 import java.util.ArrayList;
@@ -51,8 +52,9 @@ public class FormEditEnergyConsumption
 	//endregion
 
 	private static ArrayList<JSlider> sliders = new ArrayList<>();
-	private static final int NUM_OF_TIERS = Controller.getnumOfTiers();
+	private static final int NUM_OF_TIERS = Controller.getNumOfTiers();
 	private static final int MAJOR_TICK_SPACING = Controller.getMajorTickSpacing();
+	private static City city = Controller.getSelectedCity();
 
 	public FormEditEnergyConsumption()
 	{
@@ -94,10 +96,12 @@ public class FormEditEnergyConsumption
 		sliders.add(slider11PM);
 	}
 
+	//region Getters/Setters
 	public JPanel getPanelMain()
 	{
 		return panelMain;
 	}
+	//endregion
 
 	public static void main(String[] args)
 	{
