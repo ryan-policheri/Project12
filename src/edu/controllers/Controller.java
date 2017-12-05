@@ -1,6 +1,7 @@
 package edu.controllers;
 
 import edu.model.batteries.*;
+import edu.model.city.City;
 import edu.view.MainUserGUI;
 
 import java.util.Scanner;
@@ -13,6 +14,19 @@ public class Controller
 
 	private static final int NUM_OF_TIERS = 5;
 	private static final int MAJOR_TICK_SPACING = 1;
+
+
+	//region Default Cities
+	//region Des Moines
+	private int[] energyConsumptionTiersDesMoines = {
+			1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1};
+	private int[] energyProductionTiersDesMoines = {
+			1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1};
+	private City desMoines = new City("Des Moines", energyConsumptionTiersDesMoines,
+			energyProductionTiersDesMoines);
+
+	//endregion
+	//endregion
 
 	public static void addGravitationalBattery(GravitationalBattery battery)
 	{

@@ -1,24 +1,14 @@
 package edu.model.city;
 
-import java.util.Timer;
-import java.util.TimerTask;
-
 import edu.controllers.WriteToFile;
 import edu.model.EnergyCommander;
 import edu.model.batteries.Demand;
-import edu.model.batteries.Surplus;
 
 import java.io.File;
 import java.io.IOException;
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Calendar;
-import java.util.Collections;
-import java.util.Date;
-import java.util.List;
-import java.util.ListIterator;
+import java.util.*;
 
 public class CitySimulator
 {
@@ -30,7 +20,7 @@ public class CitySimulator
 	private long simulatedMillisecondsInDay = millisecondsInDay / 360; //* by scale
 	private String fileName = "..\\Project12\\src\\edu\\model\\CityDemandDayLog";
 	private File file = new File(fileName);
-	private City desMoines = new City("Des Moines");
+	private City city;
 	private String[] hoursOfDay = new String[this.hoursInDay];
 	private long currentMillisecond = 0;
 
@@ -38,8 +28,10 @@ public class CitySimulator
 	private List<Demand> dailyDemand= new ArrayList<Demand>();
 	private List<Double> dailyDemandTimesOfDayInMilliseconds = new ArrayList<Double>();
 
-	public CitySimulator()
+	public CitySimulator(City city)
 	{
+		this.city = city;
+
 		//simulate();
 		buildHoursOfDayArray();	
 	}
@@ -103,7 +95,7 @@ public class CitySimulator
 			long randomMillisecondInDay = (long)(Math.random() * simulatedMillisecondsInDay);
 			int randomMillisecondInDayToHour = (int) ((randomMillisecondInDay / 10000));
 
-			addDemand(new Demand((desMoines.calculateCityDemand(randomMillisecondInDayToHour)), 
+			addDemand(new Demand((city.calculateCityDemand(randomMillisecondInDayToHour)),
 					Math.random() * 10 ), 
 					randomMillisecondInDay);
 		}
