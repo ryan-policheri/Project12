@@ -18,6 +18,7 @@ public class FlywheelMaterial
 		this.materialName = materialName;
 
 		// give the material values based on the name of the material
+		// numbers found at: http://large.stanford.edu/courses/2010/ph240/wheeler1/
 		switch (materialName)
 		{
 			case "Titanium":

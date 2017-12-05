@@ -165,30 +165,35 @@ public class ProgramDriver
 		//rotBat.releaseEnergy(new Demand(29744500,10));
 		rotBat.displayBattery();*/
 		
-		double densityOfCarbonFiberInKilogramsMetersCubed = 1799;
+/*		double densityOfCarbonFiberInKilogramsMetersCubed = 1799;
+		double densityOfSteelInKilogramsMetersCubed = 8050;
 		double tensileStressOfCarbonFiberInPascals = 4000000000.0;
+		double tensileStressOfSteelInPascals = 690000000.0;
 		FlywheelMaterial carbonFiber = new FlywheelMaterial("Carbon Fiber", densityOfCarbonFiberInKilogramsMetersCubed, tensileStressOfCarbonFiberInPascals);
+		FlywheelMaterial steel = new FlywheelMaterial("Steel", densityOfSteelInKilogramsMetersCubed, tensileStressOfSteelInPascals);
 		
-		double percentFrictionalLossPerSecondForStandardMecahnicalBearing = 0.000034722222222222222222; //number derived from 25 percent / 7200
+		double percentFrictionalLossPerSecondForStandardMecahnicalBearing = 0.0125; //number derived from 25 percent / 7200
 		FlywheelBearing mechanicalBearing = new FlywheelBearing("Mechanical Bearing", percentFrictionalLossPerSecondForStandardMecahnicalBearing);
 		
-		BatteryGrid batteryGrid = new BatteryGrid();
+		BatteryGrid batteryGrid = new BatteryGrid();*/
 		
-		batteryGrid.addGravitationalBattery(new GravitationalBattery("GB_1",1000,30));
-		batteryGrid.addGravitationalBattery(new GravitationalBattery("GB_2",5000,10));
-		batteryGrid.addGravitationalBattery(new GravitationalBattery("GB_3",500,50));
-		batteryGrid.addGravitationalBattery(new GravitationalBattery("GB_4",2000,20));
-		batteryGrid.addGravitationalBattery(new GravitationalBattery("GB_5",2500,20));
-		batteryGrid.addRotationalBattery(new RotationalBattery("RB_1", 5, 1, carbonFiber, mechanicalBearing));
-		batteryGrid.addRotationalBattery(new RotationalBattery("RB_2", 150, 7.5, carbonFiber, mechanicalBearing));
+/*		batteryGrid.addGravitationalBattery(new GravitationalBattery("GB_1",1000,30));
+		batteryGrid.addGravitationalBattery(new GravitationalBattery("GB_2",5000,10));*/
+		//batteryGrid.addGravitationalBattery(new GravitationalBattery("GB_3",20000,120));
+		//batteryGrid.addGravitationalBattery(new GravitationalBattery("GB_4",2000,20));
+		//batteryGrid.addGravitationalBattery(new GravitationalBattery("GB_5",2500,20));
+		//batteryGrid.addRotationalBattery(new RotationalBattery("RB_1", 400, 0.5, steel, mechanicalBearing));
+/*		batteryGrid.addRotationalBattery(new RotationalBattery("RB_2", 150, 7.5, carbonFiber, mechanicalBearing));
     	batteryGrid.addRotationalBattery(new RotationalBattery("RB_3", 250, 6, carbonFiber, mechanicalBearing));
     	batteryGrid.addRotationalBattery(new RotationalBattery("RB_4", 150, 5, carbonFiber, mechanicalBearing));
-		batteryGrid.addRotationalBattery(new RotationalBattery("RB_5", 200, 2.5, carbonFiber, mechanicalBearing));
+		batteryGrid.addRotationalBattery(new RotationalBattery("RB_5", 200, 2.5, carbonFiber, mechanicalBearing));*/
 		
-		batteryGrid.displayGrid();
-		batteryGrid.allocateEnergySurplus(new Surplus(100000,5));
-		batteryGrid.displayGrid();
-		batteryGrid.allocateEnergySurplus(new Surplus(50000,2));
+		//batteryGrid.displayGrid();
+		//batteryGrid.allocateEnergySurplus(new Surplus(100000000,5));
+		//batteryGrid.displayGrid();
+		//TimeUnit.SECONDS.sleep(20);
+		//batteryGrid.displayGrid();
+/*		batteryGrid.allocateEnergySurplus(new Surplus(50000,2));
 		batteryGrid.displayGrid();
 		batteryGrid.allocateEnergySurplus(new Surplus(100000,5));
 		batteryGrid.displayGrid();
@@ -212,7 +217,7 @@ public class ProgramDriver
 		batteryGrid.displayGrid();
 		TimeUnit.SECONDS.sleep(10);
 		batteryGrid.allocateEnergyDemand(new Demand(90000000,10));
-		batteryGrid.displayGrid();
+		batteryGrid.displayGrid();*/
 		
 /*		double densityOfCarbonFiberInKilogramsMetersCubed = 1799;
 		double tensileStressOfCarbonFiberInPascals = 4000000000.0;
@@ -251,6 +256,64 @@ public class ProgramDriver
 		//windmillFarmSimulator.simulate();
 		citySimulator.simulate();	*/
 		
+		//*********************************************************************
+		//POLI'S BEAUTIFUL BATTERY GRID
+		//*********************************************************************
+		
+		//MAKE MATERIALS:
+		
+		//Make using 1st constructor:
+		
+		//carbon fiber
+		double densityOfCarbonFiberInKilogramsMetersCubed = 1799;
+		double tensileStressOfCarbonFiberInPascals = 4000000000.0;
+		FlywheelMaterial carbonFiber = new FlywheelMaterial("Carbon Fiber", densityOfCarbonFiberInKilogramsMetersCubed, tensileStressOfCarbonFiberInPascals);
+		
+		//steel
+		double densityOfSteelInKilogramsMetersCubed = 8050;
+		double tensileStressOfSteelInPascals = 690000000.0;
+		FlywheelMaterial steel = new FlywheelMaterial("Steel", densityOfSteelInKilogramsMetersCubed, tensileStressOfSteelInPascals);
+		
+		//Make using 2nd constructor:
+		
+		//titanium
+		FlywheelMaterial titanium = new FlywheelMaterial("Titanium");
+		
+		//aluminum
+		FlywheelMaterial aluminum = new FlywheelMaterial("Aluminum");
+		
+		
+		//MAKE BEARINGS:
+		
+		//Make using 1st constructor:
+		
+		//mechanical bearing
+		double percentFrictionalLossPerSecondForStandardMecahnicalBearing = 0.0125; //number derived from (25 percent / 7200) * 360 (multiplying by 360 converts number to simulation time)
+		FlywheelBearing mechanicalBearing = new FlywheelBearing("Mechanical Bearing", percentFrictionalLossPerSecondForStandardMecahnicalBearing);
+		
+		
+		//magnetic bearing
+		FlywheelBearing magneticBearing = new FlywheelBearing("Magnetic");
+		
+		//super conductor bearing
+		FlywheelBearing superConductorBearing = new FlywheelBearing("Modern");
+		
+		
+		//MAKE THE GRID
+		BatteryGrid batteryGrid = new BatteryGrid();
+		
+		//ADD THE BATTERIES
+		
+		//Gravitational:
+		//batteryGrid.addGravitationalBattery(new GravitationalBattery("GB_Sumpreme_1",40000,150));
+		//batteryGrid.addGravitationalBattery(new GravitationalBattery("GB_Sumpreme_2",40000,150));
+		
+		//Rotational:
+		batteryGrid.addRotationalBattery(new RotationalBattery("RB_MegaSonic", 100, 0.5, aluminum, mechanicalBearing));
+		
+		
+		batteryGrid.allocateEnergySurplus(new Surplus(100000000,5));
+		batteryGrid.displayGrid();
 	}
 
 }

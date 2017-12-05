@@ -242,7 +242,7 @@ public class BatteryGrid
 		this.totalRotationalEnergyInJoules = this.calculateTotalRotationalEnergyInJoules();
 	}
 	
-	private double calculateTotalRotationalEnergyInJoules()
+	public double calculateTotalRotationalEnergyInJoules()
 	{
 		double totalRotationalEnergyInJoules = 0;
 		
@@ -254,7 +254,7 @@ public class BatteryGrid
 		return totalRotationalEnergyInJoules;
 	}
 	
-	private double calculateTotalGravitationalEnergyInJoules()
+	public double calculateTotalGravitationalEnergyInJoules()
 	{
 		double totalGravitationalEnergyInJoules = 0;
 		

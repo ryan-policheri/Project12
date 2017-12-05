@@ -16,6 +16,8 @@ public class FlywheelBearing
 		this.bearingTypeName = bearingTypeName;
 
 		// give the bearing a frictional loss value based on the type of bearing
+		// numbers for mechanical and magnetic deduced from info at: https://en.wikipedia.org/wiki/Flywheel_energy_storage
+		// number for modern deduced from info at: https://en.wikipedia.org/wiki/Flywheel_storage_power_system
 		switch (bearingTypeName)
 		{
 			case "Mechanical":
