@@ -8,7 +8,6 @@ public class BatteryGrid
 {
 	//ATTRIBUTES
 	//TODO: Find a way to sort these lists - use the Comparable library, maybe?
-	//TODO: Why can't this just be one list? Ask Poli
 	private ArrayList<VolatileBattery> gravitationalBatteries = new ArrayList<VolatileBattery>();
 	private ArrayList<VolatileBattery> rotationalBatteries = new ArrayList<VolatileBattery>();
 	
@@ -279,7 +278,7 @@ public class BatteryGrid
 		}
 	}
 
-	//region Getters
+	//region Getters/Setters
 	public ArrayList<VolatileBattery> getGravitationalBatteries()
 	{
 		return this.gravitationalBatteries;

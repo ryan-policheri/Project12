@@ -44,17 +44,6 @@ public class City
 	}
 	
 	//FUNTIONS
-	
-	public List<Demand> getDailyDemand()
-	{
-		return dailyDemand;
-	}
-	
-	public List<Double> getDailyDemandTimesOfDayInMilliseconds()
-	{
-		return dailyDemandTimesOfDayInMilliseconds;
-	}
-	
 	public void addDemand(Demand dailyDemand, double dailyDemandTimesOfDayInMilliseconds)
 	{
 		this.dailyDemand.add(dailyDemand);
@@ -82,25 +71,23 @@ public class City
 		double powerDemand = -1;
 
 		// Tier 1 through 5
-		if (this.energyConsumptionTiers[hourOfDay] == 1)
+		switch (this.energyConsumptionTiers[hourOfDay])
 		{
-			powerDemand = randomizeTier1Demand();
-		}
-		else if (this.energyConsumptionTiers[hourOfDay] == 2)
-		{
-			powerDemand = randomizeTier2Demand();
-		}
-		else if (this.energyConsumptionTiers[hourOfDay] == 3)
-		{
-			powerDemand = randomizeTier3Demand();
-		}
-		else if (this.energyConsumptionTiers[hourOfDay] == 4)
-		{
-			powerDemand = randomizeTier4Demand();
-		}
-		else if (this.energyConsumptionTiers[hourOfDay] == 5)
-		{
-			powerDemand = randomizeTier5Demand();
+			case 1:
+				powerDemand = randomizeTier1Demand();
+				break;
+			case 2:
+				powerDemand = randomizeTier2Demand();
+				break;
+			case 3:
+				powerDemand = randomizeTier3Demand();
+				break;
+			case 4:
+				powerDemand = randomizeTier4Demand();
+				break;
+			case 5:
+				powerDemand = randomizeTier5Demand();
+				break;
 		}
 
 		return powerDemand;
@@ -176,7 +163,42 @@ public class City
 	//
 	//}
 	//endregion
-	
 
-	
+	//region Getters/Setters
+	public List<Demand> getDailyDemand()
+	{
+		return dailyDemand;
+	}
+
+	public List<Double> getDailyDemandTimesOfDayInMilliseconds()
+	{
+		return dailyDemandTimesOfDayInMilliseconds;
+	}
+
+	public int[] getEnergyConsumptionTiers()
+	{
+		return energyConsumptionTiers;
+	}
+
+	public void setEnergyConsumptionTiers(int[] energyConsumptionTiers)
+	{
+		this.energyConsumptionTiers = energyConsumptionTiers;
+	}
+
+	public int[] getEnergyProductionTiers()
+	{
+		return energyProductionTiers;
+	}
+
+	public void setEnergyProductionTiers(int[] energyProductionTiers)
+	{
+		this.energyProductionTiers = energyProductionTiers;
+	}
+	//endregion
+
+	@Override
+	public String toString()
+	{
+		return this.cityName;
+	}
 }

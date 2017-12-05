@@ -26,13 +26,16 @@ public class FlywheelBearing
 			case "Magnetic":
 				this.percentFrictionalLossPerSecond = 4.166666667 * java.lang.Math.pow(10, -6);
 				break;
-			case "Super":
-				this.percentFrictionalLossPerSecond = 6.944444444 * java.lang.Math.pow(10, -8);
+			case "Modern":
+				this.percentFrictionalLossPerSecond = 5.787037037 * java.lang.Math.pow(10, -7);
 				break;
 			default:
 				this.percentFrictionalLossPerSecond = 0;
 				break;
 		}
+
+		// Convert to simulation time
+		this.percentFrictionalLossPerSecond = this.percentFrictionalLossPerSecond * 360;
 	}
 	
 	public double calculateFrictionalLoss(double energyStoredInJoules)
