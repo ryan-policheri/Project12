@@ -51,13 +51,16 @@ public class FormEditEnergyConsumption
 	//endregion
 	//endregion
 
+	//region Initialize attributes
 	private static ArrayList<JSlider> sliders = new ArrayList<>();
 	private static final int NUM_OF_TIERS = Controller.getNumOfTiers();
 	private static final int MAJOR_TICK_SPACING = Controller.getMajorTickSpacing();
 	private static City city = Controller.getSelectedCity();
+	//endregion
 
 	public FormEditEnergyConsumption()
 	{
+		// Set default settings for sliders
 		addSlidersToSliderList();
 
 		for (int i = 0; i < sliders.size(); i++)
@@ -65,11 +68,18 @@ public class FormEditEnergyConsumption
 			sliders.get(i).setMaximum(NUM_OF_TIERS);
 			sliders.get(i).setMajorTickSpacing(MAJOR_TICK_SPACING);
 			sliders.get(i).setSnapToTicks(true);
+
+			// Default slider values
+			sliders.get(i).setValue(city.getEnergyConsumptionTiers()[i]);
 		}
+
+		System.out.println("Done");
 	}
 
 	private void addSlidersToSliderList()
 	{
+		sliders.clear();
+
 		sliders.add(slider12AM);
 		sliders.add(slider1AM);
 		sliders.add(slider2AM);
