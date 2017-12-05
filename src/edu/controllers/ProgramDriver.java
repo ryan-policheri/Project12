@@ -1,6 +1,5 @@
 package edu.controllers;
 
-import edu.model.CitySimulator;
 import edu.model.EnergyCommander;
 import edu.model.batteries.BatteryGrid;
 import edu.model.batteries.Demand;

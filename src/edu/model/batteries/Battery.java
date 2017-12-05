@@ -1,6 +1,6 @@
 package edu.model.batteries;
 
-abstract class Battery
+public abstract class Battery
 {
 	//ATTRIBUTES
 	protected static final double forceOfGravity = 9.81; //CONSTANT

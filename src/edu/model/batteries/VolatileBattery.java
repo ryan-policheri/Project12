@@ -3,7 +3,7 @@ package edu.model.batteries;
 import java.util.Timer;
 import java.util.TimerTask;
 
-abstract class VolatileBattery extends Battery
+public abstract class VolatileBattery extends Battery
 {
 	//ATTRIBUTES
 	private boolean inUse = false;
