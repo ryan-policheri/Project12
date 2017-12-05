@@ -1,6 +1,5 @@
 package edu.model;
 
-import edu.model.batteries.Battery;
 import edu.model.batteries.BatteryGrid;
 import edu.model.batteries.Demand;
 import edu.model.batteries.Surplus;
