@@ -1,16 +1,23 @@
 package edu.view;
 
 import edu.controllers.Controller;
-import edu.model.GraphingData;
 import edu.model.city.City;
+import org.jfree.chart.ChartFactory;
+import org.jfree.chart.ChartPanel;
+import org.jfree.chart.JFreeChart;
+import org.jfree.chart.plot.PlotOrientation;
+import org.jfree.data.xy.XYSeries;
+import org.jfree.data.xy.XYSeriesCollection;
 
 import javax.swing.*;
+import java.awt.*;
 import java.util.ArrayList;
 
 public class FormEditEnergyConsumption
 {
 	//region Initialize swing elements
 	private JPanel panelMain;
+
 	private JPanel panelHeader;
 	private JPanel panelSliderValues;
 
@@ -43,13 +50,15 @@ public class FormEditEnergyConsumption
 
 	//region Image panel
 	private JPanel panelImage;
+
+	private JPanel panelPreviousGraph;
 	//endregion
 
 	//region Buttons panel
 	private JPanel panelButtons;
 	private JButton btnSave;
 	private JButton btnCancel;
-	private JPanel previousGraphPanel;
+	private JPanel panelNewGraph;
 	//endregion
 	//endregion
 
@@ -75,7 +84,9 @@ public class FormEditEnergyConsumption
 			sliders.get(i).setValue(city.getEnergyConsumptionTiers()[i]);
 		}
 
-		previousGraphPanel.add(new GraphingData());
+		// Create charts based on the city's energyConsumptionTiers
+		addJFreeChartForJPanel(this.panelPreviousGraph, city.getEnergyConsumptionTiers(), true);
+		addJFreeChartForJPanel(this.panelNewGraph, city.getEnergyConsumptionTiers(), false);
 	}
 
 	private void addSlidersToSliderList()
@@ -106,6 +117,40 @@ public class FormEditEnergyConsumption
 		sliders.add(slider9PM);
 		sliders.add(slider10PM);
 		sliders.add(slider11PM);
+	}
+
+	private void addJFreeChartForJPanel(JPanel panel, int[] energyConsumptionTiers, boolean isPrevious)
+	{
+		XYSeries series = new XYSeries("XYGraph");
+
+		// Add city energyConsumptionTiers data to the series
+		for (int i = 0; i < energyConsumptionTiers.length; i++)
+		{
+			series.add(i, energyConsumptionTiers[i]);
+		}
+
+		// Add the series to your data set
+		XYSeriesCollection dataset = new XYSeriesCollection();
+		dataset.addSeries(series);
+
+		// Generate the graph
+		String title = "";
+		if (isPrevious)
+		{
+			title = "Previous";
+		}
+		else
+		{
+			title = "With Changes";
+		}
+		JFreeChart chart = ChartFactory.createXYLineChart(title,"Hour","Tier", dataset,
+				PlotOrientation.VERTICAL, false, false, false);
+
+		// Add it the graph to the JPanel
+		ChartPanel CP = new ChartPanel(chart);
+		// panel.removeAll();
+		panel.add(CP, BorderLayout.CENTER);
+		panel.validate();
 	}
 
 	//region Getters/Setters

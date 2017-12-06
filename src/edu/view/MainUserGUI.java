@@ -5,6 +5,7 @@ import edu.controllers.Controller;
 import edu.model.EnergyCommander;
 import edu.model.batteries.*;
 import edu.model.energySources.windmillFarm.WindmillFarmSimulator;
+import org.jfree.ui.RefineryUtilities;
 
 import javax.swing.*;
 import java.awt.event.ActionEvent;

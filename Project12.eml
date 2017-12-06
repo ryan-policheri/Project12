@@ -2,6 +2,7 @@
 <component inheritJdk="true">
 	<contentEntry url="file://$MODULE_DIR$"/>
 	<levels>
+		<level name="guava-23.5-jre" value="project"/>
 		<level name="jcommon-1.0.23" value="project"/>
 		<level name="jfreechart-1.0.19" value="project"/>
 	</levels>
