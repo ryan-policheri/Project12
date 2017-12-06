@@ -20,9 +20,9 @@ public class Controller
 
 	//region Des Moines
 	private static int[] energyConsumptionTiersDesMoines = {
-			1, 2, 4, 2, 3, 5, 5, 2, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1};
+			1, 1, 1, 1, 1, 2, 2, 2, 2, 4, 5, 4, 2, 5, 5, 3, 3, 1, 1, 3, 4, 3, 3, 1};
 	private static int[] energyProductionTiersDesMoines = {
-			1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1};
+			1, 1, 1, 1, 1, 2, 2, 2, 3, 3, 3, 3, 4, 4, 5, 3, 3, 3, 4, 2, 2, 2, 1, 1};
 	private static City desMoines = new City("Des Moines", energyConsumptionTiersDesMoines,
 			energyProductionTiersDesMoines);
 

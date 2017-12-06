@@ -5,6 +5,8 @@ import edu.model.batteries.BatteryGrid;
 import edu.model.batteries.Demand;
 import edu.model.batteries.RotationalBattery;
 import edu.model.batteries.Surplus;
+import edu.model.city.City;
+import edu.model.city.CitySimulator;
 import edu.model.energySources.windmillFarm.WindmillFarmSimulator;
 import edu.model.batteries.FlywheelBearing;
 import edu.model.batteries.FlywheelMaterial;
@@ -296,23 +298,113 @@ public class ProgramDriver
 		FlywheelBearing magneticBearing = new FlywheelBearing("Magnetic");
 		
 		//super conductor bearing
-		FlywheelBearing superConductorBearing = new FlywheelBearing("Modern");
+		FlywheelBearing modernBearing = new FlywheelBearing("Modern");
 		
 		
 		//MAKE THE GRID
 		BatteryGrid batteryGrid = new BatteryGrid();
 		
 		//ADD THE BATTERIES
+		double GB_Supreme_Count = 50;
+		double GB_PowerHouse_Count = 200;
+		double GB_Classic_Count = 125;
+		double GB_Lite_Count = 75;
+		
+		double RB_MegaSonic_Count = 45;
+		double RB_SuperSonic_Count = 100;
+		double RB_BigSexy_Count = 175;
+		double RB_LittleTitan_Count = 100;
+		double RB_Classic_Count = 125;
 		
 		//Gravitational:
-		//batteryGrid.addGravitationalBattery(new GravitationalBattery("GB_Sumpreme_1",40000,150));
-		//batteryGrid.addGravitationalBattery(new GravitationalBattery("GB_Sumpreme_2",40000,150));
+		
+		//GB_Supremes:
+		for (int i = 1; i <= GB_Supreme_Count; i++)
+		{
+			batteryGrid.addGravitationalBattery(new GravitationalBattery("GB_Supreme_" + Integer.toString(i),40000,150));
+		}
+		
+		//GB_PowerHouses:
+		for (int i = 1; i <= GB_PowerHouse_Count; i++)
+		{
+			batteryGrid.addGravitationalBattery(new GravitationalBattery("GB_PowerHouse_" + Integer.toString(i),20000,120));
+		}
+		
+		//GB_Classics:
+		for (int i = 1; i <= GB_Classic_Count; i++)
+		{
+			batteryGrid.addGravitationalBattery(new GravitationalBattery("GB_Classic_" + Integer.toString(i),30000,50));
+		}
+		
+		//GB_Lites:
+		for (int i = 1; i <= GB_Lite_Count; i++)
+		{
+			batteryGrid.addGravitationalBattery(new GravitationalBattery("GB_Lite_" + Integer.toString(i),40000,150));
+		}
+
 		
 		//Rotational:
-		batteryGrid.addRotationalBattery(new RotationalBattery("RB_MegaSonic", 100, 0.5, aluminum, mechanicalBearing));
 		
+		//RB_MegaSonics:
+		for (int i = 1; i <= RB_MegaSonic_Count; i++)
+		{
+			batteryGrid.addRotationalBattery(new RotationalBattery("RB_MegaSonic_" + Integer.toString(i),100,0.5,carbonFiber,modernBearing));
+		}
 		
-		batteryGrid.allocateEnergySurplus(new Surplus(100000000,5));
+		//RB_SuperSonics:
+		for (int i = 1; i <= RB_SuperSonic_Count; i++)
+		{
+			batteryGrid.addRotationalBattery(new RotationalBattery("RB_SuperSonic_" + Integer.toString(i),75,0.5,carbonFiber,magneticBearing));
+		}
+		
+		//RB_BigSexys:
+		for (int i = 1; i <= RB_BigSexy_Count; i++)
+		{
+			batteryGrid.addRotationalBattery(new RotationalBattery("RB_BigSexy_" + Integer.toString(i),500,1,steel,mechanicalBearing));
+		}
+		
+		//RB_LittleTitans:
+		for (int i = 1; i <= RB_LittleTitan_Count; i++)
+		{
+			batteryGrid.addRotationalBattery(new RotationalBattery("RB_LittleTitan_" + Integer.toString(i),250,0.25,titanium,magneticBearing));
+		}
+		
+		//RB_Classics:
+		for (int i = 1; i <= RB_Classic_Count; i++)
+		{
+			batteryGrid.addRotationalBattery(new RotationalBattery("RB_Classic_" + Integer.toString(i),100,0.5,aluminum,mechanicalBearing));
+		}
+		
+		batteryGrid.displayGrid();
+		
+		//FILL BATTERIES (for testing, waiting for windmill farm)
+		for(int i = 0; i < 500; i++)
+		{
+			batteryGrid.allocateEnergySurplus(new Surplus(19200000,5));
+		}
+		
+		TimeUnit.SECONDS.sleep(10);
+		
+		batteryGrid.displayGrid();
+		
+		//CREATE CITY
+		int[] energyConsumptionTiersDesMoines = {1, 1, 1, 1, 1, 2, 2, 2, 2, 4, 5, 4, 2, 5, 5, 3, 3, 1, 1, 3, 4, 3, 3, 1};
+		int[] energyProductionTiersDesMoines = {1, 1, 1, 1, 1, 2, 2, 2, 3, 3, 3, 3, 4, 4, 5, 3, 3, 3, 4, 2, 2, 2, 1, 1};
+		
+		City desMoines = new City("Des Moines", energyConsumptionTiersDesMoines,energyProductionTiersDesMoines);
+		CitySimulator citySimulator = new CitySimulator(desMoines);
+		
+		//CREATE WINDMILL FARM
+		//TODO
+		
+		//CREATE ENERGY COMMANDER
+		EnergyCommander energyCommander = new EnergyCommander(batteryGrid);
+		
+		//SIMULATE
+		citySimulator.simulate();
+		
+		TimeUnit.SECONDS.sleep(300);
+		
 		batteryGrid.displayGrid();
 	}
 

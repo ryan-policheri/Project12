@@ -66,7 +66,7 @@ public class City
 	}
 	*/
 
-	public double calculateCityDemand(int hourOfDay)
+	public double calculateCityDemand(int hourOfDay, int expectedDemandsPerHour)
 	{
 		double powerDemand = -1;
 
@@ -74,19 +74,19 @@ public class City
 		switch (this.energyConsumptionTiers[hourOfDay])
 		{
 			case 1:
-				powerDemand = randomizeTier1Demand();
+				powerDemand = randomizeTier1Demand(expectedDemandsPerHour);
 				break;
 			case 2:
-				powerDemand = randomizeTier2Demand();
+				powerDemand = randomizeTier2Demand(expectedDemandsPerHour);
 				break;
 			case 3:
-				powerDemand = randomizeTier3Demand();
+				powerDemand = randomizeTier3Demand(expectedDemandsPerHour);
 				break;
 			case 4:
-				powerDemand = randomizeTier4Demand();
+				powerDemand = randomizeTier4Demand(expectedDemandsPerHour);
 				break;
 			case 5:
-				powerDemand = randomizeTier5Demand();
+				powerDemand = randomizeTier5Demand(expectedDemandsPerHour);
 				break;
 		}
 
@@ -111,29 +111,54 @@ public class City
 
 	//region New tiers code
 	//TODO: Figure out reasonable demands for each tier.
-	private double randomizeTier1Demand()
+	private double randomizeTier1Demand(int expectedDemandsPerHour)
 	{
-		return 1;
+		double minimumDemand = 300000000 / expectedDemandsPerHour; // 300,000,000 watts split up among how ever many average demands are in an hour
+		double maximumDemand = 800000000 / expectedDemandsPerHour; // 800,000,000
+		
+		double randomDemand = minimumDemand + (Math.random() * ((maximumDemand - minimumDemand) + 1));
+		
+		return randomDemand;
 	}
 
-	private double randomizeTier2Demand()
+	private double randomizeTier2Demand(int expectedDemandsPerHour)
 	{
-		return 1;
+		double minimumDemand = 800000000 / expectedDemandsPerHour; // 800,000,000
+		double maximumDemand = 1800000000 / expectedDemandsPerHour; // 1,800,000,000
+		
+		double randomDemand = minimumDemand + (Math.random() * ((maximumDemand - minimumDemand) + 1));
+		
+		return randomDemand;
 	}
 
-	private double randomizeTier3Demand()
+	private double randomizeTier3Demand(int expectedDemandsPerHour)
 	{
-		return 1;
+		double minimumDemand = 1800000000 / expectedDemandsPerHour; // 1,800,000,000
+		double maximumDemand = 3200000000L / expectedDemandsPerHour; // 3,200,000,000
+	
+		double randomDemand = minimumDemand + (Math.random() * ((maximumDemand - minimumDemand) + 1));
+		
+		return randomDemand;
 	}
 
-	private double randomizeTier4Demand()
+	private double randomizeTier4Demand(int expectedDemandsPerHour)
 	{
-		return 1;
+		double minimumDemand = 3200000000L / expectedDemandsPerHour; // 3,200,000,000
+		double maximumDemand = 6400000000L / expectedDemandsPerHour; // 6,400,000,000
+		
+		double randomDemand = minimumDemand + (Math.random() * ((maximumDemand - minimumDemand) + 1));
+		
+		return randomDemand;
 	}
 
-	private double randomizeTier5Demand()
+	private double randomizeTier5Demand(int expectedDemandsPerHour)
 	{
-		return 1;
+		double minimumDemand = 6400000000L / expectedDemandsPerHour; // 6,400,000,000
+		double maximumDemand = 10000000000L  / expectedDemandsPerHour; // 10,000,000,000
+		
+		double randomDemand = minimumDemand + (Math.random() * ((maximumDemand - minimumDemand) + 1));
+		
+		return randomDemand;
 	}
 	//endregion
 

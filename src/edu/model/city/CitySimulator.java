@@ -12,7 +12,7 @@ import java.util.*;
 
 public class CitySimulator
 {
-	private int totalDemandsInDay = 100;
+	private int totalDemandsInDay = 7200;
 	private double oneSecondInSimTime = .0027;
 	private int simulatedHourLengthInSeconds = 10;
 	private int hoursInDay = 24;
@@ -95,7 +95,7 @@ public class CitySimulator
 			long randomMillisecondInDay = (long)(Math.random() * simulatedMillisecondsInDay);
 			int randomMillisecondInDayToHour = (int) ((randomMillisecondInDay / 10000));
 
-			addDemand(new Demand((city.calculateCityDemand(randomMillisecondInDayToHour)),
+			addDemand(new Demand((city.calculateCityDemand(randomMillisecondInDayToHour, (this.totalDemandsInDay / this.hoursInDay))),
 					Math.random() * 10 ), 
 					randomMillisecondInDay);
 		}
