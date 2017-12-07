@@ -1,25 +1,22 @@
 package edu.view.misc;
 
 import edu.view.EnergyForm;
-import edu.view.FormEditEnergyConsumption;
 
 import javax.swing.event.ChangeEvent;
 import javax.swing.event.ChangeListener;
 
-// TESTING
-// We can't have the form
 public class SliderListener implements ChangeListener
 {
-	private EnergyForm form;
+	private EnergyForm energyForm;
 
-	public SliderListener(FormEditEnergyConsumption formEditEnergyConsumption)
+	public SliderListener(EnergyForm energyForm)
 	{
-		this.form = formEditEnergyConsumption;
+		this.energyForm = energyForm;
 	}
 
 	@Override
 	public void stateChanged(ChangeEvent e)
 	{
-		this.form.updateGraphs();
+		this.energyForm.updateGraphs();
 	}
 }

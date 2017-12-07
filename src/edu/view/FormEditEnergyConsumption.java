@@ -1,99 +1,24 @@
 package edu.view;
 
-import edu.controllers.Controller;
-import edu.model.city.City;
-import edu.view.misc.SliderListener;
-import org.jfree.chart.ChartFactory;
-import org.jfree.chart.ChartPanel;
-import org.jfree.chart.JFreeChart;
-import org.jfree.chart.plot.PlotOrientation;
-import org.jfree.chart.plot.XYPlot;
-import org.jfree.chart.renderer.xy.XYLineAndShapeRenderer;
-import org.jfree.data.xy.XYSeries;
-import org.jfree.data.xy.XYSeriesCollection;
-
 import javax.swing.*;
-import java.awt.*;
-import java.util.ArrayList;
 
 public class FormEditEnergyConsumption extends EnergyForm
 {
-	//region Initialize swing elements
-	private JPanel panelMain;
-
-	private JPanel panelHeader;
-	private JPanel panelSliderValues;
-	private JLabel lblTitle;
-
-	//region Sliders
-	private JSlider slider12AM;
-	private JSlider slider1AM;
-	private JSlider slider2AM;
-	private JSlider slider3AM;
-	private JSlider slider4AM;
-	private JSlider slider5AM;
-	private JSlider slider6AM;
-	private JSlider slider7AM;
-	private JSlider slider8AM;
-	private JSlider slider9AM;
-	private JSlider slider10AM;
-	private JSlider slider11AM;
-	private JSlider slider12PM;
-	private JSlider slider1PM;
-	private JSlider slider2PM;
-	private JSlider slider3PM;
-	private JSlider slider4PM;
-	private JSlider slider5PM;
-	private JSlider slider6PM;
-	private JSlider slider7PM;
-	private JSlider slider8PM;
-	private JSlider slider9PM;
-	private JSlider slider10PM;
-	private JSlider slider11PM;
-	//endregion
-
-	//region Image panel
-	private JPanel panelImage;
-
-	private JPanel panelPreviousGraph;
-	//endregion
-
-	//region Buttons panel
-	private JPanel panelButtons;
-	private JButton btnSave;
-	private JButton btnCancel;
-	private JPanel panelNewGraph;
-	//endregion
-	//endregion
-
-	//region Initialize attributes
-	private static ArrayList<JSlider> sliders = new ArrayList<>();
-	private static final int NUM_OF_TIERS = Controller.getNumOfTiers();
-	private static final int MAJOR_TICK_SPACING = Controller.getMajorTickSpacing();
-	private static City city = Controller.getSelectedCity();
-	//endregion
-
 	public FormEditEnergyConsumption()
 	{
-		// Set default settings for sliders
-		addSlidersToSliderList();
-
+		// Set default slider values
 		for (int i = 0; i < sliders.size(); i++)
 		{
-			sliders.get(i).setMaximum(NUM_OF_TIERS);
-			sliders.get(i).setMajorTickSpacing(MAJOR_TICK_SPACING);
-			sliders.get(i).setSnapToTicks(true);
-
-			// Default slider values
 			sliders.get(i).setValue(city.getEnergyConsumptionTiers()[i]);
-
-			// Add listeners
-			sliders.get(i).addChangeListener(new SliderListener(this));
 		}
 
+		// Set title
+		String title = "Energy Consumption for " + city.toString();
+		this.lblTitle.setText(title);
+
 		// Create charts based on the city's energyConsumptionTiers
-		addJFreeChartForJPanel(this.panelPreviousGraph, city.getEnergyConsumptionTiers(), true);
-		addJFreeChartForJPanel(this.panelNewGraph, city.getEnergyConsumptionTiers(), false);
+		addJFreeChartToJPanel(this.panelPreviousGraph, city.getEnergyConsumptionTiers(), true);
+		addJFreeChartToJPanel(this.panelNewGraph, city.getEnergyConsumptionTiers(), false);
 	}
 
 	public void updateGraphs()
@@ -105,77 +30,7 @@ public class FormEditEnergyConsumption extends EnergyForm
 			modifiedEnergyConsumptionTiers[i] = sliders.get(i).getValue();
 		}
 
-		addJFreeChartForJPanel(this.panelNewGraph, modifiedEnergyConsumptionTiers, false);
-	}
-
-	private void addSlidersToSliderList()
-	{
-		sliders.clear();
-
-		sliders.add(slider12AM);
-		sliders.add(slider1AM);
-		sliders.add(slider2AM);
-		sliders.add(slider3AM);
-		sliders.add(slider4AM);
-		sliders.add(slider5AM);
-		sliders.add(slider6AM);
-		sliders.add(slider7AM);
-		sliders.add(slider8AM);
-		sliders.add(slider9AM);
-		sliders.add(slider10AM);
-		sliders.add(slider11AM);
-		sliders.add(slider12PM);
-		sliders.add(slider1PM);
-		sliders.add(slider2PM);
-		sliders.add(slider3PM);
-		sliders.add(slider4PM);
-		sliders.add(slider5PM);
-		sliders.add(slider6PM);
-		sliders.add(slider7PM);
-		sliders.add(slider8PM);
-		sliders.add(slider9PM);
-		sliders.add(slider10PM);
-		sliders.add(slider11PM);
-	}
-
-	private void addJFreeChartForJPanel(JPanel panel, int[] energyConsumptionTiers, boolean isPrevious)
-	{
-		XYSeries series = new XYSeries("XYGraph");
-
-		// Add city energyConsumptionTiers data to the series
-		for (int i = 0; i < energyConsumptionTiers.length; i++)
-		{
-			series.add(i, energyConsumptionTiers[i]);
-		}
-
-		// Add the series to your data set
-		XYSeriesCollection dataset = new XYSeriesCollection();
-		dataset.addSeries(series);
-
-		// Generate the graph
-		String title = "";
-		if (isPrevious)
-		{
-			title = "Previous";
-		}
-		else
-		{
-			title = "With Changes";
-		}
-		JFreeChart chart = ChartFactory.createXYLineChart(title,"Hour","Tier", dataset,
-				PlotOrientation.VERTICAL, false, false, false);
-
-		// Make data points visible
-		XYPlot chartPlot = chart.getXYPlot();
-		XYLineAndShapeRenderer renderer =
-				(XYLineAndShapeRenderer) chartPlot.getRenderer();
-		renderer.setBaseShapesVisible(true);
-
-		// Add it the graph to the JPanel
-		ChartPanel CP = new ChartPanel(chart);
-		// panel.removeAll();
-		panel.add(CP, BorderLayout.CENTER);
-		panel.validate();
+		addJFreeChartToJPanel(this.panelNewGraph, modifiedEnergyConsumptionTiers, false);
 	}
 
 	//region Getters/Setters

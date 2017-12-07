@@ -129,10 +129,6 @@ public class FormAddBattery
 							String flywheelMaterial = findSelectedFlywheelMaterial();
 							String flywheelBearing = findSelectedFlywheelBearing();
 							addRotationalBattery(flywheelMaterial, flywheelBearing);
-
-							// TESTING
-							System.out.println(flywheelMaterial.toString());
-							System.out.println(flywheelBearing.toString());
 							break;
 					}
 				}
@@ -277,7 +273,7 @@ public class FormAddBattery
 	//region Find selected radio buttons
 	private String findSelectedFlywheelMaterial()
 	{
-		String materialName = "";
+		String materialName;
 		if (rbRotMaterialTitanium.isSelected())
 		{
 			materialName = "Titanium";
@@ -300,7 +296,7 @@ public class FormAddBattery
 
 	private String findSelectedFlywheelBearing()
 	{
-		String bearingName = "";
+		String bearingName;
 
 		if (rbRotBearingMechanical.isSelected())
 		{

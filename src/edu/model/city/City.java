@@ -21,7 +21,7 @@ public class City
 	private double cityEnergyProducedYearly;
 	private double cityRenewableEnergyProducedYearly;
 	private int lowestPowerDemand = 50000;
-	long millisecondsInDay = (long) (8640000000L);
+	private long millisecondsInDay = (long) (8640000000L);
 	long randomMillisecondInDay = (long)(Math.random() * millisecondsInDay);
 	
 	
@@ -35,6 +35,12 @@ public class City
 		this.cityName = cityName;
 		this.energyConsumptionTiers = new int[24];
 		this.energyProductionTiers = new int[24];
+
+		for (int i = 0; i < this.energyConsumptionTiers.length; i++)
+		{
+			this.energyConsumptionTiers[i] = 1;
+			this.energyProductionTiers[i] = 1;
+		}
 	}
 	public City(String cityName, int[] energyConsumptionTiers, int[] energyProductionTiers)
 	{

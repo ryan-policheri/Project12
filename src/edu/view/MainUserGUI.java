@@ -80,7 +80,7 @@ public class MainUserGUI
 	//region Methods
 	public MainUserGUI()
 	{
-		//region TESTING FOR REMOVE FUNCTIONALITY
+		//region NATHAN TESTING FOR REMOVE FUNCTIONALITY
 		// Adding 20 batteries total with random names
 		for (int i = 10; i > 0; i--)
 		{
@@ -99,9 +99,9 @@ public class MainUserGUI
 		listBatteries.setModel(model);
 		listPlaceBatteries.setModel(model);
 
-		//region TESTING FOR SELECTED CITY FUNCTIONALITY
+		//region NATHAN TESTING FOR SELECTED CITY FUNCTIONALITY
 		Controller.setSelectedCity(Controller.getDesMoines());
-		System.out.println(Controller.getSelectedCity().toString());
+		System.out.println("Selected City: " + Controller.getSelectedCity().toString());
 		//endregion
 
 		//region Button listeners
@@ -269,7 +269,6 @@ public class MainUserGUI
 	private static void updateListModel()
 	{
 		model.clear();
-		System.out.println("Grid has been cleared.");
 
 		BatteryGrid grid = Controller.getGrid();
 
@@ -277,14 +276,12 @@ public class MainUserGUI
 		for (Battery battery : grid.getGravitationalBatteries())
 		{
 			model.addElement(battery);
-			System.out.println(battery.toString() + " was added to the battery grid.");
 		}
 
 		// add rotational batteries
 		for (Battery battery : grid.getRotationalBatteries())
 		{
 			model.addElement(battery);
-			System.out.println(battery.toString() + " was added to the battery grid.");
 		}
 	}
 	//endregion
