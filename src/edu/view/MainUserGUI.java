@@ -4,10 +4,22 @@ package edu.view;
 import edu.controllers.Controller;
 import edu.model.EnergyCommander;
 import edu.model.batteries.*;
+import edu.model.city.City;
 import edu.model.energySources.windmillFarm.WindmillFarmSimulator;
+import org.jfree.chart.ChartFactory;
+import org.jfree.chart.ChartPanel;
+import org.jfree.chart.JFreeChart;
+import org.jfree.chart.axis.NumberAxis;
+import org.jfree.chart.axis.NumberTickUnit;
+import org.jfree.chart.plot.PlotOrientation;
+import org.jfree.chart.plot.XYPlot;
+import org.jfree.chart.renderer.xy.XYLineAndShapeRenderer;
+import org.jfree.data.xy.XYSeries;
+import org.jfree.data.xy.XYSeriesCollection;
 import org.jfree.ui.RefineryUtilities;
 
 import javax.swing.*;
+import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.util.ArrayList;
@@ -51,6 +63,8 @@ public class MainUserGUI
 	private JButton btnEnergyConsumptionEdit;
 	private JButton btnEnergyBack;
 	private JButton btnEnergyNext;
+	private JPanel panelEnergyProductionChart;
+	private JPanel panelEnergyConsumptionChart;
 	//endregion
 
 	//region Batteries panel
@@ -75,6 +89,9 @@ public class MainUserGUI
 
 	//region Initialize attributes
 	private static DefaultListModel<Battery> model = new DefaultListModel<>();
+	private static City selectedCity;
+	protected static final int NUM_OF_TIERS = Controller.getNumOfTiers();
+	protected static final int MAJOR_TICK_SPACING = Controller.getMajorTickSpacing();
 	//endregion
 
 	//region Methods
@@ -101,6 +118,7 @@ public class MainUserGUI
 
 		//region NATHAN TESTING FOR SELECTED CITY FUNCTIONALITY
 		Controller.setSelectedCity(Controller.getDesMoines());
+		selectedCity = Controller.getSelectedCity();
 		System.out.println("Selected City: " + Controller.getSelectedCity().toString());
 		//endregion
 
@@ -233,6 +251,50 @@ public class MainUserGUI
 		//endregion
 	}
 
+	private void addJFreeChartToJPanel(JPanel panel, int[] energyConsumptionTiers)
+	{
+		XYSeries series = new XYSeries("XYGraph");
+
+		// Add city energyConsumptionTiers data to the series
+		for (int i = 0; i < energyConsumptionTiers.length; i++)
+		{
+			series.add(i, energyConsumptionTiers[i]);
+		}
+
+		// Add the series to your data set
+		XYSeriesCollection dataset = new XYSeriesCollection();
+		dataset.addSeries(series);
+
+		// Generate the graph
+		String title = "";
+		JFreeChart chart = ChartFactory.createXYLineChart(title,"Hour","Tier", dataset,
+				PlotOrientation.VERTICAL, false, false, false);
+
+		// Make data points visible
+		XYPlot chartPlot = chart.getXYPlot();
+		XYLineAndShapeRenderer renderer = (XYLineAndShapeRenderer) chartPlot.getRenderer();
+		renderer.setBaseShapesVisible(true);
+
+		// Set the range
+		XYPlot xyPlot = (XYPlot) chart.getPlot();
+		xyPlot.setDomainCrosshairVisible(true);
+		xyPlot.setRangeCrosshairVisible(true);
+		// Domain
+		NumberAxis domain = (NumberAxis) xyPlot.getDomainAxis();
+		domain.setRange(0, 23.5);
+		domain.setTickUnit(new NumberTickUnit(1));
+		domain.setTickLabelsVisible(false);
+		// Range
+		NumberAxis range = (NumberAxis) chartPlot.getRangeAxis();
+		range.setRange(0, NUM_OF_TIERS + .5);
+		range.setTickUnit(new NumberTickUnit(MAJOR_TICK_SPACING));
+
+		// Add it the graph to the JPanel
+		ChartPanel CP = new ChartPanel(chart);
+		panel.add(CP, BorderLayout.CENTER);
+		panel.validate();
+	}
+
 	private void createNewWindmillFarmSimulator()
 	{
 		WindmillFarmSimulator windmillFarmSimulator = new WindmillFarmSimulator();
@@ -256,6 +318,15 @@ public class MainUserGUI
 		panelMain.add(panel);
 		panelMain.repaint();
 		panelMain.revalidate();
+
+		// If it's the Energy panel, insert the charts into the appropriate JPanels
+		if (panel.equals(this.panelEnergy))
+		{
+			this.panelEnergyProductionChart.removeAll();
+			this.panelEnergyConsumptionChart.removeAll();
+			addJFreeChartToJPanel(this.panelEnergyProductionChart, selectedCity.getEnergyProductionTiers());
+			addJFreeChartToJPanel(this.panelEnergyConsumptionChart, selectedCity.getEnergyConsumptionTiers());
+		}
 	}
 	//endregion
 
