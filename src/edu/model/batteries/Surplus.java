@@ -11,6 +11,11 @@ public class Surplus
 		this.timeAvailableInSeconds = timeAvailableInSeconds;
 	}
 	
+	public String toString()
+	{
+		return this.energyAvailableInWatts + " watts avaiable over " + this.timeAvailableInSeconds + " seconds";
+	}
+	
 	public double getEnergyAvailableInWatts()
 	{
 		return this.energyAvailableInWatts;
