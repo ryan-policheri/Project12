@@ -53,6 +53,11 @@ public class Controller
 		MainUserGUI.update();
 	}
 
+	public static void removeAllBatteries()
+	{
+		grid.removeAllBatteries();
+	}
+
 	private static void addEnergySurplus()
 	{
 		/*System.out.println("Enter the amount of energy to add in watts: ");

@@ -84,6 +84,7 @@ public class MainUserGUI
 	private JLabel lblPlaceBatteriesCityName;
 	private JButton btnPlaceBatteriesBack;
 	private JButton btnPlaceBatteriesSimulate;
+	private JButton btnBatteriesRemoveAll;
 	//endregion
 	//endregion
 
@@ -245,6 +246,15 @@ public class MainUserGUI
 				}
 
 				listBatteries.setSelectedIndex(selectedBatteryIndex);
+			}
+		});
+		btnBatteriesRemoveAll.addActionListener(new ActionListener()
+		{
+			@Override
+			public void actionPerformed(ActionEvent e)
+			{
+				Controller.removeAllBatteries();
+				update();
 			}
 		});
 		//endregion

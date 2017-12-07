@@ -60,6 +60,12 @@ public class BatteryGrid
 			this.rotationalBatteries.remove(index - this.gravitationalBatteries.size());
 		}
 	}
+
+	public void removeAllBatteries()
+	{
+		this.gravitationalBatteries.clear();
+		this.rotationalBatteries.clear();
+	}
 		
 	public void allocateEnergySurplus(Surplus surplus)
 	{
