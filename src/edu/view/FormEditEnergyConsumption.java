@@ -23,6 +23,7 @@ public class FormEditEnergyConsumption extends EnergyForm
 
 	private JPanel panelHeader;
 	private JPanel panelSliderValues;
+	private JLabel lblTitle;
 
 	//region Sliders
 	private JSlider slider12AM;

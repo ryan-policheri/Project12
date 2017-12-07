@@ -48,18 +48,26 @@ public class FormEditEnergyProduction extends EnergyForm
 	private JPanel panelButtons;
 	private JButton btnSave;
 	private JButton btnCancel;
+	private JLabel lblTitle;
 	//endregion
 	//endregion
 
+	//region Initialize attributes
 	private static ArrayList<JSlider> sliders = new ArrayList<>();
 	private static final int NUM_OF_TIERS = Controller.getNumOfTiers();
 	private static final int MAJOR_TICK_SPACING = Controller.getMajorTickSpacing();
 	private static City city = Controller.getSelectedCity();
+	//endregion
 
 	//TODO: Modifiy this and the EditEnergyConsumption forms to use EnergyForm as a proper parent
 	//TODO: Add functionality for graph updates and changes
 	public FormEditEnergyProduction()
 	{
+		// Change the lblTitle to include the selected city's name
+		String title = "Edit Energy Production for " + city.toString();
+		lblTitle.setText(title);
+
+		// Set default settings for sliders
 		addSlidersToSliderList();
 
 		for (int i = 0; i < sliders.size(); i++)
@@ -103,10 +111,12 @@ public class FormEditEnergyProduction extends EnergyForm
 		sliders.add(slider11PM);
 	}
 
+	//region Getters/Setters
 	public JPanel getPanelMain()
 	{
 		return panelMain;
 	}
+	//endregion
 
 	public static void main(String[] args)
 	{
