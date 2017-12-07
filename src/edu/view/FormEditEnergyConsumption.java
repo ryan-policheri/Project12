@@ -2,10 +2,13 @@ package edu.view;
 
 import edu.controllers.Controller;
 import edu.model.city.City;
+import edu.view.misc.SliderListener;
 import org.jfree.chart.ChartFactory;
 import org.jfree.chart.ChartPanel;
 import org.jfree.chart.JFreeChart;
 import org.jfree.chart.plot.PlotOrientation;
+import org.jfree.chart.plot.XYPlot;
+import org.jfree.chart.renderer.xy.XYLineAndShapeRenderer;
 import org.jfree.data.xy.XYSeries;
 import org.jfree.data.xy.XYSeriesCollection;
 
@@ -13,7 +16,7 @@ import javax.swing.*;
 import java.awt.*;
 import java.util.ArrayList;
 
-public class FormEditEnergyConsumption
+public class FormEditEnergyConsumption extends EnergyForm
 {
 	//region Initialize swing elements
 	private JPanel panelMain;
@@ -82,11 +85,26 @@ public class FormEditEnergyConsumption
 
 			// Default slider values
 			sliders.get(i).setValue(city.getEnergyConsumptionTiers()[i]);
+
+			// Add listeners
+			sliders.get(i).addChangeListener(new SliderListener(this));
 		}
 
 		// Create charts based on the city's energyConsumptionTiers
 		addJFreeChartForJPanel(this.panelPreviousGraph, city.getEnergyConsumptionTiers(), true);
 		addJFreeChartForJPanel(this.panelNewGraph, city.getEnergyConsumptionTiers(), false);
+	}
+
+	public void updateGraphs()
+	{
+		int[] modifiedEnergyConsumptionTiers = new int[24];
+
+		for (int i = 0; i < modifiedEnergyConsumptionTiers.length; i++)
+		{
+			modifiedEnergyConsumptionTiers[i] = sliders.get(i).getValue();
+		}
+
+		addJFreeChartForJPanel(this.panelNewGraph, modifiedEnergyConsumptionTiers, false);
 	}
 
 	private void addSlidersToSliderList()
@@ -145,6 +163,12 @@ public class FormEditEnergyConsumption
 		}
 		JFreeChart chart = ChartFactory.createXYLineChart(title,"Hour","Tier", dataset,
 				PlotOrientation.VERTICAL, false, false, false);
+
+		// Make data points visible
+		XYPlot chartPlot = chart.getXYPlot();
+		XYLineAndShapeRenderer renderer =
+				(XYLineAndShapeRenderer) chartPlot.getRenderer();
+		renderer.setBaseShapesVisible(true);
 
 		// Add it the graph to the JPanel
 		ChartPanel CP = new ChartPanel(chart);

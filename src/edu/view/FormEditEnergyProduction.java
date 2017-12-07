@@ -6,7 +6,7 @@ import edu.model.city.City;
 import javax.swing.*;
 import java.util.ArrayList;
 
-public class FormEditEnergyProduction
+public class FormEditEnergyProduction extends EnergyForm
 {
 	//region Initialize swing elements
 	private JPanel panelMain;
@@ -56,6 +56,8 @@ public class FormEditEnergyProduction
 	private static final int MAJOR_TICK_SPACING = Controller.getMajorTickSpacing();
 	private static City city = Controller.getSelectedCity();
 
+	//TODO: Modifiy this and the EditEnergyConsumption forms to use EnergyForm as a proper parent
+	//TODO: Add functionality for graph updates and changes
 	public FormEditEnergyProduction()
 	{
 		addSlidersToSliderList();
