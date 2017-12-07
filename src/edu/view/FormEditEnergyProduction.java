@@ -33,13 +33,6 @@ public class FormEditEnergyProduction extends EnergyForm
 		addJFreeChartToJPanel(this.panelNewGraph, modifiedEnergyProductionTiers, false);
 	}
 
-	//region Getters/Setters
-	public JPanel getPanelMain()
-	{
-		return panelMain;
-	}
-	//endregion
-
 	public static void main(String[] args)
 	{
 		JFrame frame = new JFrame("FormEditEnergyProduction");

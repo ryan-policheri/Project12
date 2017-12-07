@@ -6,8 +6,12 @@ import edu.view.misc.SliderListener;
 import org.jfree.chart.ChartFactory;
 import org.jfree.chart.ChartPanel;
 import org.jfree.chart.JFreeChart;
+import org.jfree.chart.axis.NumberAxis;
+import org.jfree.chart.axis.NumberTickUnit;
 import org.jfree.chart.plot.PlotOrientation;
 import org.jfree.chart.plot.XYPlot;
+import org.jfree.chart.renderer.xy.StackedXYAreaRenderer;
+import org.jfree.chart.renderer.xy.XYAreaRenderer;
 import org.jfree.chart.renderer.xy.XYLineAndShapeRenderer;
 import org.jfree.data.xy.XYSeries;
 import org.jfree.data.xy.XYSeriesCollection;
@@ -156,13 +160,33 @@ public class EnergyForm
 
 		// Make data points visible
 		XYPlot chartPlot = chart.getXYPlot();
-		XYLineAndShapeRenderer renderer =
-				(XYLineAndShapeRenderer) chartPlot.getRenderer();
+		XYLineAndShapeRenderer renderer = (XYLineAndShapeRenderer) chartPlot.getRenderer();
 		renderer.setBaseShapesVisible(true);
+
+		// Set the range
+		XYPlot xyPlot = (XYPlot) chart.getPlot();
+		xyPlot.setDomainCrosshairVisible(true);
+		xyPlot.setRangeCrosshairVisible(true);
+		// Domain
+		NumberAxis domain = (NumberAxis) xyPlot.getDomainAxis();
+		domain.setRange(0, 23.5);
+		domain.setTickUnit(new NumberTickUnit(1));
+		domain.setTickLabelsVisible(false);
+		// Range
+		NumberAxis range = (NumberAxis) chartPlot.getRangeAxis();
+		range.setRange(0, NUM_OF_TIERS + .5);
+		range.setTickUnit(new NumberTickUnit(MAJOR_TICK_SPACING));
 
 		// Add it the graph to the JPanel
 		ChartPanel CP = new ChartPanel(chart);
 		panel.add(CP, BorderLayout.CENTER);
 		panel.validate();
 	}
+
+	//region Getters/Setters
+	public JPanel getPanelMain()
+	{
+		return panelMain;
+	}
+	//endregion
 }
