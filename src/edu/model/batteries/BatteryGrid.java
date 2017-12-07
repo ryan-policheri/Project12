@@ -7,7 +7,7 @@ import java.util.Comparator;
 public class BatteryGrid
 {
 	//ATTRIBUTES
-	//TODO: Find a way to sort these lists - use the Comparable library, maybe?
+	//TODO: Find a way to sort these lists - use the Comparable library, maybe? Only the grav list sorts right now
 	private ArrayList<VolatileBattery> gravitationalBatteries = new ArrayList<VolatileBattery>();
 	private ArrayList<VolatileBattery> rotationalBatteries = new ArrayList<VolatileBattery>();
 	
@@ -53,13 +53,10 @@ public class BatteryGrid
 	{
 		if (index < this.gravitationalBatteries.size())
 		{
-			System.out.println("Removing grav battery " + this.gravitationalBatteries.get(index) + " at index " + index);
 			this.gravitationalBatteries.remove(index);
 		}
 		else
 		{
-			System.out.println("Removing rot battery " + this.rotationalBatteries.get(index -
-					this.gravitationalBatteries.size()) + " at index " + index);
 			this.rotationalBatteries.remove(index - this.gravitationalBatteries.size());
 		}
 	}
