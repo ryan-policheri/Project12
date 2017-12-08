@@ -12,7 +12,7 @@ import java.util.*;
 
 public class CitySimulator
 {
-	private int totalDemandsInDay = 7200;
+	private int totalDemandsInDay = 24; //don't go below 24
 	private double oneSecondInSimTime = .0027;
 	private int simulatedHourLengthInSeconds = 10;
 	private int hoursInDay = 24;
@@ -25,15 +25,17 @@ public class CitySimulator
 	private long currentMillisecond = 0;
 
 	//parallel array
-	private List<Demand> dailyDemand= new ArrayList<Demand>();
-	private List<Double> dailyDemandTimesOfDayInMilliseconds = new ArrayList<Double>();
+	private List<Demand> dailyDemand = new ArrayList<Demand>();
+	private List<Long> dailyDemandTimesOfDayInMilliseconds = new ArrayList<Long>();
+	
+	private ArrayList<Double> magnitudeByMillisecond = new ArrayList<Double>();
 
 	public CitySimulator(City city)
 	{
 		this.city = city;
 
-		//simulate();
-		buildHoursOfDayArray();	
+		this.buildHoursOfDayArray();
+		this.buildDemandArray();
 	}
 
 	public List<Demand> getDailyDemand()
@@ -41,12 +43,12 @@ public class CitySimulator
 		return dailyDemand;
 	}
 
-	public List<Double> getDailyDemandTimesOfDayInMilliseconds()
+	public List<Long> getDailyDemandTimesOfDayInMilliseconds()
 	{
 		return dailyDemandTimesOfDayInMilliseconds;
 	}
 
-	public void addDemand(Demand dailyDemand, double dailyDemandTimesOfDayInMilliseconds)
+	public void addDemand(Demand dailyDemand, long dailyDemandTimesOfDayInMilliseconds)
 	{
 		this.dailyDemand.add(dailyDemand);
 		this.dailyDemandTimesOfDayInMilliseconds.add(dailyDemandTimesOfDayInMilliseconds);
@@ -56,11 +58,6 @@ public class CitySimulator
 	{
 		this.dailyDemand.remove(dailyDemand);
 		this.dailyDemandTimesOfDayInMilliseconds.remove(dailyDemandTimesOfDayInMilliseconds);
-	}
-
-	public void simulate()
-	{
-		buildDemandArray();
 	}
 
 	private void buildHoursOfDayArray()
@@ -103,6 +100,160 @@ public class CitySimulator
 		//Sorts the parallel arrays created above
 		doSelectionSort(dailyDemandTimesOfDayInMilliseconds, dailyDemand);
 
+		writeToCityDemandDayLog();
+
+		simulate();
+	}
+
+	public void simulate()
+	{
+		//Beginning of Timer Code
+		long intervalInMilliseconds = (long) 1;
+
+		Timer timer = new Timer();
+		timer.scheduleAtFixedRate(new TimerTask() {
+			@Override
+			public void run()
+			{
+				currentMillisecond += 1;
+
+				if (!dailyDemandTimesOfDayInMilliseconds.isEmpty())
+				{
+					//Out of bounds error when array is done.
+					if (currentMillisecond == getDailyDemandTimesOfDayInMilliseconds().get(0))
+					{
+						System.out.println("Removing " + getDailyDemand().get(0) + " at the " 
+								+ getDailyDemandTimesOfDayInMilliseconds().get(0) + " millisecond of day");
+
+						sendDemandThroughEnergyCommander();
+
+						System.out.println("Removed");
+					}
+				}
+				else
+				{
+					System.out.println("Done");
+					timer.cancel();
+				}
+			}
+		}
+		, 0, intervalInMilliseconds);
+		
+	}
+
+	private void sendDemandThroughEnergyCommander()
+	{
+		EnergyCommander.commandEnergy(this.dailyDemand.get(0));
+		removeDemand(this.dailyDemand.get(0), this.dailyDemandTimesOfDayInMilliseconds.get(0));	
+	}
+
+	//End Timer Code
+	
+	public ArrayList<Double> constructMagnitudeByMillisecondArray()
+	{
+		int lastPositionInDemandArray = this.dailyDemandTimesOfDayInMilliseconds.size() - 1;
+		
+		//find the last possible active millisecond
+		long lastDemandStartTimeInMilliseconds = this.dailyDemandTimesOfDayInMilliseconds.get(lastPositionInDemandArray);
+		long lastPossibleRelevantMillisecond = lastDemandStartTimeInMilliseconds + (this.simulatedHourLengthInSeconds * 1000);
+		
+		long milliIterator = -1;
+		long nextMilliWithNewDemand = 0;
+		
+		int spotInDemandArray = 0;
+		
+		double currentDemandPower = 0;
+		double currentTimeNeeded = 0;
+		
+		double thisMillisecondMagnitude = 0;
+		
+		ArrayList<Demand> ongoingDemands = new ArrayList<Demand>();
+		
+		//find first active millisecond
+		nextMilliWithNewDemand = this.dailyDemandTimesOfDayInMilliseconds.get(spotInDemandArray);
+		
+		while (milliIterator <= lastPossibleRelevantMillisecond)
+		{
+			milliIterator += 1;
+			
+			thisMillisecondMagnitude = 0;
+			
+			currentDemandPower = 0;
+			currentTimeNeeded = 0;
+			
+			//add previous energy needs that may overlap
+			//go backwards so that can delete while in loop
+			for(int i = ongoingDemands.size() - 1; i >=0; i--)
+			{
+				thisMillisecondMagnitude += ongoingDemands.get(i).getEnergyNeededInWatts();
+				//chop a millisecond off
+				ongoingDemands.get(i).chopMillisecondOff();
+				//remove empty ones
+				if((long) (ongoingDemands.get(i).getTimeNeededInSeconds() * 1000) < 1)
+				{
+					ongoingDemands.remove(ongoingDemands.get(i));
+				}
+			}
+			
+			//if this milliseconds is a millisecond with a new demand
+			if(milliIterator == nextMilliWithNewDemand)
+			{
+				//energy need specifically at this millisecond
+				currentDemandPower = this.dailyDemand.get(spotInDemandArray).getEnergyNeededInWatts();
+				currentTimeNeeded = this.dailyDemandTimesOfDayInMilliseconds.get(spotInDemandArray);
+				thisMillisecondMagnitude += currentDemandPower;
+				
+				//then add this demand to the be part of future overlapping demands
+				Demand tempDemand = new Demand(currentDemandPower, currentTimeNeeded);
+				tempDemand.chopMillisecondOff();
+				ongoingDemands.add(tempDemand);
+				
+				//go to next index in array if there is one
+				if(spotInDemandArray < lastPositionInDemandArray)
+				{
+					spotInDemandArray += 1;
+				}
+				
+				//set the next relevant milli
+				nextMilliWithNewDemand = this.dailyDemandTimesOfDayInMilliseconds.get(spotInDemandArray);
+			}
+			
+			this.magnitudeByMillisecond.add(thisMillisecondMagnitude);
+		
+		}
+		
+		return this.magnitudeByMillisecond;
+
+	}
+
+	//Method to sort parallel arrays
+
+	//TODO Change this to mergeSort.
+	public static void doSelectionSort(List<Long> dailyDemandTimesOfDayInMilliseconds2,
+			List<Demand> dailyDemand2) 
+	{
+		for (int i = 0; i < dailyDemandTimesOfDayInMilliseconds2.size(); i++) {
+			// find position of smallest number between (i + 1)th element and last element
+
+			int pos = i;
+			for (int j = i; j < dailyDemandTimesOfDayInMilliseconds2.size(); j++) {
+				if (dailyDemandTimesOfDayInMilliseconds2.get(j) < dailyDemandTimesOfDayInMilliseconds2.get(pos))
+					pos = j;
+			}
+
+			// Swap smallest number to current position on array
+			// Swap the position on the dailyDemand array as well
+			Long min = dailyDemandTimesOfDayInMilliseconds2.get(pos);
+			Demand equalMinPosition = dailyDemand2.get(pos);
+			dailyDemandTimesOfDayInMilliseconds2.set(pos, dailyDemandTimesOfDayInMilliseconds2.get(i));
+			dailyDemand2.set(pos, dailyDemand2.get(i));
+			dailyDemandTimesOfDayInMilliseconds2.set(i, min);
+			dailyDemand2.set(i, equalMinPosition);
+		}
+	}
+	
+	private void writeToCityDemandDayLog()
+	{
 		//Write to CityDemandDayLog
 
 		if (file.exists()) 
@@ -143,73 +294,6 @@ public class CitySimulator
 		}
 
 		System.out.println("Done");
-
-		//Beginning of Timer Code
-
-		long intervalInMilliseconds = (long) 1;
-
-		Timer timer = new Timer();
-		timer.scheduleAtFixedRate(new TimerTask() {
-			@Override
-			public void run()
-			{
-				currentMillisecond += 1;
-
-				if (!dailyDemandTimesOfDayInMilliseconds.isEmpty())
-				{
-					//Out of bounds error when array is done.
-					if (currentMillisecond == getDailyDemandTimesOfDayInMilliseconds().get(0))
-					{
-						System.out.println("Removing " + getDailyDemand().get(0) + " at the " 
-								+ getDailyDemandTimesOfDayInMilliseconds().get(0) + " millisecond of day");
-
-						sendDemandThroughEnergyCommander();
-
-						System.out.println("Removed");
-					}
-				}
-				else
-				{
-					//System.out.println("Done");
-					timer.cancel();
-				}
-			}
-		}
-		, 0, intervalInMilliseconds);
-	}
-
-	private void sendDemandThroughEnergyCommander()
-	{
-		EnergyCommander.commandEnergy(this.dailyDemand.get(0));
-		removeDemand(this.dailyDemand.get(0), this.dailyDemandTimesOfDayInMilliseconds.get(0));	
-	}
-
-	//End Timer Code
-
-	//Method to sort parallel arrays
-
-	//TODO Change this to mergeSort.
-	public static void doSelectionSort(List<Double> dailyDemandTimesOfDayInMilliseconds2,
-			List<Demand> dailyDemand2) 
-	{
-		for (int i = 0; i < dailyDemandTimesOfDayInMilliseconds2.size(); i++) {
-			// find position of smallest number between (i + 1)th element and last element
-
-			int pos = i;
-			for (int j = i; j < dailyDemandTimesOfDayInMilliseconds2.size(); j++) {
-				if (dailyDemandTimesOfDayInMilliseconds2.get(j) < dailyDemandTimesOfDayInMilliseconds2.get(pos))
-					pos = j;
-			}
-
-			// Swap smallest number to current position on array
-			// Swap the position on the dailyDemand array as well
-			Double min = dailyDemandTimesOfDayInMilliseconds2.get(pos);
-			Demand equalMinPosition = dailyDemand2.get(pos);
-			dailyDemandTimesOfDayInMilliseconds2.set(pos, dailyDemandTimesOfDayInMilliseconds2.get(i));
-			dailyDemand2.set(pos, dailyDemand2.get(i));
-			dailyDemandTimesOfDayInMilliseconds2.set(i, min);
-			dailyDemand2.set(i, equalMinPosition);
-		}
 	}
 }
 

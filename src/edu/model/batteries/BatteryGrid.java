@@ -3,6 +3,10 @@ package edu.model.batteries;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
+import java.util.Timer;
+import java.util.TimerTask;
+
+import edu.model.GraphDataPoint;
 
 public class BatteryGrid
 {
@@ -266,7 +270,7 @@ public class BatteryGrid
 		}
 		
 		return totalRotationalEnergyInJoules;
-	}
+	}	
 	
 	public void displayGrid()
 	{
@@ -292,4 +296,5 @@ public class BatteryGrid
 		return this.rotationalBatteries;
 	}
 	//endregion
+	
 }

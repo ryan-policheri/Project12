@@ -1,6 +1,7 @@
 package edu.controllers;
 
 import edu.model.EnergyCommander;
+import edu.model.GraphDataPoint;
 import edu.model.batteries.BatteryGrid;
 import edu.model.batteries.Demand;
 import edu.model.batteries.RotationalBattery;
@@ -12,7 +13,13 @@ import edu.model.batteries.FlywheelBearing;
 import edu.model.batteries.FlywheelMaterial;
 import edu.model.batteries.GravitationalBattery;
 
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Timer;
+import java.util.TimerTask;
 import java.util.concurrent.TimeUnit;
+
+import com.sun.xml.internal.ws.policy.privateutil.PolicyUtils.Collections;
 
 public class ProgramDriver
 {
@@ -375,17 +382,17 @@ public class ProgramDriver
 			batteryGrid.addRotationalBattery(new RotationalBattery("RB_Classic_" + Integer.toString(i),100,0.5,aluminum,mechanicalBearing));
 		}
 		
-		batteryGrid.displayGrid();
+		//batteryGrid.displayGrid();
 		
 		//FILL BATTERIES (for testing, waiting for windmill farm)
-		for(int i = 0; i < 500; i++)
+		for(int i = 0; i < 1; i++)
 		{
 			batteryGrid.allocateEnergySurplus(new Surplus(19200000,5));
 		}
 		
 		TimeUnit.SECONDS.sleep(10);
 		
-		batteryGrid.displayGrid();
+		//batteryGrid.displayGrid();
 		
 		//CREATE CITY
 		int[] energyConsumptionTiersDesMoines = {1, 1, 1, 1, 1, 2, 2, 2, 2, 4, 5, 4, 2, 5, 5, 3, 3, 1, 1, 3, 4, 3, 3, 1};
@@ -401,11 +408,19 @@ public class ProgramDriver
 		EnergyCommander energyCommander = new EnergyCommander(batteryGrid);
 		
 		//SIMULATE
+		for(double x : citySimulator.constructMagnitudeByMillisecondArray())
+		{
+			System.out.println(x);
+		}
+		System.out.println("we made it");
+		
 		citySimulator.simulate();
 		
-		TimeUnit.SECONDS.sleep(300);
+		ArrayList<GraphDataPoint> graphDataPoints = new ArrayList<GraphDataPoint>();
 		
-		batteryGrid.displayGrid();
+		//TimeUnit.SECONDS.sleep(300);
+		
+		//batteryGrid.displayGrid();
 	}
 
 }

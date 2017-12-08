@@ -24,6 +24,4 @@ public class EnergyCommander
 		batteryGrid.allocateEnergyDemand(demand);
 		batteryGrid.displayGrid();
 	}
-		
-	
 }

@@ -1,9 +1,11 @@
 package edu.controllers;
 
+import edu.model.GraphDataPoint;
 import edu.model.batteries.*;
 import edu.model.city.City;
 import edu.view.MainUserGUI;
 
+import java.util.ArrayList;
 import java.util.Scanner;
 
 public class Controller
@@ -29,6 +31,8 @@ public class Controller
 	//endregion
 	//endregion
 
+	private ArrayList<GraphDataPoint> graphDataPoints;
+	
 	public static void addGravitationalBattery(GravitationalBattery battery)
 	{
 		grid.addGravitationalBattery(battery);
@@ -93,7 +97,7 @@ public class Controller
 	{
 		return grid;
 	}
-
+	
 	//region Getters/Setters
 	public static int getNumOfTiers()
 	{
