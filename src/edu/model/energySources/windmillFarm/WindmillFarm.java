@@ -28,7 +28,6 @@ public class WindmillFarm
 		return this.powerOutput;
 	}
 	
-	
 	private void randomizeHighOutput() 
 	{
 		int minimumOutput = 5000000; //5 MW

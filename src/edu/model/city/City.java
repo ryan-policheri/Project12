@@ -168,33 +168,6 @@ public class City
 	}
 	//endregion
 
-	//region Old tiers code
-	//private void randomizeHighDemand()
-	//{
-	//	int minimumDemand = 5000000; //5 MW
-	//	int maximumDemand = 10000000; //10 MW
-	//
-	//	this.powerDemand = minimumDemand + (Math.random() * ((maximumDemand - minimumDemand) + 1));
-	//}
-	//
-	//private void randomizeModerateDemand()
-	//{
-	//	int minimumDemand = 500000; // 0.5 MW
-	//	int maximumDemand = 5000000; //5 MW
-	//
-	//	this.powerDemand = minimumDemand + (Math.random() * ((maximumDemand - minimumDemand) + 1));
-	//}
-	//
-	//private void randomizeLowDemand()
-	//{
-	//	int minimumDemand = 10; //DON'T WANT LOWER
-	//	int maximumDemand = 500000; //0.5 MW
-	//
-	//	this.powerDemand = minimumDemand + (Math.random() * ((maximumDemand - minimumDemand) + 1));
-	//
-	//}
-	//endregion
-
 	//region Getters/Setters
 	public List<Demand> getDailyDemand()
 	{

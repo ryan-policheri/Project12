@@ -1,12 +1,13 @@
 package edu.controllers;
 
-import edu.model.GraphDataPoint;
+import edu.model.EnergyCommander;
 import edu.model.batteries.*;
 import edu.model.city.City;
+import edu.model.city.CitySimulator;
 import edu.view.MainUserGUI;
 
+import java.lang.reflect.Array;
 import java.util.ArrayList;
-import java.util.Scanner;
 
 public class Controller
 {
@@ -17,7 +18,7 @@ public class Controller
 	private static final int NUM_OF_TIERS = 5;
 	private static final int MAJOR_TICK_SPACING = 1;
 
-	//region Default Cities
+	//region Cities
 	private static City selectedCity = new City("Default");
 
 	//region Des Moines
@@ -27,17 +28,43 @@ public class Controller
 			1, 1, 1, 1, 1, 2, 2, 2, 3, 3, 3, 3, 4, 4, 5, 3, 3, 3, 4, 2, 2, 2, 1, 1};
 	private static City desMoines = new City("Des Moines", energyConsumptionTiersDesMoines,
 			energyProductionTiersDesMoines);
-
-	//endregion
 	//endregion
 
-	private ArrayList<GraphDataPoint> graphDataPoints;
-	
+	//region Chicago
+	private static int[] energyConsumptionTiersChicago = {
+			1, 1, 1, 1, 1, 2, 2, 2, 2, 4, 5, 4, 2, 5, 5, 3, 3, 1, 1, 3, 4, 3, 3, 1};
+	private static int[] energyProductionTiersChicago = {
+			1, 1, 1, 1, 1, 2, 2, 2, 3, 3, 3, 3, 4, 4, 5, 3, 3, 3, 4, 2, 2, 2, 1, 1};
+	private static City chicago = new City("Chicago", energyConsumptionTiersChicago,
+			energyProductionTiersChicago);
+	//endregion
+
+	private static ArrayList<City> availableCities = new ArrayList<City>();
+	//endregion
+
+	// Set default city
+	private static CitySimulator citySimulator = new CitySimulator(desMoines);
+	private static EnergyCommander energyCommander = new EnergyCommander(grid);
+
+	private static ArrayList<Double> magnitudeByMillisecondArray;
+
+	public static void updateCities()
+	{
+		availableCities.clear();
+		availableCities.add(chicago);
+		availableCities.add(desMoines);
+
+		citySimulator = new CitySimulator(selectedCity);
+		energyCommander = new EnergyCommander(grid);
+		//TODO: Run this when the "simulate" button is hit
+		// magnitudeByMillisecondArray = citySimulator.constructMagnitudeByMillisecondArray();
+	}
+
 	public static void addGravitationalBattery(GravitationalBattery battery)
 	{
 		grid.addGravitationalBattery(battery);
 
-		// update the view
+		// updateCities the view
 		MainUserGUI.update();
 	}
 
@@ -45,7 +72,7 @@ public class Controller
 	{
 		grid.addRotationalBattery(battery);
 
-		// update the view
+		// updateCities the view
 		MainUserGUI.update();
 	}
 
@@ -53,7 +80,7 @@ public class Controller
 	{
 		grid.removeBattery(index);
 
-		// update the view
+		// updateCities the view
 		MainUserGUI.update();
 	}
 
@@ -92,16 +119,31 @@ public class Controller
 	{
 		grid.displayGrid();
 	}
+	
+	//region Getters/Setters
+	public static ArrayList<City> getAvailableCities()
+	{
+		return availableCities;
+	}
+
+	public static void setAvailableCities(ArrayList<City> availableCities)
+	{
+		Controller.availableCities = availableCities;
+	}
 
 	public static BatteryGrid getGrid()
 	{
 		return grid;
 	}
-	
-	//region Getters/Setters
+
 	public static int getNumOfTiers()
 	{
 		return NUM_OF_TIERS;
+	}
+
+	public static ArrayList<Double> getMagnitudeByMillisecondArray()
+	{
+		return magnitudeByMillisecondArray;
 	}
 
 	public static int getMajorTickSpacing()

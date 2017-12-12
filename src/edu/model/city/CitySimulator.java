@@ -296,38 +296,37 @@ public class CitySimulator
 		System.out.println("Done printing demands");
 	}
 
-
-private void writeMillisecondByMagnitudeToCityDemandDayLog()
-{
-	//Write to CityDemandDayLog
-
-	WriteToFile data = new WriteToFile(fileName, true);
-	
-	try {
-		data.writeToFile("Milliseconds        ,            Magnitude");
-	} catch (IOException e1) {
-		// TODO Auto-generated catch block
-		e1.printStackTrace();
-	}
-
-	for (int i = 0; i < this.magnitudeByMillisecond.size(); i++)
+	private void writeMillisecondByMagnitudeToCityDemandDayLog()
 	{
+		//Write to CityDemandDayLog
 
-		try		
-		{
-			data.writeToFile((i + 1) + "                    ,                           " +
-					magnitudeByMillisecond.get(i));
-			
-		} 
+		WriteToFile data = new WriteToFile(fileName, true);
 
-		catch (IOException e) 
-		{
-			System.out.println("Sorry - No can do");
-			break;
+		try {
+			data.writeToFile("Milliseconds        ,            Magnitude");
+		} catch (IOException e1) {
+			// TODO Auto-generated catch block
+			e1.printStackTrace();
 		}
-	}
 
-	System.out.println("Done with magnitudes");
-}
+		for (int i = 0; i < this.magnitudeByMillisecond.size(); i++)
+		{
+
+			try
+			{
+				data.writeToFile((i + 1) + "                    ,                           " +
+						magnitudeByMillisecond.get(i));
+
+			}
+
+			catch (IOException e)
+			{
+				System.out.println("Sorry - No can do");
+				break;
+			}
+		}
+
+		System.out.println("Done with magnitudes");
+	}
 }
 

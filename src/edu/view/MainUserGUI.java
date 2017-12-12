@@ -16,9 +16,10 @@ import org.jfree.chart.plot.XYPlot;
 import org.jfree.chart.renderer.xy.XYLineAndShapeRenderer;
 import org.jfree.data.xy.XYSeries;
 import org.jfree.data.xy.XYSeriesCollection;
-import org.jfree.ui.RefineryUtilities;
 
 import javax.swing.*;
+import javax.swing.event.ListSelectionEvent;
+import javax.swing.event.ListSelectionListener;
 import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
@@ -75,21 +76,20 @@ public class MainUserGUI
 	private JButton btnBatteriesRemove;
 	private JLabel lblBatteriesSelectedBatteryName;
 	private JButton btnBatteriesBack;
-	private JButton btnBatteriesNext;
+	private JButton btnBatteriesSimulate;
 	//endregion
 
 	//region Place Batteries panel
 	private JPanel panelPlaceBatteries;
 	private JList listPlaceBatteries;
-	private JLabel lblPlaceBatteriesCityName;
 	private JButton btnPlaceBatteriesBack;
-	private JButton btnPlaceBatteriesSimulate;
 	private JButton btnBatteriesRemoveAll;
 	//endregion
 	//endregion
 
 	//region Initialize attributes
-	private static DefaultListModel<Battery> model = new DefaultListModel<>();
+	private static DefaultListModel<Battery> batteryDefaultListModel = new DefaultListModel<>();
+	private static DefaultListModel<City> cityDefaultListModel = new DefaultListModel<>();
 	private static City selectedCity;
 	protected static final int NUM_OF_TIERS = Controller.getNumOfTiers();
 	protected static final int MAJOR_TICK_SPACING = Controller.getMajorTickSpacing();
@@ -98,6 +98,12 @@ public class MainUserGUI
 	//region Methods
 	public MainUserGUI()
 	{
+		//TODO: Add cities to the list, be able to select them and change their info on the fly
+		//TODO: Add a final "Simulate" feature
+		//region NATHAN TESTING FOR CITY LIST FUNCTIONALITY
+		Controller.updateCities();
+		//endregion
+
 		//region NATHAN TESTING FOR REMOVE FUNCTIONALITY
 		// Adding 20 batteries total with random names
 		for (int i = 10; i > 0; i--)
@@ -113,9 +119,11 @@ public class MainUserGUI
 		}
 		//endregion
 
-		// Make the two battery lists have the same model
-		listBatteries.setModel(model);
-		listPlaceBatteries.setModel(model);
+		// Set the battery list batteryDefaultListModel
+		listBatteries.setModel(batteryDefaultListModel);
+
+		// Set the cities list batteryDefaultListModel
+		listCities.setModel(cityDefaultListModel);
 
 		//region NATHAN TESTING FOR SELECTED CITY FUNCTIONALITY
 		Controller.setSelectedCity(Controller.getDesMoines());
@@ -165,20 +173,31 @@ public class MainUserGUI
 				switchToPanel(panelEnergy);
 			}
 		});
-		btnBatteriesNext.addActionListener(new ActionListener()
+		btnBatteriesSimulate.addActionListener(new ActionListener()
 		{
 			@Override
 			public void actionPerformed(ActionEvent e)
 			{
-				switchToPanel(panelPlaceBatteries);
+
 			}
 		});
-		btnPlaceBatteriesBack.addActionListener(new ActionListener()
+		//endregion
+
+		//region Cities
+		listCities.addListSelectionListener(new ListSelectionListener()
 		{
 			@Override
-			public void actionPerformed(ActionEvent e)
+			public void valueChanged(ListSelectionEvent e)
 			{
-				switchToPanel(panelBatteries);
+				// Set the selectedCity in the Controller to the selected city in the GUI. Update the Controller
+				ArrayList<City> cities = Controller.getAvailableCities();
+				City selectedCity = cities.get(listCities.getSelectedIndex());
+				Controller.setSelectedCity(selectedCity);
+
+				Controller.updateCities();
+
+				// Update labels
+				lblPickCitySelectedCityName.setText("Selected City: " + selectedCity.toString());
 			}
 		});
 		//endregion
@@ -343,26 +362,40 @@ public class MainUserGUI
 	//region Update functions
 	public static void update()
 	{
-		updateListModel();
+		updateBatteryListModel();
+		updateCityListModel();
 	}
 
-	// updates the list's model according to the Controller's battery lists
-	private static void updateListModel()
+	// updates the list's batteryDefaultListModel according to the Controller's battery lists
+	private static void updateBatteryListModel()
 	{
-		model.clear();
+		batteryDefaultListModel.clear();
 
 		BatteryGrid grid = Controller.getGrid();
 
 		// add gravitational batteries
 		for (Battery battery : grid.getGravitationalBatteries())
 		{
-			model.addElement(battery);
+			batteryDefaultListModel.addElement(battery);
 		}
 
 		// add rotational batteries
 		for (Battery battery : grid.getRotationalBatteries())
 		{
-			model.addElement(battery);
+			batteryDefaultListModel.addElement(battery);
+		}
+	}
+
+	private static void updateCityListModel()
+	{
+		cityDefaultListModel.clear();
+
+		ArrayList<City> availableCities = Controller.getAvailableCities();
+
+		// add gravitational batteries
+		for (City city : availableCities)
+		{
+			cityDefaultListModel.addElement(city);
 		}
 	}
 	//endregion

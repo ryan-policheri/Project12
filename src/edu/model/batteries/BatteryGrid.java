@@ -285,6 +285,13 @@ public class BatteryGrid
 		}
 	}
 
+	//TODO: This
+	// Returns the sum of all energy (returned as an int) to be called when the Controller asks.
+	public int sumOfDemandsAtTime(double time)
+	{
+		return 0;
+	}
+
 	//region Getters/Setters
 	public ArrayList<VolatileBattery> getGravitationalBatteries()
 	{
