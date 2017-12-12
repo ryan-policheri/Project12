@@ -20,11 +20,11 @@ public class WindmillFarmSimulator
 	private double simulatedHourLengthInSeconds = 10;
 	private long millisecondsInDay = (long) (86400000L);
 	private long simulatedMillisecondsInDay = millisecondsInDay / 360; //* by scale
-	private int totalAmountOfSurplusesInDay = 100;
+	private int totalAmountOfSurplusesInDay = 24;
 	private int hoursInDay = 24;
 	private int currentHourOfDay = 0;
 	private long currentMillisecond = 0;
-	private static String fileName = "..\\Project12\\src\\edu\\model\\CityDemandDayLog";
+	private static String fileName = "..\\Project12\\src\\edu\\model\\WindmillFarmSurplusLog";
 	private static File file = new File(fileName);
 	
 	private String[] hoursOfDay = new String[this.hoursInDay];
@@ -105,7 +105,7 @@ public class WindmillFarmSimulator
 				{
 					if (currentMillisecond == dailySurplusTimesOfDayInMilliseconds.get(0))
 					{
-						System.out.println("Adding " + dailySurplus.get(0) + " surplus at the " 
+						System.out.println("Adding " + dailySurplus.get(0) + " at the " 
 								+ dailySurplusTimesOfDayInMilliseconds.get(0) + " millisecond of day");
 
 						sendSurplusThroughEnergyCommander();
@@ -130,7 +130,7 @@ private void sendSurplusThroughEnergyCommander()
 	EnergyCommander.commandEnergy(dailySurplus.get(0));
 	removeSurplus(dailySurplus.get(0), dailySurplusTimesOfDayInMilliseconds.get(0));	
 }
-	
+	/*
 	private Surplus generatePowerFromWindmillFarm()
 	{
 		double windmillFarmOutput = windmillFarm.calculateWindmillFarmOutput(this.currentHourOfDay);
@@ -156,7 +156,7 @@ private void sendSurplusThroughEnergyCommander()
 		
 		return surplus;
 	}
-	
+	*/
 	private void buildHoursOfDayArray()
 	{
 		for(int hour = 0; hour < 24; hour++)
@@ -201,8 +201,7 @@ private void sendSurplusThroughEnergyCommander()
 	
 	private void writeToLog()
 	{
-	
-			//Write to CityDemandDayLog
+		System.out.println("HELLO PRINTING SURPLUSES");
 
 			if (file.exists()) 
 			{
@@ -237,7 +236,7 @@ private void sendSurplusThroughEnergyCommander()
 				}
 			}
 
-			System.out.println("Done");
+			System.out.println("Done with surpluses");
 		}
 		
 	
