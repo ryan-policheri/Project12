@@ -12,7 +12,6 @@ public class City
 	//Keeping just in case
 	private String cityName;
 	private int[] energyConsumptionTiers;
-	private int[] energyProductionTiers;
 	private int estimatedLandAvailableInAcres;
 	private int cityPopulation;
 	private int statePopulation;
@@ -25,42 +24,25 @@ public class City
 	long randomMillisecondInDay = (long)(Math.random() * millisecondsInDay);
 	
 	
-	//parallel array
-	private List<Demand> dailyDemand= new ArrayList<Demand>();
-    private List<Double> dailyDemandTimesOfDayInMilliseconds = new ArrayList<Double>();
-	
 	//CONSTRUCTORS
 	public City(String cityName)
 	{	
 		this.cityName = cityName;
 		this.energyConsumptionTiers = new int[24];
-		this.energyProductionTiers = new int[24];
 
 		for (int i = 0; i < this.energyConsumptionTiers.length; i++)
 		{
 			this.energyConsumptionTiers[i] = 1;
-			this.energyProductionTiers[i] = 1;
 		}
 	}
-	public City(String cityName, int[] energyConsumptionTiers, int[] energyProductionTiers)
+	public City(String cityName, int[] energyConsumptionTiers)//, int[] energyProductionTiers)
 	{
 		this.cityName = cityName;
 		this.energyConsumptionTiers = energyConsumptionTiers;
-		this.energyProductionTiers = energyProductionTiers;
+		//this.energyProductionTiers = energyProductionTiers;
 	}
 	
 	//FUNTIONS
-	public void addDemand(Demand dailyDemand, double dailyDemandTimesOfDayInMilliseconds)
-	{
-		this.dailyDemand.add(dailyDemand);
-		this.dailyDemandTimesOfDayInMilliseconds.add(dailyDemandTimesOfDayInMilliseconds);
-	}
-	
-	public void removeDemand(Demand dailyDemand, long dailyDemandTimesOfDayInMilliseconds)
-	{
-		this.dailyDemand.remove(dailyDemand);
-		this.dailyDemandTimesOfDayInMilliseconds.remove(dailyDemandTimesOfDayInMilliseconds);
-	}
 	
 /*	public double powerNeed(double energyNeededInWatts, double amountOfTimeInSeconds)
 	{
@@ -196,15 +178,6 @@ public class City
 	//endregion
 
 	//region Getters/Setters
-	public List<Demand> getDailyDemand()
-	{
-		return dailyDemand;
-	}
-
-	public List<Double> getDailyDemandTimesOfDayInMilliseconds()
-	{
-		return dailyDemandTimesOfDayInMilliseconds;
-	}
 
 	public int[] getEnergyConsumptionTiers()
 	{
@@ -214,16 +187,6 @@ public class City
 	public void setEnergyConsumptionTiers(int[] energyConsumptionTiers)
 	{
 		this.energyConsumptionTiers = energyConsumptionTiers;
-	}
-
-	public int[] getEnergyProductionTiers()
-	{
-		return energyProductionTiers;
-	}
-
-	public void setEnergyProductionTiers(int[] energyProductionTiers)
-	{
-		this.energyProductionTiers = energyProductionTiers;
 	}
 	//endregion
 

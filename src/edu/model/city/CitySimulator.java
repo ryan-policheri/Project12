@@ -12,7 +12,7 @@ import java.util.*;
 
 public class CitySimulator
 {
-	private int totalDemandsInDay = 1000; //don't go below 24
+	private int totalDemandsInDay = 1000; //don't go below 24. should be same as windmill farm simulators
 	private double oneSecondInSimTime = .0027;
 	private int simulatedHourLengthInSeconds = 10;
 	private int hoursInDay = 24;
@@ -129,7 +129,7 @@ public class CitySimulator
 				}
 				else
 				{
-					System.out.println("Done");
+					System.out.println("Done With City Demands");
 					timer.cancel();
 				}
 			}
@@ -217,7 +217,7 @@ public class CitySimulator
 			this.magnitudeByMillisecond.add(thisMillisecondMagnitude);	
 		}
 		
-		writeMillisecondByMagnitudeToCityDemandDayLog();
+		//writeMillisecondByMagnitudeToCityDemandDayLog();
 		
 		return this.magnitudeByMillisecond;
 		

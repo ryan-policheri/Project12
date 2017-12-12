@@ -26,6 +26,13 @@ public class Surplus
 		return this.timeAvailableInSeconds;
 	}
 	
+	public void chopMillisecondOff()
+	{
+		double tempTimeNeededInMilliseconds = (long) this.timeAvailableInSeconds * 1000;
+		tempTimeNeededInMilliseconds -= 1;
+		this.timeAvailableInSeconds = (double) tempTimeNeededInMilliseconds / 1000.0;	
+	}
+	
 	public boolean isSurplusGone()
 	{
 		if (this.timeAvailableInSeconds == 0)

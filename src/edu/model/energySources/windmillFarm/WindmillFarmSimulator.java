@@ -17,10 +17,10 @@ import java.util.List;
 
 public class WindmillFarmSimulator
 {
+	private int totalAmountOfSurplusesInDay = 24; //don't go below 24. should be same as city simulators
 	private double simulatedHourLengthInSeconds = 10;
 	private long millisecondsInDay = (long) (86400000L);
 	private long simulatedMillisecondsInDay = millisecondsInDay / 360; //* by scale
-	private int totalAmountOfSurplusesInDay = 24;
 	private int hoursInDay = 24;
 	private int currentHourOfDay = 0;
 	private long currentMillisecond = 0;
@@ -29,26 +29,31 @@ public class WindmillFarmSimulator
 	
 	private String[] hoursOfDay = new String[this.hoursInDay];
 	
-	private WindmillFarm windmillFarm = new WindmillFarm();
+	private WindmillFarm windmillFarm;
 	
-	private List<Surplus> dailySurplus= new ArrayList<Surplus>();
-	private List<Double> dailySurplusTimesOfDayInMilliseconds = new ArrayList<Double>();
+	private List<Surplus> dailySurplus = new ArrayList<Surplus>();
+	private List<Long> dailySurplusTimesOfDayInMilliseconds = new ArrayList<Long>();
 	
-	public void addSurplus(Surplus dailySurplus, double dailySurplusTimesOfDayInMilliseconds)
+	private ArrayList<Double> magnitudeByMillisecond = new ArrayList<Double>();
+	
+	public WindmillFarmSimulator(WindmillFarm windmillFarm)
+	{
+		this.windmillFarm = windmillFarm;
+		
+		this.buildHoursOfDayArray();
+		this.buildSurplusArray();
+	}
+	
+	public void addSurplus(Surplus dailySurplus, long dailySurplusTimesOfDayInMilliseconds)
 	{
 		this.dailySurplus.add(dailySurplus);
 		this.dailySurplusTimesOfDayInMilliseconds.add(dailySurplusTimesOfDayInMilliseconds);
 	}
 
-	public void removeSurplus(Surplus dailySurplus, double dailySurplusTimesOfDayInMilliseconds)
+	public void removeSurplus(Surplus dailySurplus, long dailySurplusTimesOfDayInMilliseconds)
 	{
 		this.dailySurplus.remove(dailySurplus);
 		this.dailySurplusTimesOfDayInMilliseconds.remove(dailySurplusTimesOfDayInMilliseconds);
-	}
-	
-	public WindmillFarmSimulator()
-	{
-		buildHoursOfDayArray();
 	}
 	
 	//CHANGE TO oldSimulate
@@ -71,27 +76,24 @@ public class WindmillFarmSimulator
 	}
 	*/
 	
-	public void simulate()
+	private void buildSurplusArray()
 	{
-		for (int i = 0; i < totalAmountOfSurplusesInDay; i++)
+		for (int i = 0; i < this.totalAmountOfSurplusesInDay; i++)
 		{
 			long randomMillisecondInDay = (long)(Math.random() * simulatedMillisecondsInDay);
 			int randomMillisecondInDayToHour = (int) ((randomMillisecondInDay / 10000));
 
-			addSurplus(new Surplus(windmillFarm.calculateWindmillFarmOutput(randomMillisecondInDayToHour), 
+			addSurplus(new Surplus(windmillFarm.calculateWindmillFarmOutput(randomMillisecondInDayToHour, (this.totalAmountOfSurplusesInDay / this.hoursInDay)), 
 					Math.random() * 10 ), randomMillisecondInDay);
 		}		
 		doSelectionSort(dailySurplusTimesOfDayInMilliseconds, dailySurplus);
+		
 		writeToLog();
-		
-	/*	for (int i = 0; i < dailySurplus.size(); i++)
-		{
-			//For debugging purposes:
-			System.out.println(dailySurplus.get(i) + " at the " +
-					dailySurplusTimesOfDayInMilliseconds.get(i) + " millisecond time of day and");
-		}
-		*/
-		
+	}
+	
+	
+	public void simulate()
+	{		
 		//Timer Code
 		long intervalInMilliseconds = (long) 1;
 		Timer timer = new Timer();
@@ -115,21 +117,100 @@ public class WindmillFarmSimulator
 				}
 				else
 				{
-					//System.out.println("Done");
+					System.out.println("Done With Windmill Farm Surpluses");
 					timer.cancel();
 				}
 			}
 		}
 		, 0, intervalInMilliseconds);
-	}
-	
-	
+	}	
 	
 private void sendSurplusThroughEnergyCommander()
 {
 	EnergyCommander.commandEnergy(dailySurplus.get(0));
 	removeSurplus(dailySurplus.get(0), dailySurplusTimesOfDayInMilliseconds.get(0));	
 }
+
+public ArrayList<Double> constructMagnitudeByMillisecondArray()
+{
+	int lastPositionInSurplusArray = this.dailySurplusTimesOfDayInMilliseconds.size() - 1;
+	
+	//find the last possible active millisecond
+	long lastSurplusStartTimeInMilliseconds = this.dailySurplusTimesOfDayInMilliseconds.get(lastPositionInSurplusArray);
+	long lastPossibleRelevantMillisecond = (long) (lastSurplusStartTimeInMilliseconds + (this.simulatedHourLengthInSeconds * 1000));
+	
+	long milliIterator = -1;
+	long nextMilliWithNewDemand = 0;
+	
+	int spotInDemandArray = 0;
+	
+	double currentDemandPower = 0;
+	double currentTimeNeeded = 0;
+	
+	double thisMillisecondMagnitude = 0;
+	
+	ArrayList<Demand> ongoingDemands = new ArrayList<Demand>();
+	
+	//find first active millisecond
+	nextMilliWithNewDemand = this.dailySurplusTimesOfDayInMilliseconds.get(spotInDemandArray);
+	
+	while (milliIterator <= lastPossibleRelevantMillisecond)
+	{
+		milliIterator += 1;
+		
+		thisMillisecondMagnitude = 0;
+		
+		currentDemandPower = 0;
+		currentTimeNeeded = 0;
+		
+		//add previous energy needs that may overlap
+		//go backwards so that can delete while in loop
+		for(int i = ongoingDemands.size() - 1; i >=0; i--)
+		{
+			thisMillisecondMagnitude += ongoingDemands.get(i).getEnergyNeededInWatts();
+			//chop a millisecond off
+			ongoingDemands.get(i).chopMillisecondOff();
+			//remove empty ones
+			if((long) (ongoingDemands.get(i).getTimeNeededInSeconds() * 1000) < 1)
+			{
+				ongoingDemands.remove(ongoingDemands.get(i));
+			}
+		}
+		
+		//if this milliseconds is a millisecond with a new demand
+		if(milliIterator == nextMilliWithNewDemand)
+		{
+			//energy need specifically at this millisecond
+			currentDemandPower = this.dailySurplus.get(spotInDemandArray).getEnergyAvailableInWatts();
+			currentTimeNeeded = this.dailySurplusTimesOfDayInMilliseconds.get(spotInDemandArray);
+			thisMillisecondMagnitude += currentDemandPower;
+			
+			//then add this demand to the be part of future overlapping demands
+			Demand tempDemand = new Demand(currentDemandPower, currentTimeNeeded);
+			tempDemand.chopMillisecondOff();
+			ongoingDemands.add(tempDemand);
+			
+			//go to next index in array if there is one
+			if(spotInDemandArray < lastPositionInSurplusArray)
+			{
+				spotInDemandArray += 1;
+			}
+			
+			//set the next relevant milli
+			nextMilliWithNewDemand = this.dailySurplusTimesOfDayInMilliseconds.get(spotInDemandArray);
+		}
+		
+		this.magnitudeByMillisecond.add(thisMillisecondMagnitude);	
+	}
+	
+	//writeMillisecondByMagnitudeToCityDemandDayLog();
+	
+	return this.magnitudeByMillisecond;
+	
+	//write (millisecond + 1), and magnitude
+
+}
+
 	/*
 	private Surplus generatePowerFromWindmillFarm()
 	{
@@ -172,7 +253,7 @@ private void sendSurplusThroughEnergyCommander()
 		
 	}
 	
-	public static void doSelectionSort(List<Double> dailySurplusTimesOfDayInMilliseconds,
+	public static void doSelectionSort(List<Long> dailySurplusTimesOfDayInMilliseconds,
 			List<Surplus> dailySurplus) 
 	{
 		for (int i = 0; i < dailySurplusTimesOfDayInMilliseconds.size(); i++) 
@@ -188,7 +269,7 @@ private void sendSurplusThroughEnergyCommander()
 
 			// Swap smallest number to current position on array
 			// Swap the position on the dailyDemand array as well
-			Double min = dailySurplusTimesOfDayInMilliseconds.get(pos);
+			Long min = dailySurplusTimesOfDayInMilliseconds.get(pos);
 			Surplus equalMinPosition = dailySurplus.get(pos);
 			dailySurplusTimesOfDayInMilliseconds.set(pos, dailySurplusTimesOfDayInMilliseconds.get(i));
 			dailySurplus.set(pos, dailySurplus.get(i));

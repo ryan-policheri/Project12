@@ -3,6 +3,7 @@ package edu.controllers;
 import edu.model.GraphDataPoint;
 import edu.model.batteries.*;
 import edu.model.city.City;
+import edu.model.energySources.windmillFarm.WindmillFarm;
 import edu.view.MainUserGUI;
 
 import java.util.ArrayList;
@@ -23,10 +24,11 @@ public class Controller
 	//region Des Moines
 	private static int[] energyConsumptionTiersDesMoines = {
 			1, 1, 1, 1, 1, 2, 2, 2, 2, 4, 5, 4, 2, 5, 5, 3, 3, 1, 1, 3, 4, 3, 3, 1};
-	private static int[] energyProductionTiersDesMoines = {
+	private static int[] energyProductionTiersWarrenCountyWindmillFarm = {
 			1, 1, 1, 1, 1, 2, 2, 2, 3, 3, 3, 3, 4, 4, 5, 3, 3, 3, 4, 2, 2, 2, 1, 1};
-	private static City desMoines = new City("Des Moines", energyConsumptionTiersDesMoines,
-			energyProductionTiersDesMoines);
+	private static City desMoines = new City("Des Moines", energyConsumptionTiersDesMoines);
+	//windmill farm
+	private static WindmillFarm warrenCountyWindmillFarm = new WindmillFarm("Warren County Windmill Farm", energyProductionTiersWarrenCountyWindmillFarm);
 
 	//endregion
 	//endregion
