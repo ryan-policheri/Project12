@@ -102,7 +102,6 @@ public class CitySimulator
 
 		writeToCityDemandDayLog();
 
-		simulate();
 	}
 
 	public void simulate()
