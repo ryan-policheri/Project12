@@ -5,6 +5,7 @@ import edu.controllers.Controller;
 import edu.model.EnergyCommander;
 import edu.model.batteries.*;
 import edu.model.city.City;
+import edu.model.energySources.windmillFarm.WindmillFarm;
 import edu.model.energySources.windmillFarm.WindmillFarmSimulator;
 import org.jfree.chart.ChartFactory;
 import org.jfree.chart.ChartPanel;
@@ -17,6 +18,7 @@ import org.jfree.chart.renderer.xy.XYLineAndShapeRenderer;
 import org.jfree.data.xy.XYSeries;
 import org.jfree.data.xy.XYSeriesCollection;
 
+import javax.naming.ldap.Control;
 import javax.swing.*;
 import javax.swing.event.ListSelectionEvent;
 import javax.swing.event.ListSelectionListener;
@@ -84,6 +86,8 @@ public class MainUserGUI
 	private JList listPlaceBatteries;
 	private JButton btnPlaceBatteriesBack;
 	private JButton btnBatteriesRemoveAll;
+	private JPanel panelSimulation;
+	private JPanel panelSimulationChart;
 	//endregion
 	//endregion
 
@@ -91,8 +95,11 @@ public class MainUserGUI
 	private static DefaultListModel<Battery> batteryDefaultListModel = new DefaultListModel<>();
 	private static DefaultListModel<City> cityDefaultListModel = new DefaultListModel<>();
 	private static City selectedCity;
-	protected static final int NUM_OF_TIERS = Controller.getNumOfTiers();
-	protected static final int MAJOR_TICK_SPACING = Controller.getMajorTickSpacing();
+	private static final int NUM_OF_TIERS = Controller.getNumOfTiers();
+	private static final int MAJOR_TICK_SPACING = Controller.getMajorTickSpacing();
+	private static WindmillFarm selectedWindmillFarm;
+	private static ArrayList<Double> magnitudeOfDemandsByMillisecond;
+	private static ArrayList<Double> getMagnitudeOfSurplusesByMillisecond;
 	//endregion
 
 	//region Methods
@@ -100,6 +107,12 @@ public class MainUserGUI
 	{
 		//TODO: Add cities to the list, be able to select them and change their info on the fly
 		//TODO: Add a final "Simulate" feature
+
+		// Initialize
+		selectedWindmillFarm = Controller.getSelectedWMF();
+		magnitudeOfDemandsByMillisecond = Controller.getMagnitudeOfDemandsByMillisecond();
+		getMagnitudeOfSurplusesByMillisecond = Controller.getMagnitudeOfSurplusesByMillisecond();
+
 		//region NATHAN TESTING FOR CITY LIST FUNCTIONALITY
 		Controller.updateCities();
 		//endregion
@@ -178,7 +191,7 @@ public class MainUserGUI
 			@Override
 			public void actionPerformed(ActionEvent e)
 			{
-
+				switchToPanel(panelSimulation);
 			}
 		});
 		//endregion
@@ -280,14 +293,16 @@ public class MainUserGUI
 		//endregion
 	}
 
-	private void addJFreeChartToJPanel(JPanel panel, int[] energyConsumptionTiers)
+	private void addJFreeChartToJPanel(JPanel panel, int[] data, String xAxisLabel, String yAxisLabel, double
+			xAxisStartRange, double
+			xAxisEndRange, double xAxisTickUnit, double yAxisRange, double yAxisTickUnit)
 	{
 		XYSeries series = new XYSeries("XYGraph");
 
-		// Add city energyConsumptionTiers data to the series
-		for (int i = 0; i < energyConsumptionTiers.length; i++)
+		// Add city data data to the series
+		for (int i = 0; i < data.length; i++)
 		{
-			series.add(i, energyConsumptionTiers[i]);
+			series.add(i, data[i]);
 		}
 
 		// Add the series to your data set
@@ -296,7 +311,7 @@ public class MainUserGUI
 
 		// Generate the graph
 		String title = "";
-		JFreeChart chart = ChartFactory.createXYLineChart(title,"Hour","Tier", dataset,
+		JFreeChart chart = ChartFactory.createXYLineChart(title, xAxisLabel, yAxisLabel, dataset,
 				PlotOrientation.VERTICAL, false, false, false);
 
 		// Make data points visible
@@ -310,13 +325,13 @@ public class MainUserGUI
 		xyPlot.setRangeCrosshairVisible(true);
 		// Domain
 		NumberAxis domain = (NumberAxis) xyPlot.getDomainAxis();
-		domain.setRange(0, 23.5);
-		domain.setTickUnit(new NumberTickUnit(1));
+		domain.setRange(0, xAxisEndRange);
+		domain.setTickUnit(new NumberTickUnit(xAxisTickUnit));
 		domain.setTickLabelsVisible(false);
 		// Range
 		NumberAxis range = (NumberAxis) chartPlot.getRangeAxis();
-		range.setRange(0, NUM_OF_TIERS + .5);
-		range.setTickUnit(new NumberTickUnit(MAJOR_TICK_SPACING));
+		range.setRange(0, yAxisRange);
+		range.setTickUnit(new NumberTickUnit(yAxisTickUnit));
 
 		// Add it the graph to the JPanel
 		ChartPanel CP = new ChartPanel(chart);
@@ -326,7 +341,8 @@ public class MainUserGUI
 
 	private void createNewWindmillFarmSimulator()
 	{
-		WindmillFarmSimulator windmillFarmSimulator = new WindmillFarmSimulator();
+		// Ignore this
+		WindmillFarmSimulator windmillFarmSimulator = new WindmillFarmSimulator(new WindmillFarm("Default"));
 		EnergyCommander energyCommander = new EnergyCommander(Controller.getGrid());
 		windmillFarmSimulator.simulate();
 	}
@@ -343,18 +359,27 @@ public class MainUserGUI
 
 	private void switchToPanel(JPanel panel)
 	{
-		panelMain.removeAll();
-		panelMain.add(panel);
-		panelMain.repaint();
-		panelMain.revalidate();
+		this.panelMain.removeAll();
+		this.panelMain.add(panel);
+		this.panelMain.repaint();
+		this.panelMain.revalidate();
 
 		// If it's the Energy panel, insert the charts into the appropriate JPanels
 		if (panel.equals(this.panelEnergy))
 		{
 			this.panelEnergyProductionChart.removeAll();
 			this.panelEnergyConsumptionChart.removeAll();
-			addJFreeChartToJPanel(this.panelEnergyProductionChart, selectedCity.getEnergyProductionTiers());
-			addJFreeChartToJPanel(this.panelEnergyConsumptionChart, selectedCity.getEnergyConsumptionTiers());
+			addJFreeChartToJPanel(this.panelEnergyProductionChart, Controller.getSelectedWMF().getEnergyProductionTiers(),
+					"Hour", "Tier", 0, 23.5, 1, NUM_OF_TIERS + .5, MAJOR_TICK_SPACING);
+			addJFreeChartToJPanel(this.panelEnergyConsumptionChart, selectedCity.getEnergyConsumptionTiers(),
+					"Hour", "Tier", 0, 23.5, 1, NUM_OF_TIERS + .5, MAJOR_TICK_SPACING);
+		}
+
+		if (panel.equals(this.panelSimulation))
+		{
+			System.out.println("Updating controller magnitude by millisecond array...");
+			Controller.updateMagnitudeByMillisecondArrays();
+			updateSimulationChart();
 		}
 	}
 	//endregion
@@ -397,6 +422,13 @@ public class MainUserGUI
 		{
 			cityDefaultListModel.addElement(city);
 		}
+	}
+
+	public void updateSimulationChart()
+	{
+		panelSimulationChart.removeAll();
+		addJFreeChartToJPanel(panelSimulationChart, selectedCity.getEnergyConsumptionTiers(), "Hour",
+				"Tier", 0, 23.5, 1, NUM_OF_TIERS + .5, MAJOR_TICK_SPACING);
 	}
 	//endregion
 

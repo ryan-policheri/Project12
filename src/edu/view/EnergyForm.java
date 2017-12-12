@@ -2,6 +2,7 @@ package edu.view;
 
 import edu.controllers.Controller;
 import edu.model.city.City;
+import edu.model.energySources.windmillFarm.WindmillFarm;
 import edu.view.misc.SliderListener;
 import org.jfree.chart.ChartFactory;
 import org.jfree.chart.ChartPanel;
@@ -75,6 +76,7 @@ public class EnergyForm
 	protected static final int NUM_OF_TIERS = Controller.getNumOfTiers();
 	protected static final int MAJOR_TICK_SPACING = Controller.getMajorTickSpacing();
 	protected static City city = Controller.getSelectedCity();
+	protected static WindmillFarm windmillFarm = Controller.getSelectedWMF();
 	//endregion
 
 	public EnergyForm()
