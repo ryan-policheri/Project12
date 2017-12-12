@@ -12,7 +12,7 @@ import java.util.*;
 
 public class CitySimulator
 {
-	private int totalDemandsInDay = 24; //don't go below 24
+	private int totalDemandsInDay = 1000; //don't go below 24
 	private double oneSecondInSimTime = .0027;
 	private int simulatedHourLengthInSeconds = 10;
 	private int hoursInDay = 24;
@@ -77,7 +77,6 @@ public class CitySimulator
 
 	private void buildDemandArray()
 	{
-
 		Calendar cal = Calendar.getInstance();
 		Date date = new Date();
 		cal.setTime(date);
@@ -100,8 +99,7 @@ public class CitySimulator
 		//Sorts the parallel arrays created above
 		doSelectionSort(dailyDemandTimesOfDayInMilliseconds, dailyDemand);
 
-		writeToCityDemandDayLog();
-
+		writeDemandsToCityDemandDayLog();
 	}
 
 	public void simulate()
@@ -136,8 +134,7 @@ public class CitySimulator
 				}
 			}
 		}
-		, 0, intervalInMilliseconds);
-		
+		, 0, intervalInMilliseconds);		
 	}
 
 	private void sendDemandThroughEnergyCommander()
@@ -217,11 +214,14 @@ public class CitySimulator
 				nextMilliWithNewDemand = this.dailyDemandTimesOfDayInMilliseconds.get(spotInDemandArray);
 			}
 			
-			this.magnitudeByMillisecond.add(thisMillisecondMagnitude);
-		
+			this.magnitudeByMillisecond.add(thisMillisecondMagnitude);	
 		}
 		
+		writeMillisecondByMagnitudeToCityDemandDayLog();
+		
 		return this.magnitudeByMillisecond;
+		
+		//write (millisecond + 1), and magnitude
 
 	}
 
@@ -251,7 +251,7 @@ public class CitySimulator
 		}
 	}
 	
-	private void writeToCityDemandDayLog()
+	private void writeDemandsToCityDemandDayLog()
 	{
 		//Write to CityDemandDayLog
 
@@ -283,6 +283,7 @@ public class CitySimulator
 				//For debugging purposes:
 				//System.out.println("Needs " + getDailyDemand().get(i) + " at the " +
 					//	getDailyDemandTimesOfDayInMilliseconds().get(i) + " millisecond time of day and");
+			
 			} 
 
 			catch (IOException e) 
@@ -292,8 +293,41 @@ public class CitySimulator
 			}
 		}
 
-		System.out.println("Done");
+		System.out.println("Done printing demands");
 	}
-}
 
+
+private void writeMillisecondByMagnitudeToCityDemandDayLog()
+{
+	//Write to CityDemandDayLog
+
+	WriteToFile data = new WriteToFile(fileName, true);
+	
+	try {
+		data.writeToFile("Milliseconds        ,            Magnitude");
+	} catch (IOException e1) {
+		// TODO Auto-generated catch block
+		e1.printStackTrace();
+	}
+
+	for (int i = 0; i < this.magnitudeByMillisecond.size(); i++)
+	{
+
+		try		
+		{
+			data.writeToFile((i + 1) + "                    ,                           " +
+					magnitudeByMillisecond.get(i));
+			
+		} 
+
+		catch (IOException e) 
+		{
+			System.out.println("Sorry - No can do");
+			break;
+		}
+	}
+
+	System.out.println("Done with magnitudes");
+}
+}
 
