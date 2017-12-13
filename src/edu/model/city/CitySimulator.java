@@ -12,7 +12,7 @@ import java.util.*;
 
 public class CitySimulator
 {
-	private int totalDemandsInDay = 5000; //don't go below 24. should be same as windmill farm simulators
+	private int totalDemandsInDay = 1000; //don't go below 24. should be same as windmill farm simulators
 	private double oneSecondInSimTime = .0027;
 	private int simulatedHourLengthInSeconds = 10;
 	private int hoursInDay = 24;
@@ -99,7 +99,7 @@ public class CitySimulator
 		//Sorts the parallel arrays created above
 		doSelectionSort(dailyDemandTimesOfDayInMilliseconds, dailyDemand);
 
-		writeDemandsToCityDemandDayLog();
+		//writeDemandsToCityDemandDayLog();
 	}
 
 	public void simulate()
@@ -112,15 +112,15 @@ public class CitySimulator
 			@Override
 			public void run()
 			{
-				currentMillisecond += 1;
+				currentMillisecond ++;
 
 				if (!dailyDemandTimesOfDayInMilliseconds.isEmpty())
 				{
 					//Out of bounds error when array is done.
-					if (currentMillisecond == getDailyDemandTimesOfDayInMilliseconds().get(0))
+					if (currentMillisecond == dailyDemandTimesOfDayInMilliseconds.get(0))
 					{
-						System.out.println("Removing " + getDailyDemand().get(0) + " at the " 
-								+ getDailyDemandTimesOfDayInMilliseconds().get(0) + " millisecond of day");
+						System.out.println("Removing " + dailyDemand.get(0) + " at the " 
+								+ dailyDemandTimesOfDayInMilliseconds.get(0) + " millisecond of day");
 
 						sendDemandThroughEnergyCommander();
 
@@ -172,6 +172,11 @@ public class CitySimulator
 		{
 			milliIterator += 1;
 			
+			if(milliIterator == nextMilliWithNewDemand)
+			{
+				int uselessThing = 5;
+			}
+			
 			thisMillisecondMagnitude = 0;
 			
 			currentDemandPower = 0;
@@ -196,7 +201,7 @@ public class CitySimulator
 			{
 				//energy need specifically at this millisecond
 				currentDemandPower = this.dailyDemand.get(spotInDemandArray).getEnergyNeededInWatts();
-				currentTimeNeeded = this.dailyDemandTimesOfDayInMilliseconds.get(spotInDemandArray);
+				currentTimeNeeded = this.dailyDemand.get(spotInDemandArray).getTimeNeededInSeconds();
 				thisMillisecondMagnitude += currentDemandPower;
 				
 				//then add this demand to the be part of future overlapping demands
