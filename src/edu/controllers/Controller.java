@@ -7,9 +7,7 @@ import edu.model.city.CitySimulator;
 import edu.model.energySources.windmillFarm.WindmillFarm;
 import edu.model.energySources.windmillFarm.WindmillFarmSimulator;
 import edu.view.MainUserGUI;
-import sun.applet.Main;
 
-import java.lang.reflect.Array;
 import java.util.ArrayList;
 
 public class Controller
@@ -86,8 +84,7 @@ public class Controller
 	public static void updateTimeInformation()
 	{
 		currentMillisecond = windmillFarmSimulator.getCurrentMillisecond();
-		System.out.println(currentMillisecond);
-		mainUserGUI.updateSimulationChart(currentMillisecond);
+		mainUserGUI.updateSimulationChartWithCurrentMillisecond(currentMillisecond);
 	}
 
 	public static void addGravitationalBattery(GravitationalBattery battery)

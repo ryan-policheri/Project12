@@ -18,7 +18,6 @@ import org.jfree.chart.renderer.xy.XYLineAndShapeRenderer;
 import org.jfree.data.xy.XYSeries;
 import org.jfree.data.xy.XYSeriesCollection;
 
-import javax.naming.ldap.Control;
 import javax.swing.*;
 import javax.swing.event.ListSelectionEvent;
 import javax.swing.event.ListSelectionListener;
@@ -98,10 +97,12 @@ public class MainUserGUI
 	private static City selectedCity;
 	private static final int NUM_OF_TIERS = Controller.getNumOfTiers();
 	private static final int MAJOR_TICK_SPACING = Controller.getMajorTickSpacing();
+	private static final int SIMULATION_CHART_WIDTH_IN_POINTS = 2000;
 	private static WindmillFarm selectedWindmillFarm = Controller.getSelectedWMF();
-	private static ArrayList<Double> magnitudeOfDemandsByMillisecond = Controller.getMagnitudeOfDemandsByMillisecond();
-	private static ArrayList<Double> getMagnitudeOfSurplusesByMillisecond = Controller.getMagnitudeOfSurplusesByMillisecond();
+	private static ArrayList<Double> magnitudeOfDemandsByMillisecond;
+	private static ArrayList<Double> getMagnitudeOfSurplusesByMillisecond;
 	private static WindmillFarmSimulator windmillFarmSimulator = Controller.getWindmillFarmSimulator();
+	private static int maximumMagnitudeOfDemandsByMillisecond;
 	//endregion
 
 	//region Methods
@@ -332,7 +333,7 @@ public class MainUserGUI
 		xyPlot.setRangeCrosshairVisible(true);
 		// Domain
 		NumberAxis domain = (NumberAxis) xyPlot.getDomainAxis();
-		domain.setRange(0, xAxisEndRange);
+		domain.setRange(xAxisStartRange, xAxisEndRange);
 		domain.setTickUnit(new NumberTickUnit(xAxisTickUnit));
 		domain.setTickLabelsVisible(false);
 		// Range
@@ -384,13 +385,40 @@ public class MainUserGUI
 
 		if (panel.equals(this.panelSimulation))
 		{
+			// Create the simulation
 			System.out.println("Updating controller magnitude by millisecond array...");
 			Controller.updateMagnitudeByMillisecondArrays();
-			this.updateSimulationChart(0);
+			magnitudeOfDemandsByMillisecond = Controller.getMagnitudeOfDemandsByMillisecond();
+			getMagnitudeOfSurplusesByMillisecond = Controller.getMagnitudeOfSurplusesByMillisecond();
+			this.updateSimulationChartWithCurrentMillisecond(0);
+			System.out.println("Simulating...");
+			findMaximumValueInMagnitudeOfDemandsArray();
+
+			// Testing
+			for (int i = 0; i < magnitudeOfDemandsByMillisecond.size(); i++)
+			{
+				System.out.println(magnitudeOfDemandsByMillisecond.get(i));
+			}
+
 			windmillFarmSimulator.simulate();
 		}
 	}
 	//endregion
+
+	private void findMaximumValueInMagnitudeOfDemandsArray()
+	{
+		double max = 0;
+		for (int i = 0; i < magnitudeOfDemandsByMillisecond.size(); i++)
+		{
+			if (magnitudeOfDemandsByMillisecond.get(i) > max)
+			{
+				max = magnitudeOfDemandsByMillisecond.get(i);
+			}
+		}
+
+		maximumMagnitudeOfDemandsByMillisecond = (int) max;
+		System.out.println(maximumMagnitudeOfDemandsByMillisecond);
+	}
 
 	//region Update functions
 	public static void update()
@@ -432,11 +460,38 @@ public class MainUserGUI
 		}
 	}
 
-	public void updateSimulationChart(long currentMillisecond)
+	public void updateSimulationChartWithCurrentMillisecond(long currentMillisecond)
 	{
+		// Get current millisecond from WindmillFarmSimulator as the xAxisStartRange
+		// Get a period of time later as the xAxisEndRange
+		// Set xAxisTickUnit to a reasonable amount
+		// Set yAxisRange to the maximum value of the entire "demands" array
+		// Set yAxisTickUnit to roughly 20 ticks
+		// Update the graph every millisecond
+
 		panelSimulationChart.removeAll();
-		addJFreeChartToJPanel(panelSimulationChart, selectedCity.getEnergyConsumptionTiers(), "Hour " + currentMillisecond,
-				"Tier", 0, 23.5, 1, NUM_OF_TIERS + .5, MAJOR_TICK_SPACING);
+
+		// Set the data for the chart
+		int xAxisStartRange = (int) currentMillisecond;
+		double xAxisEndRange = xAxisStartRange + SIMULATION_CHART_WIDTH_IN_POINTS;
+		int[] data = new int[SIMULATION_CHART_WIDTH_IN_POINTS];
+
+		for (int i = 0; i < data.length && i + SIMULATION_CHART_WIDTH_IN_POINTS < magnitudeOfDemandsByMillisecond.size();
+			 i++)
+		{
+			data[i] = magnitudeOfDemandsByMillisecond.get(i + xAxisStartRange).intValue();
+		}
+
+		double xAxisTickUnit = SIMULATION_CHART_WIDTH_IN_POINTS / 10;
+		double yAxisRange = 900000;
+		double yAxisTickUnit = Math.round(maximumMagnitudeOfDemandsByMillisecond / 20);
+
+		addJFreeChartToJPanel(panelSimulationChart, data, "Time: " + currentMillisecond,
+				"Total Magnitude of Demands", xAxisStartRange, xAxisEndRange, xAxisTickUnit, yAxisRange,
+				yAxisTickUnit);
+
+		// Testing
+		System.out.println(magnitudeOfDemandsByMillisecond.get((int) currentMillisecond));
 	}
 	//endregion
 

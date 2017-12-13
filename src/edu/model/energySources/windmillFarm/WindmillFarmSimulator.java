@@ -103,8 +103,8 @@ public class WindmillFarmSimulator
 			public void run()
 			{
 				currentMillisecond++;
-				// Update the controller info every 500 milliseconds
-				int updateRate = 250;
+				// Update the controller info every 50 milliseconds
+				int updateRate = 50;
 				if (currentMillisecond % updateRate == 0)
 				{
 					Controller.updateTimeInformation();
@@ -114,7 +114,7 @@ public class WindmillFarmSimulator
 				{
 					if (currentMillisecond == dailySurplusTimesOfDayInMilliseconds.get(0))
 					{
-						System.out.println("Adding " + dailySurplus.get(0) + " at the " 
+						System.out.println("Adding " + dailySurplus.get(0) + " at the "
 								+ dailySurplusTimesOfDayInMilliseconds.get(0) + " millisecond of day");
 
 						sendSurplusThroughEnergyCommander();
