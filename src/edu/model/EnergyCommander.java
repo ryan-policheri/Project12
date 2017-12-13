@@ -16,12 +16,12 @@ public class EnergyCommander
 	public static void commandEnergy(Surplus surplus)
 	{
 		batteryGrid.allocateEnergySurplus(surplus);
-		batteryGrid.displayGrid();
+		//batteryGrid.displayGrid();
 	}
 	
 	public static void commandEnergy(Demand demand)
 	{
 		batteryGrid.allocateEnergyDemand(demand);
-		batteryGrid.displayGrid();
+		//batteryGrid.displayGrid();
 	}
 }
