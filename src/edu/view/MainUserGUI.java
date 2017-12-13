@@ -103,6 +103,7 @@ public class MainUserGUI
 	private static ArrayList<Double> getMagnitudeOfSurplusesByMillisecond;
 	private static WindmillFarmSimulator windmillFarmSimulator = Controller.getWindmillFarmSimulator();
 	private static long maximumMagnitudeOfDemandsByMillisecond;
+	private static final double MAX_Y_AXIS_CHART_MULTIPLIER = 1.2;
 	//endregion
 
 	//region Methods
@@ -307,7 +308,7 @@ public class MainUserGUI
 	{
 		XYSeries series = new XYSeries("XYGraph");
 
-		// Add city data data to the series
+		// Add data to the series
 		for (int i = 0; i < data.length; i++)
 		{
 			series.add(i, data[i]);
@@ -390,35 +391,27 @@ public class MainUserGUI
 			Controller.updateMagnitudeByMillisecondArrays();
 			magnitudeOfDemandsByMillisecond = Controller.getMagnitudeOfDemandsByMillisecond();
 			getMagnitudeOfSurplusesByMillisecond = Controller.getMagnitudeOfSurplusesByMillisecond();
-			this.updateSimulationChartWithCurrentMillisecond(0);
 			System.out.println("Simulating...");
 			findMaximumValueInMagnitudeOfDemandsArray();
-
-			// Testing
-			for (int i = 0; i < magnitudeOfDemandsByMillisecond.size(); i++)
-			{
-				System.out.println(magnitudeOfDemandsByMillisecond.get(i));
-			}
+			this.updateSimulationChartWithCurrentMillisecond(0);
 
 			windmillFarmSimulator.simulate();
 		}
 	}
 	//endregion
 
-	private double findMaximumValueInMagnitudeOfDemandsArray()
+	private void findMaximumValueInMagnitudeOfDemandsArray()
 	{
-		long max = 0;
+		int max = 1;
 		for (int i = 0; i < magnitudeOfDemandsByMillisecond.size(); i++)
 		{
 			if (magnitudeOfDemandsByMillisecond.get(i) > max)
 			{
-				max = Math.round(magnitudeOfDemandsByMillisecond.get(i));
+				max = (int) Math.round(magnitudeOfDemandsByMillisecond.get(i));
 			}
 		}
 
-		maximumMagnitudeOfDemandsByMillisecond = (int) max;
-		System.out.println(maximumMagnitudeOfDemandsByMillisecond);
-		return max;
+		maximumMagnitudeOfDemandsByMillisecond = max;
 	}
 
 	//region Update functions
@@ -474,25 +467,25 @@ public class MainUserGUI
 
 		// Set the data for the chart
 		int xAxisStartRange = (int) currentMillisecond;
-		double xAxisEndRange = xAxisStartRange + SIMULATION_CHART_WIDTH_IN_POINTS;
+		int xAxisEndRange = xAxisStartRange + SIMULATION_CHART_WIDTH_IN_POINTS;
 		int[] data = new int[SIMULATION_CHART_WIDTH_IN_POINTS];
 
-		for (int i = 0; i < data.length && i + SIMULATION_CHART_WIDTH_IN_POINTS < magnitudeOfDemandsByMillisecond.size();
-			 i++)
+		for (int i = 0; i < data.length; i++)
 		{
-			data[i] = magnitudeOfDemandsByMillisecond.get(i + xAxisStartRange).intValue();
+			data[i] = magnitudeOfDemandsByMillisecond.get(xAxisStartRange + i).intValue();
 		}
 
-		double xAxisTickUnit = SIMULATION_CHART_WIDTH_IN_POINTS / 10;
-		long yAxisRange = 90000;
-		double yAxisTickUnit = Math.round(maximumMagnitudeOfDemandsByMillisecond / 20);
+		double xAxisTickUnit = SIMULATION_CHART_WIDTH_IN_POINTS / 2;
+		double yAxisRange = MAX_Y_AXIS_CHART_MULTIPLIER * maximumMagnitudeOfDemandsByMillisecond;
+		double yAxisTickUnit = Math.round(MAX_Y_AXIS_CHART_MULTIPLIER * maximumMagnitudeOfDemandsByMillisecond / 5.2);
 
 		addJFreeChartToJPanel(panelSimulationChart, data, "Time: " + currentMillisecond,
-				"Total Magnitude of Demands", xAxisStartRange, xAxisEndRange, xAxisTickUnit, yAxisRange,
+				"Total Magnitude of Demands", 0, SIMULATION_CHART_WIDTH_IN_POINTS, xAxisTickUnit, yAxisRange,
 				yAxisTickUnit);
 
-		// Testing
-		System.out.println(magnitudeOfDemandsByMillisecond.get((int) currentMillisecond));
+		System.out.println(data[0]);
+
+
 	}
 	//endregion
 

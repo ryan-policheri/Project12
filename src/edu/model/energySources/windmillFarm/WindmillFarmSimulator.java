@@ -18,7 +18,7 @@ import java.util.List;
 
 public class WindmillFarmSimulator
 {
-	private int totalAmountOfSurplusesInDay = 5000; //don't go below 24. should be same as city simulators
+	private int totalAmountOfSurplusesInDay = 24; //don't go below 24. should be same as city simulators
 	private double simulatedHourLengthInSeconds = 10;
 	private long millisecondsInDay = (long) (86400000L);
 	private long simulatedMillisecondsInDay = millisecondsInDay / 360; //* by scale
@@ -114,12 +114,12 @@ public class WindmillFarmSimulator
 				{
 					if (currentMillisecond == dailySurplusTimesOfDayInMilliseconds.get(0))
 					{
-						System.out.println("Adding " + dailySurplus.get(0) + " at the "
-								+ dailySurplusTimesOfDayInMilliseconds.get(0) + " millisecond of day");
+						//System.out.println("Adding " + dailySurplus.get(0) + " at the "
+						//		+ dailySurplusTimesOfDayInMilliseconds.get(0) + " millisecond of day");
 
 						sendSurplusThroughEnergyCommander();
 
-						System.out.println("Added");
+						//System.out.println("Added");
 					}
 				}
 				else
