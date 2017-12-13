@@ -189,7 +189,7 @@ public class WindmillFarmSimulator
 			{
 				//energy need specifically at this millisecond
 				currentDemandPower = this.dailySurplus.get(spotInDemandArray).getEnergyAvailableInWatts();
-				currentTimeNeeded = this.dailySurplusTimesOfDayInMilliseconds.get(spotInDemandArray);
+				currentTimeNeeded = this.dailySurplus.get(spotInDemandArray).getTimeAvailableInSeconds();
 				thisMillisecondMagnitude += currentDemandPower;
 
 				//then add this demand to the be part of future overlapping demands
