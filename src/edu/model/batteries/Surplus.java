@@ -28,7 +28,7 @@ public class Surplus
 	
 	public void chopMillisecondOff()
 	{
-		double tempTimeNeededInMilliseconds = (long) this.timeAvailableInSeconds * 1000;
+		double tempTimeNeededInMilliseconds = (long) (this.timeAvailableInSeconds * 1000);
 		tempTimeNeededInMilliseconds -= 1;
 		this.timeAvailableInSeconds = (double) tempTimeNeededInMilliseconds / 1000.0;	
 	}

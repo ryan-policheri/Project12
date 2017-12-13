@@ -30,7 +30,7 @@ public class Demand
 	
 	public void chopMillisecondOff()
 	{
-		double tempTimeNeededInMilliseconds = (long) this.timeNeededInSeconds * 1000;
+		double tempTimeNeededInMilliseconds = (long) (this.timeNeededInSeconds * 1000);
 		tempTimeNeededInMilliseconds -= 1;
 		this.timeNeededInSeconds = (double) tempTimeNeededInMilliseconds / 1000.0;	
 	}
