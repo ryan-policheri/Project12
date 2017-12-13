@@ -176,7 +176,9 @@ public class ProgramDriver
 		
 		
 		//BUILD ARRAYS THAT GIVE THE TOTAL ENERGY EVERY MILLISECOND - FOR THE USER INTERFACE GRAPHS
-		citySimulator.constructMagnitudeByMillisecondArray();
+		System.out.println(citySimulator.constructMagnitudeByMillisecondArray());
+		System.out.println(citySimulator.getDailyDemand());
+		System.out.println(citySimulator.getDailyDemandTimesOfDayInMilliseconds());
 		//windmillFarmSimulator.constructMagnitudeByMillisecondArray();
 		
 		

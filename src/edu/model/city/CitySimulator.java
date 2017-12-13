@@ -12,7 +12,7 @@ import java.util.*;
 
 public class CitySimulator
 {
-	private int totalDemandsInDay = 1000; //don't go below 24. should be same as windmill farm simulators
+	private int totalDemandsInDay = 100; //don't go below 24. should be same as windmill farm simulators
 	private double oneSecondInSimTime = .0027;
 	private int simulatedHourLengthInSeconds = 10;
 	private int hoursInDay = 24;
@@ -54,7 +54,7 @@ public class CitySimulator
 		this.dailyDemandTimesOfDayInMilliseconds.add(dailyDemandTimesOfDayInMilliseconds);
 	}
 
-	public void removeDemand(Demand dailyDemand, double dailyDemandTimesOfDayInMilliseconds)
+	public void removeDemand(Demand dailyDemand, long dailyDemandTimesOfDayInMilliseconds)
 	{
 		this.dailyDemand.remove(dailyDemand);
 		this.dailyDemandTimesOfDayInMilliseconds.remove(dailyDemandTimesOfDayInMilliseconds);
