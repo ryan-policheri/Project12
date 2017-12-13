@@ -92,26 +92,33 @@ public class MainUserGUI
 	//endregion
 
 	//region Initialize attributes
+	private Controller controller;
 	private static DefaultListModel<Battery> batteryDefaultListModel = new DefaultListModel<>();
 	private static DefaultListModel<City> cityDefaultListModel = new DefaultListModel<>();
 	private static City selectedCity;
 	private static final int NUM_OF_TIERS = Controller.getNumOfTiers();
 	private static final int MAJOR_TICK_SPACING = Controller.getMajorTickSpacing();
-	private static WindmillFarm selectedWindmillFarm;
-	private static ArrayList<Double> magnitudeOfDemandsByMillisecond;
-	private static ArrayList<Double> getMagnitudeOfSurplusesByMillisecond;
+	private static WindmillFarm selectedWindmillFarm = Controller.getSelectedWMF();
+	private static ArrayList<Double> magnitudeOfDemandsByMillisecond = Controller.getMagnitudeOfDemandsByMillisecond();
+	private static ArrayList<Double> getMagnitudeOfSurplusesByMillisecond = Controller.getMagnitudeOfSurplusesByMillisecond();
+	private static WindmillFarmSimulator windmillFarmSimulator = Controller.getWindmillFarmSimulator();
 	//endregion
 
 	//region Methods
 	public MainUserGUI()
 	{
+		controller = new Controller(this);
+
 		//TODO: Add cities to the list, be able to select them and change their info on the fly
 		//TODO: Add a final "Simulate" feature
 
-		// Initialize
-		selectedWindmillFarm = Controller.getSelectedWMF();
-		magnitudeOfDemandsByMillisecond = Controller.getMagnitudeOfDemandsByMillisecond();
-		getMagnitudeOfSurplusesByMillisecond = Controller.getMagnitudeOfSurplusesByMillisecond();
+		//TODO: MAJOR PRIORITY - see below
+		// Get current millisecond from WindmillFarmSimulator as the xAxisStartRange
+		// Get a period of time later as the xAxisEndRange
+		// Set xAxisTickUnit to a reasonable amount
+		// Set yAxisRange to the maximum value of the entire "demands" array
+		// Set yAxisTickUnit to roughly 20 ticks
+		// Update the graph every millisecond
 
 		//region NATHAN TESTING FOR CITY LIST FUNCTIONALITY
 		Controller.updateCities();
@@ -207,7 +214,8 @@ public class MainUserGUI
 				City selectedCity = cities.get(listCities.getSelectedIndex());
 				Controller.setSelectedCity(selectedCity);
 
-				Controller.updateCities();
+				// Made it laggy
+				// Controller.updateCities();
 
 				// Update labels
 				lblPickCitySelectedCityName.setText("Selected City: " + selectedCity.toString());
@@ -294,8 +302,7 @@ public class MainUserGUI
 	}
 
 	private void addJFreeChartToJPanel(JPanel panel, int[] data, String xAxisLabel, String yAxisLabel, double
-			xAxisStartRange, double
-			xAxisEndRange, double xAxisTickUnit, double yAxisRange, double yAxisTickUnit)
+			xAxisStartRange, double xAxisEndRange, double xAxisTickUnit, double yAxisRange, double yAxisTickUnit)
 	{
 		XYSeries series = new XYSeries("XYGraph");
 
@@ -379,7 +386,8 @@ public class MainUserGUI
 		{
 			System.out.println("Updating controller magnitude by millisecond array...");
 			Controller.updateMagnitudeByMillisecondArrays();
-			updateSimulationChart();
+			this.updateSimulationChart(0);
+			windmillFarmSimulator.simulate();
 		}
 	}
 	//endregion
@@ -424,10 +432,10 @@ public class MainUserGUI
 		}
 	}
 
-	public void updateSimulationChart()
+	public void updateSimulationChart(long currentMillisecond)
 	{
 		panelSimulationChart.removeAll();
-		addJFreeChartToJPanel(panelSimulationChart, selectedCity.getEnergyConsumptionTiers(), "Hour",
+		addJFreeChartToJPanel(panelSimulationChart, selectedCity.getEnergyConsumptionTiers(), "Hour " + currentMillisecond,
 				"Tier", 0, 23.5, 1, NUM_OF_TIERS + .5, MAJOR_TICK_SPACING);
 	}
 	//endregion

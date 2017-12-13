@@ -1,5 +1,6 @@
 package edu.model.energySources.windmillFarm;
 
+import edu.controllers.Controller;
 import edu.controllers.WriteToFile;
 import edu.model.EnergyCommander;
 import edu.model.batteries.Demand;
@@ -56,7 +57,7 @@ public class WindmillFarmSimulator
 		this.dailySurplusTimesOfDayInMilliseconds.remove(dailySurplusTimesOfDayInMilliseconds);
 	}
 	
-	//CHANGE TO oldSimulate
+	//region Old oldSimulate function
 	/*
 	public void oldSimulate()
 	{
@@ -75,7 +76,8 @@ public class WindmillFarmSimulator
 									, 0, intervalInMilliseconds);
 	}
 	*/
-	
+	//endregion
+
 	private void buildSurplusArray()
 	{
 		for (int i = 0; i < this.totalAmountOfSurplusesInDay; i++)
@@ -90,8 +92,7 @@ public class WindmillFarmSimulator
 		
 		writeToLog();
 	}
-	
-	
+
 	public void simulate()
 	{		
 		//Timer Code
@@ -102,6 +103,12 @@ public class WindmillFarmSimulator
 			public void run()
 			{
 				currentMillisecond++;
+				// Update the controller info every 500 milliseconds
+				int updateRate = 250;
+				if (currentMillisecond % updateRate == 0)
+				{
+					Controller.updateTimeInformation();
+				}
 
 				if (!dailySurplusTimesOfDayInMilliseconds.isEmpty())
 				{
@@ -125,92 +132,93 @@ public class WindmillFarmSimulator
 		, 0, intervalInMilliseconds);
 	}	
 	
-private void sendSurplusThroughEnergyCommander()
-{
-	EnergyCommander.commandEnergy(dailySurplus.get(0));
-	removeSurplus(dailySurplus.get(0), dailySurplusTimesOfDayInMilliseconds.get(0));	
-}
-
-public ArrayList<Double> constructMagnitudeByMillisecondArray()
-{
-	int lastPositionInSurplusArray = this.dailySurplusTimesOfDayInMilliseconds.size() - 1;
-	
-	//find the last possible active millisecond
-	long lastSurplusStartTimeInMilliseconds = this.dailySurplusTimesOfDayInMilliseconds.get(lastPositionInSurplusArray);
-	long lastPossibleRelevantMillisecond = (long) (lastSurplusStartTimeInMilliseconds + (this.simulatedHourLengthInSeconds * 1000));
-	
-	long milliIterator = -1;
-	long nextMilliWithNewDemand = 0;
-	
-	int spotInDemandArray = 0;
-	
-	double currentDemandPower = 0;
-	double currentTimeNeeded = 0;
-	
-	double thisMillisecondMagnitude = 0;
-	
-	ArrayList<Demand> ongoingDemands = new ArrayList<Demand>();
-	
-	//find first active millisecond
-	nextMilliWithNewDemand = this.dailySurplusTimesOfDayInMilliseconds.get(spotInDemandArray);
-	
-	while (milliIterator <= lastPossibleRelevantMillisecond)
+	private void sendSurplusThroughEnergyCommander()
 	{
-		milliIterator += 1;
-		
-		thisMillisecondMagnitude = 0;
-		
-		currentDemandPower = 0;
-		currentTimeNeeded = 0;
-		
-		//add previous energy needs that may overlap
-		//go backwards so that can delete while in loop
-		for(int i = ongoingDemands.size() - 1; i >=0; i--)
-		{
-			thisMillisecondMagnitude += ongoingDemands.get(i).getEnergyNeededInWatts();
-			//chop a millisecond off
-			ongoingDemands.get(i).chopMillisecondOff();
-			//remove empty ones
-			if((long) (ongoingDemands.get(i).getTimeNeededInSeconds() * 1000) < 1)
-			{
-				ongoingDemands.remove(ongoingDemands.get(i));
-			}
-		}
-		
-		//if this milliseconds is a millisecond with a new demand
-		if(milliIterator == nextMilliWithNewDemand)
-		{
-			//energy need specifically at this millisecond
-			currentDemandPower = this.dailySurplus.get(spotInDemandArray).getEnergyAvailableInWatts();
-			currentTimeNeeded = this.dailySurplusTimesOfDayInMilliseconds.get(spotInDemandArray);
-			thisMillisecondMagnitude += currentDemandPower;
-			
-			//then add this demand to the be part of future overlapping demands
-			Demand tempDemand = new Demand(currentDemandPower, currentTimeNeeded);
-			tempDemand.chopMillisecondOff();
-			ongoingDemands.add(tempDemand);
-			
-			//go to next index in array if there is one
-			if(spotInDemandArray < lastPositionInSurplusArray)
-			{
-				spotInDemandArray += 1;
-			}
-			
-			//set the next relevant milli
-			nextMilliWithNewDemand = this.dailySurplusTimesOfDayInMilliseconds.get(spotInDemandArray);
-		}
-		
-		this.magnitudeByMillisecond.add(thisMillisecondMagnitude);	
+		EnergyCommander.commandEnergy(dailySurplus.get(0));
+		removeSurplus(dailySurplus.get(0), dailySurplusTimesOfDayInMilliseconds.get(0));
 	}
-	
-	//writeMillisecondByMagnitudeToCityDemandDayLog();
-	
-	return this.magnitudeByMillisecond;
-	
-	//write (millisecond + 1), and magnitude
 
-}
+	public ArrayList<Double> constructMagnitudeByMillisecondArray()
+	{
+		int lastPositionInSurplusArray = this.dailySurplusTimesOfDayInMilliseconds.size() - 1;
 
+		//find the last possible active millisecond
+		long lastSurplusStartTimeInMilliseconds = this.dailySurplusTimesOfDayInMilliseconds.get(lastPositionInSurplusArray);
+		long lastPossibleRelevantMillisecond = (long) (lastSurplusStartTimeInMilliseconds + (this.simulatedHourLengthInSeconds * 1000));
+
+		long milliIterator = -1;
+		long nextMilliWithNewDemand = 0;
+
+		int spotInDemandArray = 0;
+
+		double currentDemandPower = 0;
+		double currentTimeNeeded = 0;
+
+		double thisMillisecondMagnitude = 0;
+
+		ArrayList<Demand> ongoingDemands = new ArrayList<Demand>();
+
+		//find first active millisecond
+		nextMilliWithNewDemand = this.dailySurplusTimesOfDayInMilliseconds.get(spotInDemandArray);
+
+		while (milliIterator <= lastPossibleRelevantMillisecond)
+		{
+			milliIterator += 1;
+
+			thisMillisecondMagnitude = 0;
+
+			currentDemandPower = 0;
+			currentTimeNeeded = 0;
+
+			//add previous energy needs that may overlap
+			//go backwards so that can delete while in loop
+			for(int i = ongoingDemands.size() - 1; i >=0; i--)
+			{
+				thisMillisecondMagnitude += ongoingDemands.get(i).getEnergyNeededInWatts();
+				//chop a millisecond off
+				ongoingDemands.get(i).chopMillisecondOff();
+				//remove empty ones
+				if((long) (ongoingDemands.get(i).getTimeNeededInSeconds() * 1000) < 1)
+				{
+					ongoingDemands.remove(ongoingDemands.get(i));
+				}
+			}
+
+			//if this milliseconds is a millisecond with a new demand
+			if(milliIterator == nextMilliWithNewDemand)
+			{
+				//energy need specifically at this millisecond
+				currentDemandPower = this.dailySurplus.get(spotInDemandArray).getEnergyAvailableInWatts();
+				currentTimeNeeded = this.dailySurplusTimesOfDayInMilliseconds.get(spotInDemandArray);
+				thisMillisecondMagnitude += currentDemandPower;
+
+				//then add this demand to the be part of future overlapping demands
+				Demand tempDemand = new Demand(currentDemandPower, currentTimeNeeded);
+				tempDemand.chopMillisecondOff();
+				ongoingDemands.add(tempDemand);
+
+				//go to next index in array if there is one
+				if(spotInDemandArray < lastPositionInSurplusArray)
+				{
+					spotInDemandArray += 1;
+				}
+
+				//set the next relevant milli
+				nextMilliWithNewDemand = this.dailySurplusTimesOfDayInMilliseconds.get(spotInDemandArray);
+			}
+
+			this.magnitudeByMillisecond.add(thisMillisecondMagnitude);
+		}
+
+		//writeMillisecondByMagnitudeToCityDemandDayLog();
+
+		return this.magnitudeByMillisecond;
+
+		//write (millisecond + 1), and magnitude
+
+	}
+
+	//region Old generatePowerFromWindmillFarm function
 	/*
 	private Surplus generatePowerFromWindmillFarm()
 	{
@@ -238,6 +246,8 @@ public ArrayList<Double> constructMagnitudeByMillisecondArray()
 		return surplus;
 	}
 	*/
+	//endregion
+
 	private void buildHoursOfDayArray()
 	{
 		for(int hour = 0; hour < 24; hour++)
@@ -279,7 +289,12 @@ public ArrayList<Double> constructMagnitudeByMillisecondArray()
 		
 
 	}
-	
+
+	public long getCurrentMillisecond()
+	{
+		return currentMillisecond;
+	}
+
 	private void writeToLog()
 	{
 		System.out.println("HELLO PRINTING SURPLUSES");

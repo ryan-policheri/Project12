@@ -7,6 +7,7 @@ import edu.model.city.CitySimulator;
 import edu.model.energySources.windmillFarm.WindmillFarm;
 import edu.model.energySources.windmillFarm.WindmillFarmSimulator;
 import edu.view.MainUserGUI;
+import sun.applet.Main;
 
 import java.lang.reflect.Array;
 import java.util.ArrayList;
@@ -45,14 +46,24 @@ public class Controller
 	private static CitySimulator citySimulator = new CitySimulator(desMoines);
 	private static EnergyCommander energyCommander = new EnergyCommander(grid);
 
-	//Windmill farm
+	// Windmill farm
 	private static WindmillFarm warrenCountyWindmillFarm = new WindmillFarm("Warren County Windmill Farm",
 			energyProductionTiersWarrenCountyWMF);
 	private static WindmillFarmSimulator windmillFarmSimulator = new WindmillFarmSimulator(warrenCountyWindmillFarm);
-
 	private static ArrayList<Double> magnitudeOfDemandsByMillisecond;
 	private static ArrayList<Double> magnitudeOfSurplusesByMillisecond;
 	private static WindmillFarm selectedWMF = warrenCountyWindmillFarm;
+
+	// Times
+	private static long currentMillisecond = 0;
+
+	// Connect it to the correct form
+	private static MainUserGUI mainUserGUI;
+
+	public Controller(MainUserGUI mainUserGUI)
+	{
+		this.mainUserGUI = mainUserGUI;
+	}
 
 	public static void updateCities()
 	{
@@ -70,6 +81,13 @@ public class Controller
 	{
 		magnitudeOfDemandsByMillisecond = citySimulator.constructMagnitudeByMillisecondArray();
 		magnitudeOfSurplusesByMillisecond = windmillFarmSimulator.constructMagnitudeByMillisecondArray();
+	}
+
+	public static void updateTimeInformation()
+	{
+		currentMillisecond = windmillFarmSimulator.getCurrentMillisecond();
+		System.out.println(currentMillisecond);
+		mainUserGUI.updateSimulationChart(currentMillisecond);
 	}
 
 	public static void addGravitationalBattery(GravitationalBattery battery)
@@ -171,6 +189,11 @@ public class Controller
 	public static void setSelectedCity(City newCity)
 	{
 		selectedCity = newCity;
+	}
+
+	public static WindmillFarmSimulator getWindmillFarmSimulator()
+	{
+		return windmillFarmSimulator;
 	}
 
 	public static City getDesMoines()
