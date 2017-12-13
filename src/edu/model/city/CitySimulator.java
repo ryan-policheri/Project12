@@ -92,8 +92,7 @@ public class CitySimulator
 			int randomMillisecondInDayToHour = (int) ((randomMillisecondInDay / 10000));
 
 			addDemand(new Demand((city.calculateCityDemand(randomMillisecondInDayToHour, (this.totalDemandsInDay / this.hoursInDay))),
-					Math.random() * 10 ), 
-					randomMillisecondInDay);
+					Math.random() * 10 ), randomMillisecondInDay);
 		}
 
 		//Sorts the parallel arrays created above
