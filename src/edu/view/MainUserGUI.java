@@ -102,8 +102,8 @@ public class MainUserGUI
 	private static ArrayList<Double> magnitudeOfDemandsByMillisecond;
 	private static ArrayList<Double> getMagnitudeOfSurplusesByMillisecond;
 	private static WindmillFarmSimulator windmillFarmSimulator = Controller.getWindmillFarmSimulator();
-	private static long maximumMagnitudeOfDemandsByMillisecond;
-	private static final double MAX_Y_AXIS_CHART_MULTIPLIER = 1.2;
+	private static double maximumMagnitudeOfDemandsByMillisecond;
+	private static final double MAX_Y_AXIS_CHART_MULTIPLIER = 1;
 	//endregion
 
 	//region Methods
@@ -303,7 +303,7 @@ public class MainUserGUI
 		//endregion
 	}
 
-	private void addJFreeChartToJPanel(JPanel panel, int[] data, String xAxisLabel, String yAxisLabel, double
+	private void addJFreeChartToJPanel(JPanel panel, double[] data, String xAxisLabel, String yAxisLabel, double
 			xAxisStartRange, double xAxisEndRange, double xAxisTickUnit, double yAxisRange, double yAxisTickUnit)
 	{
 		XYSeries series = new XYSeries("XYGraph");
@@ -378,10 +378,21 @@ public class MainUserGUI
 		{
 			this.panelEnergyProductionChart.removeAll();
 			this.panelEnergyConsumptionChart.removeAll();
-			addJFreeChartToJPanel(this.panelEnergyProductionChart, Controller.getSelectedWMF().getEnergyProductionTiers(),
-					"Hour", "Tier", 0, 23.5, 1, NUM_OF_TIERS + .5, MAJOR_TICK_SPACING);
-			addJFreeChartToJPanel(this.panelEnergyConsumptionChart, selectedCity.getEnergyConsumptionTiers(),
-					"Hour", "Tier", 0, 23.5, 1, NUM_OF_TIERS + .5, MAJOR_TICK_SPACING);
+			int[] energyProductionTiers = Controller.getSelectedWMF().getEnergyProductionTiers();
+			int[] energyConsumptionTiers = selectedCity.getEnergyConsumptionTiers();
+			double[] energyProductionTiersDouble = new double[energyProductionTiers.length];
+			double[] energyConsumptionTiersDouble = new double[energyConsumptionTiers.length];
+
+			for (int i = 0; i < energyConsumptionTiers.length; i++)
+			{
+				energyProductionTiersDouble[i] = energyProductionTiers[i];
+				energyConsumptionTiersDouble[i] = energyConsumptionTiers[i];
+			}
+
+			addJFreeChartToJPanel(this.panelEnergyProductionChart, energyProductionTiersDouble,
+					"Hour", "Tier", 0, 23.5, 1, (double) (NUM_OF_TIERS + .5), MAJOR_TICK_SPACING);
+			addJFreeChartToJPanel(this.panelEnergyConsumptionChart, energyConsumptionTiersDouble,
+					"Hour", "Tier", 0, 23.5, 1, (double) (NUM_OF_TIERS + .5), MAJOR_TICK_SPACING);
 		}
 
 		if (panel.equals(this.panelSimulation))
@@ -454,7 +465,7 @@ public class MainUserGUI
 		}
 	}
 
-	public void updateSimulationChartWithCurrentMillisecond(long currentMillisecond)
+	public void updateSimulationChartWithCurrentMillisecond(double currentMillisecond)
 	{
 		// Get current millisecond from WindmillFarmSimulator as the xAxisStartRange
 		// Get a period of time later as the xAxisEndRange
@@ -466,18 +477,18 @@ public class MainUserGUI
 		panelSimulationChart.removeAll();
 
 		// Set the data for the chart
-		int xAxisStartRange = (int) currentMillisecond;
-		int xAxisEndRange = xAxisStartRange + SIMULATION_CHART_WIDTH_IN_POINTS;
-		int[] data = new int[SIMULATION_CHART_WIDTH_IN_POINTS];
+		double xAxisStartRange = currentMillisecond;
+		double xAxisEndRange = xAxisStartRange + SIMULATION_CHART_WIDTH_IN_POINTS;
+		double[] data = new double[SIMULATION_CHART_WIDTH_IN_POINTS];
 
 		for (int i = 0; i < data.length; i++)
 		{
-			data[i] = magnitudeOfDemandsByMillisecond.get(xAxisStartRange + i).intValue();
+			data[i] = magnitudeOfDemandsByMillisecond.get((int) (xAxisStartRange + i)).intValue();
 		}
 
 		double xAxisTickUnit = SIMULATION_CHART_WIDTH_IN_POINTS / 2;
 		double yAxisRange = MAX_Y_AXIS_CHART_MULTIPLIER * maximumMagnitudeOfDemandsByMillisecond;
-		double yAxisTickUnit = Math.round(MAX_Y_AXIS_CHART_MULTIPLIER * maximumMagnitudeOfDemandsByMillisecond / 5.2);
+		double yAxisTickUnit = Math.round(MAX_Y_AXIS_CHART_MULTIPLIER * maximumMagnitudeOfDemandsByMillisecond / 5.01);
 
 		addJFreeChartToJPanel(panelSimulationChart, data, "Time: " + currentMillisecond,
 				"Total Magnitude of Demands", 0, SIMULATION_CHART_WIDTH_IN_POINTS, xAxisTickUnit, yAxisRange,

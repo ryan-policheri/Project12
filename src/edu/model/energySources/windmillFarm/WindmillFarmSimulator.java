@@ -103,12 +103,12 @@ public class WindmillFarmSimulator
 			public void run()
 			{
 				currentMillisecond++;
-				// Update the controller info every 50 milliseconds
-/*				int updateRate = 50;
+				// Update the controller info every 20 milliseconds
+				int updateRate = 20;
 				if (currentMillisecond % updateRate == 0)
 				{
 					Controller.updateTimeInformation();
-				}*/
+				}
 
 				if (!dailySurplusTimesOfDayInMilliseconds.isEmpty())
 				{
