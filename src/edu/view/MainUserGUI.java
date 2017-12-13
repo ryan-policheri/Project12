@@ -102,7 +102,7 @@ public class MainUserGUI
 	private static ArrayList<Double> magnitudeOfDemandsByMillisecond;
 	private static ArrayList<Double> getMagnitudeOfSurplusesByMillisecond;
 	private static WindmillFarmSimulator windmillFarmSimulator = Controller.getWindmillFarmSimulator();
-	private static int maximumMagnitudeOfDemandsByMillisecond;
+	private static long maximumMagnitudeOfDemandsByMillisecond;
 	//endregion
 
 	//region Methods
@@ -405,19 +405,20 @@ public class MainUserGUI
 	}
 	//endregion
 
-	private void findMaximumValueInMagnitudeOfDemandsArray()
+	private double findMaximumValueInMagnitudeOfDemandsArray()
 	{
-		double max = 0;
+		long max = 0;
 		for (int i = 0; i < magnitudeOfDemandsByMillisecond.size(); i++)
 		{
 			if (magnitudeOfDemandsByMillisecond.get(i) > max)
 			{
-				max = magnitudeOfDemandsByMillisecond.get(i);
+				max = Math.round(magnitudeOfDemandsByMillisecond.get(i));
 			}
 		}
 
 		maximumMagnitudeOfDemandsByMillisecond = (int) max;
 		System.out.println(maximumMagnitudeOfDemandsByMillisecond);
+		return max;
 	}
 
 	//region Update functions
@@ -483,7 +484,7 @@ public class MainUserGUI
 		}
 
 		double xAxisTickUnit = SIMULATION_CHART_WIDTH_IN_POINTS / 10;
-		double yAxisRange = 900000;
+		long yAxisRange = 90000;
 		double yAxisTickUnit = Math.round(maximumMagnitudeOfDemandsByMillisecond / 20);
 
 		addJFreeChartToJPanel(panelSimulationChart, data, "Time: " + currentMillisecond,
