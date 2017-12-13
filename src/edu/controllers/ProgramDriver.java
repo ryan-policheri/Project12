@@ -177,22 +177,26 @@ public class ProgramDriver
 		
 		//BUILD ARRAYS THAT GIVE THE TOTAL ENERGY EVERY MILLISECOND - FOR THE USER INTERFACE GRAPHS
 		citySimulator.constructMagnitudeByMillisecondArray();
-		windmillFarmSimulator.constructMagnitudeByMillisecondArray();
+		//windmillFarmSimulator.constructMagnitudeByMillisecondArray();
 		
 		
 		//SIMULATE
 		
-		new Thread(new Runnable() {
+/*		new Thread(new Runnable() {
 		     public void run() {
 		    	 citySimulator.simulate();
 		     }
-		}).start();
+		}).start();*/
 		
-		new Thread(new Runnable() {
+/*		new Thread(new Runnable() {
 		     public void run() {
 		    	 windmillFarmSimulator.simulate();
 		     }
-		}).start();
+		}).start();*/
+		
+		//windmillFarmSimulator.simulate();
+		//citySimulator.simulate();
+
 		
 		//TimeUnit.SECONDS.sleep(300);
 		
