@@ -1,26 +1,13 @@
 package edu.controllers;
 
 import edu.model.EnergyCommander;
-import edu.model.GraphDataPoint;
-import edu.model.batteries.BatteryGrid;
-import edu.model.batteries.Demand;
-import edu.model.batteries.RotationalBattery;
-import edu.model.batteries.Surplus;
+import edu.model.batteries.*;
 import edu.model.city.City;
 import edu.model.city.CitySimulator;
 import edu.model.energySources.windmillFarm.WindmillFarm;
 import edu.model.energySources.windmillFarm.WindmillFarmSimulator;
-import edu.model.batteries.FlywheelBearing;
-import edu.model.batteries.FlywheelMaterial;
-import edu.model.batteries.GravitationalBattery;
 
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Timer;
-import java.util.TimerTask;
 import java.util.concurrent.TimeUnit;
-
-import com.sun.xml.internal.ws.policy.privateutil.PolicyUtils.Collections;
 
 public class ProgramDriver
 {

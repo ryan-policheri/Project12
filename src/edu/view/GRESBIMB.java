@@ -21,9 +21,13 @@ import org.jfree.data.xy.XYSeries;
 import org.jfree.data.xy.XYSeriesCollection;
 
 import javax.swing.*;
+import javax.swing.event.ListSelectionEvent;
+import javax.swing.event.ListSelectionListener;
 import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.beans.PropertyChangeEvent;
+import java.beans.PropertyChangeListener;
 import java.util.ArrayList;
 //endregion
 
@@ -41,7 +45,6 @@ public class GRESBIMB
 	//region Welcome panel
 	private JPanel panelWelcome;
 	private JButton btnStartNewSimulation;
-	private JButton btnWindmillFarm;
 	private JButton btnExit;
 	//endregion
 
@@ -348,14 +351,6 @@ public class GRESBIMB
 				switchToPanel(panelPickCity);
 			}
 		});
-		btnWindmillFarm.addActionListener(new ActionListener()
-		{
-			@Override
-			public void actionPerformed(ActionEvent e)
-			{
-				createNewWindmillFarmSimulator();
-			}
-		});
 		//endregion
 
 		//region Energy screen buttons
@@ -414,7 +409,8 @@ public class GRESBIMB
 			}
 		});
 		//endregion
-		//endregion
+
+		//region Simulate screen buttons
 		btnSimulationStop.addActionListener(new ActionListener()
 		{
 			@Override
@@ -430,6 +426,31 @@ public class GRESBIMB
 			public void actionPerformed(ActionEvent e)
 			{
 				restart();
+			}
+		});
+		//endregion
+		//endregion
+
+		listCities.addListSelectionListener(new ListSelectionListener()
+		{
+			@Override
+			public void valueChanged(ListSelectionEvent e)
+			{
+				// This is extremely hardcoded for Chicago on top, Des Moines on bottom
+				if (listCities.getSelectedIndex() == 0)
+				{
+					lblPickCitySelectedCityName.setText("Selected city: Chicago");
+				}
+				else if (listCities.getSelectedIndex() == 1)
+				{
+					lblPickCitySelectedCityName.setText("Selected city: Des Moines");
+				}
+				else
+				{
+					lblPickCitySelectedCityName.setText("Please select a city.");
+				}
+
+				System.out.println("Changed");
 			}
 		});
 	}
