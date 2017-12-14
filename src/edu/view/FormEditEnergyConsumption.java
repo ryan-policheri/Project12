@@ -1,6 +1,11 @@
 package edu.view;
 
+import edu.controllers.Controller;
+import javafx.scene.control.Slider;
+
 import javax.swing.*;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
 
 public class FormEditEnergyConsumption extends EnergyForm
 {
@@ -19,6 +24,22 @@ public class FormEditEnergyConsumption extends EnergyForm
 		// Create charts based on the city's energyConsumptionTiers
 		addJFreeChartToJPanel(this.panelPreviousGraph, city.getEnergyConsumptionTiers(), true);
 		addJFreeChartToJPanel(this.panelNewGraph, city.getEnergyConsumptionTiers(), false);
+
+		btnSave.addActionListener(new ActionListener()
+		{
+			@Override
+			public void actionPerformed(ActionEvent e)
+			{
+				int[] sliderValues = new int[24];
+				for (int i = 0; i < sliderValues.length; i++)
+				{
+					sliderValues[i] = sliders.get(i).getValue();
+				}
+
+				Controller.setSelectedCityConsumptionValues(sliderValues);
+
+			}
+		});
 	}
 
 	public void updateGraphs()
@@ -41,4 +62,5 @@ public class FormEditEnergyConsumption extends EnergyForm
 		frame.pack();
 		frame.setVisible(true);
 	}
+
 }

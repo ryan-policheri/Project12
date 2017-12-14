@@ -53,10 +53,6 @@ public class GRESBIMB
 
 	private JList listCities;
 	private JLabel lblPickCitySelectedCityName;
-	private JLabel lblPickCityEnergyProduction;
-	private JLabel lblPickCityEnergyConsumption;
-	private JLabel lblPickCitySurplus;
-	private JLabel lblPickCitySquareMilage;
 	private JButton btnPickCityBack;
 	private JButton btnPickCityNext;
 	//endregion
@@ -101,6 +97,10 @@ public class GRESBIMB
 	private JLabel lblCountPowerOutage;
 	private JButton btnSimulationExit;
 	private JButton btnSimulationStop;
+	private JPanel panelCitiesPreview;
+	private JLabel lblEnergyTitle;
+	private JLabel lblBatteryType;
+	private JLabel lblBatteryMaxStorage;
 	//endregion
 	//endregion
 
@@ -436,14 +436,32 @@ public class GRESBIMB
 			@Override
 			public void valueChanged(ListSelectionEvent e)
 			{
+				panelCitiesPreview.removeAll();
+				int[] energyProductionTiers = {2, 2, 2, 3, 3, 4, 3, 3, 5, 4, 5, 5, 5, 5, 4, 3, 4, 4, 3, 5, 2, 2, 3, 1};
+				int[] energyConsumptionTiers = selectedCity.getEnergyConsumptionTiers();
+				double[] chicagoTiersPreview = new double[energyProductionTiers.length];
+				double[] desMoinesTiersPreview = new double[energyConsumptionTiers.length];
+
+				for (int i = 0; i < energyConsumptionTiers.length; i++)
+				{
+					chicagoTiersPreview[i] = energyProductionTiers[i];
+					desMoinesTiersPreview[i] = energyConsumptionTiers[i];
+				}
+
 				// This is extremely hardcoded for Chicago on top, Des Moines on bottom
 				if (listCities.getSelectedIndex() == 0)
 				{
 					lblPickCitySelectedCityName.setText("Selected city: Chicago");
+					addJFreeChartToJPanel("Energy Consumption of Chicago", panelCitiesPreview,
+							chicagoTiersPreview, "Hour", "Tier", 0,
+							23.5, 1, (double) (NUM_OF_TIERS + .5), MAJOR_TICK_SPACING);
 				}
 				else if (listCities.getSelectedIndex() == 1)
 				{
 					lblPickCitySelectedCityName.setText("Selected city: Des Moines");
+					addJFreeChartToJPanel("Energy Consumption of Des Moines", panelCitiesPreview,
+							desMoinesTiersPreview, "Hour", "Tier", 0,
+							23.5, 1, (double) (NUM_OF_TIERS + .5), MAJOR_TICK_SPACING);
 				}
 				else
 				{
@@ -451,6 +469,20 @@ public class GRESBIMB
 				}
 
 				System.out.println("Changed");
+			}
+		});
+		listBatteries.addListSelectionListener(new ListSelectionListener()
+		{
+			@Override
+			public void valueChanged(ListSelectionEvent e)
+			{
+				int selectedIndex = listBatteries.getSelectedIndex();
+				if (selectedIndex != -1)
+				{
+					lblBatteriesSelectedBatteryName.setText(batteryDefaultListModel.get(selectedIndex).getBatteryName());
+					lblBatteryType.setText(batteryDefaultListModel.get(selectedIndex).getBatteryType());
+					lblBatteryMaxStorage.setText(batteryDefaultListModel.get(selectedIndex).getMaxEnergyInJoules() + "");
+				}
 			}
 		});
 	}
@@ -529,6 +561,7 @@ public class GRESBIMB
 		// If it's the Energy panel, insert the charts into the appropriate JPanels
 		if (panel.equals(this.panelEnergy))
 		{
+			lblEnergyTitle.setText("Energy of " + selectedCity.toString());
 			createPanelEnergy();
 		}
 
@@ -540,7 +573,7 @@ public class GRESBIMB
 	}
 	//endregion
 
-	private void createPanelEnergy()
+	public void createPanelEnergy()
 	{
 		this.panelEnergyProductionChart.removeAll();
 		this.panelEnergyConsumptionChart.removeAll();
@@ -690,6 +723,11 @@ public class GRESBIMB
 		}
 	}
 
+	public void updateEnergyScreen()
+	{
+		createPanelEnergy();
+	}
+
 	public void updateSimulationDemandChartWithCurrentMillisecond(double currentMillisecond)
 	{
 		// Get current millisecond from WindmillFarmSimulator as the xAxisStartRange
@@ -767,6 +805,12 @@ public class GRESBIMB
 				"Total Magnitude of Surpluses", 0, SIMULATION_CHART_WIDTH_IN_POINTS, xAxisTickUnit, yAxisRange,
 				yAxisTickUnit);
 	}
+
+	private String convertCurrentMillisecondToHourAndMinute(int currentMillisecond)
+	{
+
+		return "";
+	}
 	//endregion
 
 	private void restart()
@@ -778,7 +822,7 @@ public class GRESBIMB
 
 	public static void main(String[] args)
 	{
-		String title = "Project 12";
+		String title = "GRESBIMB";
 		createNewJFrame(new GRESBIMB().panelMain, title, JFrame.EXIT_ON_CLOSE);
 	}
 	//endregion

@@ -81,9 +81,14 @@ public abstract class Battery
 		return this.massInKilograms;
 	}
 
-	protected String getBatteryName()
+	public String getBatteryName()
 	{
 		return this.batteryName;
+	}
+
+	public String getBatteryType()
+	{
+		return "";
 	}
 	//endregion
 	

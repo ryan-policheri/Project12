@@ -213,6 +213,13 @@ public class Controller
 		selectedCity = newCity;
 	}
 
+	public static void setSelectedCityConsumptionValues(int[] sliderValues)
+	{
+		// Sets the city consumption values and updates the main page
+		selectedCity.setEnergyConsumptionTiers(sliderValues);
+		gresbimb.updateEnergyScreen();
+	}
+
 	public static WindmillFarmSimulator getWindmillFarmSimulator()
 	{
 		return windmillFarmSimulator;

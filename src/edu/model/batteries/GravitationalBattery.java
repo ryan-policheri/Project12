@@ -128,6 +128,11 @@ public class GravitationalBattery extends VolatileBattery
 		return heightInMeters;
 	}
 
+	public String getBatteryType()
+	{
+		return "Gravitational Battery";
+	}
+
 	public String toString()
 	{                                                  
 		return "GravitationalBattery: " + this.getBatteryName();

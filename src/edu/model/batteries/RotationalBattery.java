@@ -181,6 +181,11 @@ public class RotationalBattery extends VolatileBattery
 		return angularVelocity;
 	}
 
+	public String getBatteryType()
+	{
+		return "Rotational Battery";
+	}
+
 	public String toString()
 	{
 		return "RotationalBattery: " + this.getBatteryName();
