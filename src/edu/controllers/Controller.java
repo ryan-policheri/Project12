@@ -6,7 +6,7 @@ import edu.model.city.City;
 import edu.model.city.CitySimulator;
 import edu.model.energySources.windmillFarm.WindmillFarm;
 import edu.model.energySources.windmillFarm.WindmillFarmSimulator;
-import edu.view.MainUserGUI;
+import edu.view.GRESBIMB;
 
 import java.util.ArrayList;
 
@@ -64,11 +64,11 @@ public class Controller
 	private static long currentMillisecond = 0;
 
 	// Connect it to the correct form
-	private static MainUserGUI mainUserGUI;
+	private static GRESBIMB gresbimb;
 
-	public Controller(MainUserGUI mainUserGUI)
+	public Controller(GRESBIMB gresbimb)
 	{
-		this.mainUserGUI = mainUserGUI;
+		this.gresbimb = gresbimb;
 	}
 
 	public static void allocateEnergySurplus(Surplus surplus)
@@ -97,9 +97,9 @@ public class Controller
 	public static void updateTimeInformation()
 	{
 		currentMillisecond = windmillFarmSimulator.getCurrentMillisecond();
-		mainUserGUI.updateSimulationDemandChartWithCurrentMillisecond(currentMillisecond);
-		mainUserGUI.updateSimulationSurplusChartWithCurrentMillisecond(currentMillisecond);
-		mainUserGUI.calculateCurrentGridEnergyInJoules();
+		gresbimb.updateSimulationDemandChartWithCurrentMillisecond(currentMillisecond);
+		gresbimb.updateSimulationSurplusChartWithCurrentMillisecond(currentMillisecond);
+		gresbimb.calculateCurrentGridEnergyInJoules();
 	}
 
 	public static void addGravitationalBattery(GravitationalBattery battery)
@@ -107,7 +107,7 @@ public class Controller
 		grid.addGravitationalBattery(battery);
 
 		// updateCities the view
-		MainUserGUI.update();
+		GRESBIMB.update();
 	}
 
 	public static void addRotationalBattery(RotationalBattery battery)
@@ -115,7 +115,7 @@ public class Controller
 		grid.addRotationalBattery(battery);
 
 		// updateCities the view
-		MainUserGUI.update();
+		GRESBIMB.update();
 	}
 
 	public static void removeBattery(int index)
@@ -123,7 +123,7 @@ public class Controller
 		grid.removeBattery(index);
 
 		// updateCities the view
-		MainUserGUI.update();
+		GRESBIMB.update();
 	}
 
 	public static void removeAllBatteries()
