@@ -71,6 +71,11 @@ public class Controller
 		this.mainUserGUI = mainUserGUI;
 	}
 
+	public static void allocateEnergySurplus(Surplus surplus)
+	{
+		grid.allocateEnergySurplus(surplus);
+	}
+
 	public static void updateCities()
 	{
 		availableCities.clear();

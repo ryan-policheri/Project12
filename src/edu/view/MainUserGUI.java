@@ -1,6 +1,7 @@
 package edu.view;
 
 //region Imports
+
 import edu.controllers.Controller;
 import edu.model.EnergyCommander;
 import edu.model.batteries.*;
@@ -94,7 +95,11 @@ public class MainUserGUI
 	private JLabel lblEnergyLevel;
 	private JPanel panelSimulationBatteryLevel;
 	private JProgressBar pbSimulationGridEnergyLevel;
-	private JLabel lblEnergyLevel2;
+	private JLabel lblMaxEnergy;
+	private JLabel lblCountReachedMaxCapacity;
+	private JLabel lblCountPowerOutage;
+	private JButton btnSimulationExit;
+	private JButton btnSimulationStop;
 	//endregion
 	//endregion
 
@@ -126,6 +131,10 @@ public class MainUserGUI
 	// For tier charts
 	private static double[] energyProductionTiersDouble;
 	private static double[] energyConsumptionTiersDouble;
+
+	// For counting simulation
+	private static int countReachedMaxCapacity = 0;
+	private static int countPowerOutage = 0;
 	//endregion
 
 	//region Methods
@@ -144,11 +153,9 @@ public class MainUserGUI
 		// Set yAxisTickUnit to roughly 20 ticks
 		// Update the graph every millisecond
 
-		//region NATHAN TESTING FOR CITY LIST FUNCTIONALITY
 		Controller.updateCities();
-		//endregion
 
-		//region NATHAN TESTING FOR REMOVE FUNCTIONALITY
+		//region Add Batteries
 		// Adding 1000 batteries total with random names
 		/*for (int i = 500; i > 0; i--)
 		{
@@ -269,11 +276,15 @@ public class MainUserGUI
 		// Set the cities list batteryDefaultListModel
 		listCities.setModel(cityDefaultListModel);
 
-		//region NATHAN TESTING FOR SELECTED CITY FUNCTIONALITY
+		//region Set the selected city
 		Controller.setSelectedCity(Controller.getDesMoines());
 		selectedCity = Controller.getSelectedCity();
 		System.out.println("Selected City: " + Controller.getSelectedCity().toString());
 		//endregion
+
+		Surplus surplus = new Surplus(2000000000, 1);
+
+		// Controller.allocateEnergySurplus(surplus);
 
 		//region Button listeners
 		//region Switching between panels
@@ -328,23 +339,6 @@ public class MainUserGUI
 		//endregion
 
 		//region Cities
-		listCities.addListSelectionListener(new ListSelectionListener()
-		{
-			@Override
-			public void valueChanged(ListSelectionEvent e)
-			{
-				// Set the selectedCity in the Controller to the selected city in the GUI. Update the Controller
-				ArrayList<City> cities = Controller.getAvailableCities();
-				City selectedCity = cities.get(listCities.getSelectedIndex());
-				Controller.setSelectedCity(selectedCity);
-
-				// Made it laggy
-				// Controller.updateCities();
-
-				// Update labels
-				lblPickCitySelectedCityName.setText("Selected City: " + selectedCity.toString());
-			}
-		});
 		//endregion
 
 		//region Welcome screen buttons
@@ -423,6 +417,23 @@ public class MainUserGUI
 		});
 		//endregion
 		//endregion
+		btnSimulationStop.addActionListener(new ActionListener()
+		{
+			@Override
+			public void actionPerformed(ActionEvent e)
+			{
+				citySimulator.interruptTimer();
+				windmillFarmSimulator.interruptTimer();
+			}
+		});
+		btnSimulationExit.addActionListener(new ActionListener()
+		{
+			@Override
+			public void actionPerformed(ActionEvent e)
+			{
+				restart();
+			}
+		});
 	}
 
 	private void addJFreeChartToJPanel(String title, JPanel panel, double[] data, String xAxisLabel, String yAxisLabel,
@@ -545,6 +556,7 @@ public class MainUserGUI
 		// Set pbSimulationGridEnergyLevel width
 		pbSimulationGridEnergyLevel.setSize(500, 500);
 
+		// Set the citySimulator and windmillFarmSimulator
 		citySimulator = Controller.getCitySimulator();
 		windmillFarmSimulator = Controller.getWindmillFarmSimulator();
 
@@ -578,7 +590,7 @@ public class MainUserGUI
 	{
 		currentGridEnergyInJoules = Controller.calculateCurrentGridEnergyInJoules();
 		lblEnergyLevel.setText("Current Energy in Joules: " + currentGridEnergyInJoules);
-		lblEnergyLevel2.setText("Maximum Total Energy in Joules: " + maxTotalEnergyInJoules);
+		lblMaxEnergy.setText("Maximum Total Energy in Joules: " + maxTotalEnergyInJoules);
 	}
 
 	private void calculateMaxTotalEnergyInJoules()
@@ -619,6 +631,11 @@ public class MainUserGUI
 	{
 		updateBatteryListModel();
 		updateCityListModel();
+	}
+
+	private void allocateEnergySurplus(Surplus surplus)
+	{
+		Controller.allocateEnergySurplus(surplus);
 	}
 
 	// updates the list's batteryDefaultListModel according to the Controller's battery lists
@@ -683,9 +700,23 @@ public class MainUserGUI
 				"Total Magnitude of Demands", 0, SIMULATION_CHART_WIDTH_IN_POINTS, xAxisTickUnit, yAxisRange,
 				yAxisTickUnit);
 
-		// Set the progress bars
+		// Set the progress bar values
 		pBSimulation.setValue((int) ((currentMillisecond / 240000) * 100));
 		pbSimulationGridEnergyLevel.setValue((int) ((currentGridEnergyInJoules / maxTotalEnergyInJoules) * 100));
+
+		if (currentGridEnergyInJoules == 0)
+		{
+			countPowerOutage++;
+		}
+		else if (currentGridEnergyInJoules == maxTotalEnergyInJoules)
+		{
+			maxTotalEnergyInJoules++;
+		}
+
+		// Set the label values
+		lblCountReachedMaxCapacity.setText("Number of grid max outs: " + countReachedMaxCapacity);
+		lblCountPowerOutage.setText("Number of power outages: " + countPowerOutage);
+
 	}
 
 	public void updateSimulationSurplusChartWithCurrentMillisecond(double currentMillisecond)
@@ -718,6 +749,13 @@ public class MainUserGUI
 				yAxisTickUnit);
 	}
 	//endregion
+
+	private void restart()
+	{
+		windmillFarmSimulator.interruptTimer();
+		citySimulator.interruptTimer();
+		switchToPanel(panelWelcome);
+	}
 
 	public static void main(String[] args)
 	{

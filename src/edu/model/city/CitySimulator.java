@@ -13,7 +13,7 @@ import java.util.*;
 public class CitySimulator
 {
 	// Working at 500
-	private int totalDemandsInDay = 500; //don't go below 24. should be same as windmill farm simulators
+	private int totalDemandsInDay = 5000; //don't go below 24. should be same as windmill farm simulators
 	private double oneSecondInSimTime = .0027;
 	private int simulatedHourLengthInSeconds = 10;
 	private int hoursInDay = 24;
@@ -24,6 +24,7 @@ public class CitySimulator
 	private City city;
 	private String[] hoursOfDay = new String[this.hoursInDay];
 	private long currentMillisecond = 0;
+	private Timer timer;
 
 	//parallel array
 	private List<Demand> dailyDemand = new ArrayList<Demand>();
@@ -107,7 +108,12 @@ public class CitySimulator
 		//Beginning of Timer Code
 		long intervalInMilliseconds = (long) 1;
 
-		Timer timer = new Timer();
+		timer = new Timer();
+		startTimer(intervalInMilliseconds);
+	}
+
+	private void startTimer(long intervalInMilliseconds)
+	{
 		timer.scheduleAtFixedRate(new TimerTask() {
 			@Override
 			public void run()
@@ -119,12 +125,18 @@ public class CitySimulator
 					//Out of bounds error when array is done.
 					if (currentMillisecond == dailyDemandTimesOfDayInMilliseconds.get(0))
 					{
-						System.out.println("Removing " + dailyDemand.get(0) + " at the " 
-								+ dailyDemandTimesOfDayInMilliseconds.get(0) + " millisecond of day");
+						//System.out.println("Removing " + dailyDemand.get(0) + " at the "
+						//		+ dailyDemandTimesOfDayInMilliseconds.get(0) + " millisecond of day");
 
 						sendDemandThroughEnergyCommander();
 
-						System.out.println("Removed");
+						//System.out.println("Removed");
+
+						if(currentMillisecond == dailyDemandTimesOfDayInMilliseconds.get(0))
+						{
+							currentMillisecond--;
+							System.out.println("WE DID SOMETHING SPECIAL");
+						}
 					}
 				}
 				else
@@ -134,13 +146,18 @@ public class CitySimulator
 				}
 			}
 		}
-		, 0, intervalInMilliseconds);		
+		, 0, intervalInMilliseconds);
+	}
+
+	public void interruptTimer()
+	{
+		timer.cancel();
 	}
 
 	private void sendDemandThroughEnergyCommander()
 	{
 		EnergyCommander.commandEnergy(this.dailyDemand.get(0));
-		removeDemand(this.dailyDemand.get(0), this.dailyDemandTimesOfDayInMilliseconds.get(0));	
+		removeDemand(this.dailyDemand.get(0), this.dailyDemandTimesOfDayInMilliseconds.get(0));
 	}
 
 	//End Timer Code

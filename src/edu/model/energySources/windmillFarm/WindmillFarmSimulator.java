@@ -19,7 +19,7 @@ import java.util.List;
 public class WindmillFarmSimulator
 {
 	// Working at 500
-	private int totalAmountOfSurplusesInDay = 500; //don't go below 24. should be same as city simulators
+	private int totalAmountOfSurplusesInDay = 5000; //don't go below 24. should be same as city simulators
 	private double simulatedHourLengthInSeconds = 10;
 	private long millisecondsInDay = (long) (86400000L);
 	private long simulatedMillisecondsInDay = millisecondsInDay / 360; //* by scale
@@ -28,6 +28,7 @@ public class WindmillFarmSimulator
 	private long currentMillisecond = 0;
 	private static String fileName = "..\\Project12\\src\\edu\\model\\WindmillFarmSurplusLog";
 	private static File file = new File(fileName);
+	private Timer timer;
 	
 	private String[] hoursOfDay = new String[this.hoursInDay];
 	
@@ -98,7 +99,12 @@ public class WindmillFarmSimulator
 	{		
 		//Timer Code
 		long intervalInMilliseconds = (long) 1;
-		Timer timer = new Timer();
+		timer = new Timer();
+		startTimer(intervalInMilliseconds);
+	}
+
+	private void startTimer(long intervalInMilliseconds)
+	{
 		timer.scheduleAtFixedRate(new TimerTask() {
 			@Override
 			public void run()
@@ -115,12 +121,18 @@ public class WindmillFarmSimulator
 				{
 					if (currentMillisecond == dailySurplusTimesOfDayInMilliseconds.get(0))
 					{
-						System.out.println("Adding " + dailySurplus.get(0) + " at the "
-								+ dailySurplusTimesOfDayInMilliseconds.get(0) + " millisecond of day");
+						//System.out.println("Adding " + dailySurplus.get(0) + " at the "
+						//		+ dailySurplusTimesOfDayInMilliseconds.get(0) + " millisecond of day");
 
 						sendSurplusThroughEnergyCommander();
 
-						System.out.println("Added");
+						//System.out.println("Added");
+
+						if(currentMillisecond == dailySurplusTimesOfDayInMilliseconds.get(0))
+						{
+							currentMillisecond--;
+							System.out.println("WE DID SOMETHING SPECIAL AGAIN");
+						}
 					}
 				}
 				else
@@ -131,7 +143,12 @@ public class WindmillFarmSimulator
 			}
 		}
 		, 0, intervalInMilliseconds);
-	}	
+	}
+
+	public void interruptTimer()
+	{
+		timer.cancel();
+	}
 	
 	private void sendSurplusThroughEnergyCommander()
 	{

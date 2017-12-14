@@ -69,7 +69,7 @@ public class BatteryGrid
 				
 				if (tempSurplus.isSurplusGone() == false)
 				{
-					System.out.println("No place to store energy");
+					//System.out.println("No place to store energy");
 				}
 			}
 		}
@@ -86,7 +86,7 @@ public class BatteryGrid
 				
 				if (tempSurplus.isSurplusGone() == false)
 				{
-					System.out.println("No place to store energy");
+					//System.out.println("No place to store energy");
 				}
 			}
 		}
@@ -109,7 +109,7 @@ public class BatteryGrid
 				
 				if (tempDemand.isDemandGone() == false)
 				{
-					System.out.println("No stored energy");
+					//System.out.println("No stored energy");
 				}
 			}
 		}
@@ -126,7 +126,7 @@ public class BatteryGrid
 				
 				if (tempDemand.isDemandGone() == false)
 				{
-					System.out.println("No stored energy");
+					//System.out.println("No stored energy");
 				}
 			}
 		}

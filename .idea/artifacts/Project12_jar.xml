@@ -1,0 +1,11 @@
+<component name="ArtifactManager">
+  <artifact type="jar" name="Project12:jar">
+    <output-path>$PROJECT_DIR$/classes/artifacts/Project12_jar</output-path>
+    <root id="archive" name="Project12.jar">
+      <element id="module-output" name="Project12" />
+      <element id="extracted-dir" path="$USER_HOME$/Downloads/guava-23.5/guava/target/guava-23.5-jre.jar" path-in-jar="/" />
+      <element id="extracted-dir" path="$USER_HOME$/Dropbox/Tech and Coding/Java/JAR Libraries/jfreechart-1.0.19/lib/jfreechart-1.0.19.jar" path-in-jar="/" />
+      <element id="extracted-dir" path="$USER_HOME$/Dropbox/Tech and Coding/Java/JAR Libraries/jfreechart-1.0.19/lib/jcommon-1.0.23.jar" path-in-jar="/" />
+    </root>
+  </artifact>
+</component>
