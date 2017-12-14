@@ -84,7 +84,8 @@ public class Controller
 	public static void updateTimeInformation()
 	{
 		currentMillisecond = windmillFarmSimulator.getCurrentMillisecond();
-		mainUserGUI.updateSimulationChartWithCurrentMillisecond(currentMillisecond);
+		mainUserGUI.updateSimulationDemandChartWithCurrentMillisecond(currentMillisecond);
+		mainUserGUI.updateSimulationSurplusChartWithCurrentMillisecond(currentMillisecond);
 	}
 
 	public static void addGravitationalBattery(GravitationalBattery battery)

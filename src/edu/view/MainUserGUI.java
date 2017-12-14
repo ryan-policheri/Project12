@@ -75,18 +75,21 @@ public class MainUserGUI
 	private JList listBatteries;
 	private JButton btnBatteriesAdd;
 	private JButton btnBatteriesRemove;
+	private JButton btnBatteriesRemoveAll;
 	private JLabel lblBatteriesSelectedBatteryName;
 	private JButton btnBatteriesBack;
 	private JButton btnBatteriesSimulate;
 	//endregion
 
-	//region Place Batteries panel
-	private JPanel panelPlaceBatteries;
-	private JList listPlaceBatteries;
-	private JButton btnPlaceBatteriesBack;
-	private JButton btnBatteriesRemoveAll;
+	//region Simulation panel
 	private JPanel panelSimulation;
-	private JPanel panelSimulationChart;
+	private JPanel panelSimulationDemandChart;
+	private JPanel panelSimulationSurplusChart;
+	private JPanel panelSimulationTierCharts;
+	private JPanel panelSimulationDemandTiers;
+	private JPanel panelSimulationSurplusTiers;
+	private JPanel panelSimulationEnergy;
+	private JProgressBar pBSimulation;
 	//endregion
 	//endregion
 
@@ -100,10 +103,16 @@ public class MainUserGUI
 	private static final int SIMULATION_CHART_WIDTH_IN_POINTS = 2000;
 	private static WindmillFarm selectedWindmillFarm = Controller.getSelectedWMF();
 	private static ArrayList<Double> magnitudeOfDemandsByMillisecond;
-	private static ArrayList<Double> getMagnitudeOfSurplusesByMillisecond;
+	private static ArrayList<Double> magnitudeOfSurplusesByMillisecond;
 	private static WindmillFarmSimulator windmillFarmSimulator = Controller.getWindmillFarmSimulator();
 	private static double maximumMagnitudeOfDemandsByMillisecond;
-	private static final double MAX_Y_AXIS_CHART_MULTIPLIER = 1;
+	private static double maximumMagnitudeOfSurplusesByMillisecond;
+	private static final double MAX_Y_AXIS_CHART_MULTIPLIER = 1.1;
+	private static final double Y_AXIS_TICKS = 5.1;
+
+	// For tier charts
+	private static double[] energyProductionTiersDouble;
+	private static double[] energyConsumptionTiersDouble;
 	//endregion
 
 	//region Methods
@@ -303,8 +312,9 @@ public class MainUserGUI
 		//endregion
 	}
 
-	private void addJFreeChartToJPanel(JPanel panel, double[] data, String xAxisLabel, String yAxisLabel, double
-			xAxisStartRange, double xAxisEndRange, double xAxisTickUnit, double yAxisRange, double yAxisTickUnit)
+	private void addJFreeChartToJPanel(String title, JPanel panel, double[] data, String xAxisLabel, String yAxisLabel,
+									   double xAxisStartRange, double xAxisEndRange, double xAxisTickUnit,
+									   double yAxisRange, double yAxisTickUnit)
 	{
 		XYSeries series = new XYSeries("XYGraph");
 
@@ -319,7 +329,6 @@ public class MainUserGUI
 		dataset.addSeries(series);
 
 		// Generate the graph
-		String title = "";
 		JFreeChart chart = ChartFactory.createXYLineChart(title, xAxisLabel, yAxisLabel, dataset,
 				PlotOrientation.VERTICAL, false, false, false);
 
@@ -366,6 +375,7 @@ public class MainUserGUI
 		frame.setVisible(true);
 	}
 
+	// Add surplus functionality
 	private void switchToPanel(JPanel panel)
 	{
 		this.panelMain.removeAll();
@@ -380,8 +390,8 @@ public class MainUserGUI
 			this.panelEnergyConsumptionChart.removeAll();
 			int[] energyProductionTiers = Controller.getSelectedWMF().getEnergyProductionTiers();
 			int[] energyConsumptionTiers = selectedCity.getEnergyConsumptionTiers();
-			double[] energyProductionTiersDouble = new double[energyProductionTiers.length];
-			double[] energyConsumptionTiersDouble = new double[energyConsumptionTiers.length];
+			energyProductionTiersDouble = new double[energyProductionTiers.length];
+			energyConsumptionTiersDouble = new double[energyConsumptionTiers.length];
 
 			for (int i = 0; i < energyConsumptionTiers.length; i++)
 			{
@@ -389,22 +399,38 @@ public class MainUserGUI
 				energyConsumptionTiersDouble[i] = energyConsumptionTiers[i];
 			}
 
-			addJFreeChartToJPanel(this.panelEnergyProductionChart, energyProductionTiersDouble,
-					"Hour", "Tier", 0, 23.5, 1, (double) (NUM_OF_TIERS + .5), MAJOR_TICK_SPACING);
-			addJFreeChartToJPanel(this.panelEnergyConsumptionChart, energyConsumptionTiersDouble,
-					"Hour", "Tier", 0, 23.5, 1, (double) (NUM_OF_TIERS + .5), MAJOR_TICK_SPACING);
+			addJFreeChartToJPanel("Energy Production", this.panelEnergyProductionChart, energyProductionTiersDouble,
+					"Hour", "Tier", 0, 23.5, 1,
+					(double) (NUM_OF_TIERS + .5), MAJOR_TICK_SPACING);
+			addJFreeChartToJPanel("Energy Consumption", this.panelEnergyConsumptionChart, energyConsumptionTiersDouble,
+					"Hour", "Tier", 0, 23.5, 1,
+					(double) (NUM_OF_TIERS + .5), MAJOR_TICK_SPACING);
 		}
 
+		// Switching to Simulation panel
 		if (panel.equals(this.panelSimulation))
 		{
-			// Create the simulation
+			// Update the Controller magnitudes + the MainUserGUI magnitudes
 			System.out.println("Updating controller magnitude by millisecond array...");
 			Controller.updateMagnitudeByMillisecondArrays();
 			magnitudeOfDemandsByMillisecond = Controller.getMagnitudeOfDemandsByMillisecond();
-			getMagnitudeOfSurplusesByMillisecond = Controller.getMagnitudeOfSurplusesByMillisecond();
+			magnitudeOfSurplusesByMillisecond = Controller.getMagnitudeOfSurplusesByMillisecond();
 			System.out.println("Simulating...");
+
+			// Find maximums
 			findMaximumValueInMagnitudeOfDemandsArray();
-			this.updateSimulationChartWithCurrentMillisecond(0);
+			findMaximumValueInMagnitudeOfSurplusArray();
+
+			// Add tier charts
+			addJFreeChartToJPanel("Energy Production", this.panelSimulationSurplusTiers, energyProductionTiersDouble,
+					"Hour", "Tier", 0, 23.5, 1,
+					(double) (NUM_OF_TIERS + .5), MAJOR_TICK_SPACING);
+			addJFreeChartToJPanel("Energy Consumption", this.panelSimulationDemandTiers, energyConsumptionTiersDouble,
+					"Hour", "Tier", 0, 23.5, 1,
+					(double) (NUM_OF_TIERS + .5), MAJOR_TICK_SPACING);
+
+			this.updateSimulationDemandChartWithCurrentMillisecond(0);
+			this.updateSimulationSurplusChartWithCurrentMillisecond(0);
 
 			windmillFarmSimulator.simulate();
 		}
@@ -423,6 +449,20 @@ public class MainUserGUI
 		}
 
 		maximumMagnitudeOfDemandsByMillisecond = max;
+	}
+
+	private void findMaximumValueInMagnitudeOfSurplusArray()
+	{
+		int max = 1;
+		for (int i = 0; i < magnitudeOfSurplusesByMillisecond.size(); i++)
+		{
+			if (magnitudeOfSurplusesByMillisecond.get(i) > max)
+			{
+				max = (int) Math.round(magnitudeOfSurplusesByMillisecond.get(i));
+			}
+		}
+
+		maximumMagnitudeOfSurplusesByMillisecond = max;
 	}
 
 	//region Update functions
@@ -465,7 +505,7 @@ public class MainUserGUI
 		}
 	}
 
-	public void updateSimulationChartWithCurrentMillisecond(double currentMillisecond)
+	public void updateSimulationDemandChartWithCurrentMillisecond(double currentMillisecond)
 	{
 		// Get current millisecond from WindmillFarmSimulator as the xAxisStartRange
 		// Get a period of time later as the xAxisEndRange
@@ -474,7 +514,7 @@ public class MainUserGUI
 		// Set yAxisTickUnit to roughly 20 ticks
 		// Update the graph every millisecond
 
-		panelSimulationChart.removeAll();
+		panelSimulationDemandChart.removeAll();
 
 		// Set the data for the chart
 		double xAxisStartRange = currentMillisecond;
@@ -488,15 +528,44 @@ public class MainUserGUI
 
 		double xAxisTickUnit = SIMULATION_CHART_WIDTH_IN_POINTS / 2;
 		double yAxisRange = MAX_Y_AXIS_CHART_MULTIPLIER * maximumMagnitudeOfDemandsByMillisecond;
-		double yAxisTickUnit = Math.round(MAX_Y_AXIS_CHART_MULTIPLIER * maximumMagnitudeOfDemandsByMillisecond / 5.01);
+		double yAxisTickUnit = Math.round(MAX_Y_AXIS_CHART_MULTIPLIER * maximumMagnitudeOfDemandsByMillisecond / Y_AXIS_TICKS);
 
-		addJFreeChartToJPanel(panelSimulationChart, data, "Time: " + currentMillisecond,
+		addJFreeChartToJPanel("Demands", panelSimulationDemandChart, data, "Time: " + currentMillisecond,
 				"Total Magnitude of Demands", 0, SIMULATION_CHART_WIDTH_IN_POINTS, xAxisTickUnit, yAxisRange,
 				yAxisTickUnit);
 
-		System.out.println(data[0]);
+		// Set the progress bar
+		pBSimulation.setValue((int) ((currentMillisecond / 240000) * 100));
+	}
 
+	public void updateSimulationSurplusChartWithCurrentMillisecond(double currentMillisecond)
+	{
+		// Get current millisecond from WindmillFarmSimulator as the xAxisStartRange
+		// Get a period of time later as the xAxisEndRange
+		// Set xAxisTickUnit to a reasonable amount
+		// Set yAxisRange to the maximum value of the entire "demands" array
+		// Set yAxisTickUnit to roughly 20 ticks
+		// Update the graph every millisecond
 
+		panelSimulationSurplusChart.removeAll();
+
+		// Set the data for the chart
+		double xAxisStartRange = currentMillisecond;
+		double xAxisEndRange = xAxisStartRange + SIMULATION_CHART_WIDTH_IN_POINTS;
+		double[] data = new double[SIMULATION_CHART_WIDTH_IN_POINTS];
+
+		for (int i = 0; i < data.length; i++)
+		{
+			data[i] = magnitudeOfSurplusesByMillisecond.get((int) (xAxisStartRange + i)).intValue();
+		}
+
+		double xAxisTickUnit = SIMULATION_CHART_WIDTH_IN_POINTS / 2;
+		double yAxisRange = MAX_Y_AXIS_CHART_MULTIPLIER * maximumMagnitudeOfSurplusesByMillisecond;
+		double yAxisTickUnit = Math.round(MAX_Y_AXIS_CHART_MULTIPLIER * maximumMagnitudeOfSurplusesByMillisecond / Y_AXIS_TICKS);
+
+		addJFreeChartToJPanel("Surpluses", panelSimulationSurplusChart, data, "Time: " + currentMillisecond,
+				"Total Magnitude of Surpluses", 0, SIMULATION_CHART_WIDTH_IN_POINTS, xAxisTickUnit, yAxisRange,
+				yAxisTickUnit);
 	}
 	//endregion
 
