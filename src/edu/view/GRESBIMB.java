@@ -117,6 +117,7 @@ public class GRESBIMB
 	private static final int SIMULATION_CHART_WIDTH_IN_POINTS = 2000;
 	private static double maximumMagnitudeOfDemandsByMillisecond;
 	private static double maximumMagnitudeOfSurplusesByMillisecond;
+	private static double maximumMagnitudeByMillisecond;
 	private static final double MAX_Y_AXIS_CHART_MULTIPLIER = 1.3;
 	private static final double Y_AXIS_TICKS = 5.1;
 
@@ -629,6 +630,16 @@ public class GRESBIMB
 		findMaximumValueInMagnitudeOfDemandsArray();
 		findMaximumValueInMagnitudeOfSurplusArray();
 
+		if (maximumMagnitudeOfDemandsByMillisecond > maximumMagnitudeOfSurplusesByMillisecond)
+		{
+			maximumMagnitudeByMillisecond = maximumMagnitudeOfDemandsByMillisecond;
+		}
+		else
+		{
+			maximumMagnitudeByMillisecond = maximumMagnitudeOfSurplusesByMillisecond;
+		}
+
+
 		// Calculate the maximum total energy (for the battery display)
 		calculateMaxTotalEnergyInJoules();
 
@@ -764,8 +775,8 @@ public class GRESBIMB
 		}
 
 		double xAxisTickUnit = SIMULATION_CHART_WIDTH_IN_POINTS / 2;
-		double yAxisRange = MAX_Y_AXIS_CHART_MULTIPLIER * maximumMagnitudeOfDemandsByMillisecond;
-		double yAxisTickUnit = Math.round(MAX_Y_AXIS_CHART_MULTIPLIER * maximumMagnitudeOfDemandsByMillisecond / Y_AXIS_TICKS);
+		double yAxisRange = MAX_Y_AXIS_CHART_MULTIPLIER * maximumMagnitudeByMillisecond;
+		double yAxisTickUnit = Math.round(MAX_Y_AXIS_CHART_MULTIPLIER * maximumMagnitudeByMillisecond / Y_AXIS_TICKS);
 
 		addJFreeChartToJPanel("Demands", panelSimulationDemandChart, data, "Time: " +
 						returnStringHour + ":" + returnStringMinute, "Total Magnitude of Demands",
@@ -811,8 +822,8 @@ public class GRESBIMB
 		}
 
 		double xAxisTickUnit = SIMULATION_CHART_WIDTH_IN_POINTS / 2;
-		double yAxisRange = MAX_Y_AXIS_CHART_MULTIPLIER * maximumMagnitudeOfSurplusesByMillisecond;
-		double yAxisTickUnit = Math.round(MAX_Y_AXIS_CHART_MULTIPLIER * maximumMagnitudeOfSurplusesByMillisecond / Y_AXIS_TICKS);
+		double yAxisRange = MAX_Y_AXIS_CHART_MULTIPLIER * maximumMagnitudeByMillisecond;
+		double yAxisTickUnit = Math.round(MAX_Y_AXIS_CHART_MULTIPLIER * maximumMagnitudeByMillisecond / Y_AXIS_TICKS);
 
 		addJFreeChartToJPanel("Surpluses", panelSimulationSurplusChart, data, "Time: " +
 						returnStringHour + ":" + returnStringMinute, "Total Magnitude of Surpluses",
