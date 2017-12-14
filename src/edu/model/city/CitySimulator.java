@@ -12,7 +12,7 @@ import java.util.*;
 
 public class CitySimulator
 {
-	private int totalDemandsInDay = 400; //don't go below 24. should be same as windmill farm simulators
+	private int totalDemandsInDay = 5000; //don't go below 24. should be same as windmill farm simulators
 	private double oneSecondInSimTime = .0027;
 	private int simulatedHourLengthInSeconds = 10;
 	private int hoursInDay = 24;
@@ -54,7 +54,7 @@ public class CitySimulator
 		this.dailyDemandTimesOfDayInMilliseconds.add(dailyDemandTimesOfDayInMilliseconds);
 	}
 
-	public void removeDemand(Demand dailyDemand, double dailyDemandTimesOfDayInMilliseconds)
+	public void removeDemand(Demand dailyDemand, long dailyDemandTimesOfDayInMilliseconds)
 	{
 		this.dailyDemand.remove(dailyDemand);
 		this.dailyDemandTimesOfDayInMilliseconds.remove(dailyDemandTimesOfDayInMilliseconds);
@@ -171,11 +171,6 @@ public class CitySimulator
 		{
 			milliIterator += 1;
 			
-			if(milliIterator == nextMilliWithNewDemand)
-			{
-				int uselessThing = 5;
-			}
-			
 			thisMillisecondMagnitude = 0;
 			
 			currentDemandPower = 0;
@@ -215,7 +210,12 @@ public class CitySimulator
 				}
 				
 				//set the next relevant milli
+				if(nextMilliWithNewDemand == this.dailyDemandTimesOfDayInMilliseconds.get(spotInDemandArray) && spotInDemandArray < lastPositionInDemandArray)
+				{
+					milliIterator --;
+				}
 				nextMilliWithNewDemand = this.dailyDemandTimesOfDayInMilliseconds.get(spotInDemandArray);
+				
 			}
 			
 			this.magnitudeByMillisecond.add(thisMillisecondMagnitude);	
