@@ -116,8 +116,8 @@ public class MainUserGUI
 	// Data for the JFreeChart
 	private static ArrayList<Double> magnitudeOfDemandsByMillisecond;
 	private static ArrayList<Double> magnitudeOfSurplusesByMillisecond;
-	private static WindmillFarmSimulator windmillFarmSimulator = Controller.getWindmillFarmSimulator();
-	private static CitySimulator citySimulator = Controller.getCitySimulator();
+	private static WindmillFarmSimulator windmillFarmSimulator;
+	private static CitySimulator citySimulator;
 
 	// For the simulation batteries
 	private static double maxTotalEnergyInJoules;
@@ -544,6 +544,9 @@ public class MainUserGUI
 
 		// Set pbSimulationGridEnergyLevel width
 		pbSimulationGridEnergyLevel.setSize(500, 500);
+
+		citySimulator = Controller.getCitySimulator();
+		windmillFarmSimulator = Controller.getWindmillFarmSimulator();
 
 		// Find maximums
 		findMaximumValueInMagnitudeOfDemandsArray();

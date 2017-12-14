@@ -4,7 +4,7 @@ public class WindmillFarm
 {
 
 	private double powerOutput;
-	private int lowestPowerOutput = 50000;
+	private int lowestPowerOutput = 500;
 	private int[] energyProductionTiers;
 	private String windmillFarmName;
 	

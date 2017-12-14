@@ -18,6 +18,7 @@ import java.util.List;
 
 public class WindmillFarmSimulator
 {
+	// Working at 500
 	private int totalAmountOfSurplusesInDay = 500; //don't go below 24. should be same as city simulators
 	private double simulatedHourLengthInSeconds = 10;
 	private long millisecondsInDay = (long) (86400000L);
@@ -103,7 +104,7 @@ public class WindmillFarmSimulator
 			public void run()
 			{
 				currentMillisecond++;
-				// Update the controller info every 20 milliseconds
+				// Update the controller info every 200 milliseconds
 				int updateRate = 50;
 				if (currentMillisecond % updateRate == 0)
 				{

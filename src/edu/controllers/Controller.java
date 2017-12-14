@@ -20,11 +20,19 @@ public class Controller
 	private static final int MAJOR_TICK_SPACING = 1;
 
 	//region Cities
+
+	// FULLY WORKING FUCKING CITY
+	private static int[] workingEnergyConsumptionTiersDesMoines = {
+			1, 1, 1, 1, 1, 2, 2, 2, 2, 4, 5, 4, 2, 5, 5, 3, 3, 1, 1, 3, 4, 3, 3, 1};
+	private static int[] workingEnergyProductionTiersWarrenCountyWMF = {
+			1, 1, 1, 1, 1, 2, 2, 2, 2, 3, 3, 3, 4, 2, 3, 3, 3, 3, 4, 2, 2, 2, 1, 1};
+
+
 	//region Des Moines
 	private static int[] energyConsumptionTiersDesMoines = {
 			1, 1, 1, 1, 1, 2, 2, 2, 2, 4, 5, 4, 2, 5, 5, 3, 3, 1, 1, 3, 4, 3, 3, 1};
 	private static int[] energyProductionTiersWarrenCountyWMF = {
-			5, 5, 5, 1, 1, 2, 2, 2, 3, 3, 3, 3, 4, 4, 5, 3, 3, 3, 4, 2, 2, 2, 1, 1};
+			1, 1, 1, 1, 1, 2, 2, 2, 2, 3, 3, 3, 4, 2, 3, 3, 3, 3, 4, 2, 2, 2, 1, 1};
 	private static City desMoines = new City("Des Moines", energyConsumptionTiersDesMoines);
 	//endregion
 

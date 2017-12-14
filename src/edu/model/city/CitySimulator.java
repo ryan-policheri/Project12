@@ -12,7 +12,8 @@ import java.util.*;
 
 public class CitySimulator
 {
-	private int totalDemandsInDay = 100; //don't go below 24. should be same as windmill farm simulators
+	// Working at 500
+	private int totalDemandsInDay = 500; //don't go below 24. should be same as windmill farm simulators
 	private double oneSecondInSimTime = .0027;
 	private int simulatedHourLengthInSeconds = 10;
 	private int hoursInDay = 24;
