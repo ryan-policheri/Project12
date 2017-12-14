@@ -101,6 +101,7 @@ public class GRESBIMB
 	private JLabel lblEnergyTitle;
 	private JLabel lblBatteryType;
 	private JLabel lblBatteryMaxStorage;
+	private JLabel lblBatteriesTitle;
 	//endregion
 	//endregion
 
@@ -124,6 +125,8 @@ public class GRESBIMB
 	private static ArrayList<Double> magnitudeOfSurplusesByMillisecond;
 	private static WindmillFarmSimulator windmillFarmSimulator;
 	private static CitySimulator citySimulator;
+	private String returnStringHour;
+	private String returnStringMinute;
 
 	// For the simulation batteries
 	private static double maxTotalEnergyInJoules;
@@ -302,7 +305,14 @@ public class GRESBIMB
 			@Override
 			public void actionPerformed(ActionEvent e)
 			{
-				switchToPanel(panelEnergy);
+				if (listCities.getSelectedIndex() != -1)
+				{
+					switchToPanel(panelEnergy);
+				}
+				else
+				{
+					JOptionPane.showMessageDialog(null, "Please select a city.");
+				}
 			}
 		});
 		btnEnergyBack.addActionListener(new ActionListener()
@@ -437,7 +447,7 @@ public class GRESBIMB
 			public void valueChanged(ListSelectionEvent e)
 			{
 				panelCitiesPreview.removeAll();
-				int[] energyProductionTiers = {2, 2, 2, 3, 3, 4, 3, 3, 5, 4, 5, 5, 5, 5, 4, 3, 4, 4, 3, 5, 2, 2, 3, 1};
+				int[] energyProductionTiers = {2, 2, 2, 3, 3, 4, 3, 3, 5, 4, 5, 5, 5, 5, 4, 3, 4, 4, 3, 5, 2, 2, 3, 3};
 				int[] energyConsumptionTiers = selectedCity.getEnergyConsumptionTiers();
 				double[] chicagoTiersPreview = new double[energyProductionTiers.length];
 				double[] desMoinesTiersPreview = new double[energyConsumptionTiers.length];
@@ -453,22 +463,20 @@ public class GRESBIMB
 				{
 					lblPickCitySelectedCityName.setText("Selected city: Chicago");
 					addJFreeChartToJPanel("Energy Consumption of Chicago", panelCitiesPreview,
-							chicagoTiersPreview, "Hour", "Tier", 0,
+							chicagoTiersPreview, "Hour", "Tier", true, 0,
 							23.5, 1, (double) (NUM_OF_TIERS + .5), MAJOR_TICK_SPACING);
 				}
 				else if (listCities.getSelectedIndex() == 1)
 				{
 					lblPickCitySelectedCityName.setText("Selected city: Des Moines");
 					addJFreeChartToJPanel("Energy Consumption of Des Moines", panelCitiesPreview,
-							desMoinesTiersPreview, "Hour", "Tier", 0,
+							desMoinesTiersPreview, "Hour", "Tier", true, 0,
 							23.5, 1, (double) (NUM_OF_TIERS + .5), MAJOR_TICK_SPACING);
 				}
 				else
 				{
 					lblPickCitySelectedCityName.setText("Please select a city.");
 				}
-
-				System.out.println("Changed");
 			}
 		});
 		listBatteries.addListSelectionListener(new ListSelectionListener()
@@ -488,8 +496,8 @@ public class GRESBIMB
 	}
 
 	private void addJFreeChartToJPanel(String title, JPanel panel, double[] data, String xAxisLabel, String yAxisLabel,
-									   double xAxisStartRange, double xAxisEndRange, double xAxisTickUnit,
-									   double yAxisRange, double yAxisTickUnit)
+									   boolean hasTicks, double xAxisStartRange, double xAxisEndRange,
+									   double xAxisTickUnit, double yAxisRange, double yAxisTickUnit)
 	{
 		XYSeries series = new XYSeries("XYGraph");
 
@@ -520,7 +528,7 @@ public class GRESBIMB
 		NumberAxis domain = (NumberAxis) xyPlot.getDomainAxis();
 		domain.setRange(xAxisStartRange, xAxisEndRange);
 		domain.setTickUnit(new NumberTickUnit(xAxisTickUnit));
-		domain.setTickLabelsVisible(false);
+		domain.setTickLabelsVisible(hasTicks);
 		// Range
 		NumberAxis range = (NumberAxis) chartPlot.getRangeAxis();
 		range.setRange(0, yAxisRange);
@@ -565,6 +573,11 @@ public class GRESBIMB
 			createPanelEnergy();
 		}
 
+		if (panel.equals(this.panelBatteries))
+		{
+			lblBatteriesTitle.setText("Batteries of " + selectedCity.toString());
+		}
+
 		// Switching to Simulation panel
 		if (panel.equals(this.panelSimulation))
 		{
@@ -589,10 +602,10 @@ public class GRESBIMB
 		}
 
 		addJFreeChartToJPanel("Energy Production", this.panelEnergyProductionChart, energyProductionTiersDouble,
-				"Hour", "Tier", 0, 23.5, 1,
+				"Hour", "Tier", true, 0, 23.5, 1,
 				(double) (NUM_OF_TIERS + .5), MAJOR_TICK_SPACING);
 		addJFreeChartToJPanel("Energy Consumption", this.panelEnergyConsumptionChart, energyConsumptionTiersDouble,
-				"Hour", "Tier", 0, 23.5, 1,
+				"Hour", "Tier", true, 0, 23.5, 1,
 				(double) (NUM_OF_TIERS + .5), MAJOR_TICK_SPACING);
 	}
 
@@ -624,10 +637,10 @@ public class GRESBIMB
 
 		// Add tier charts
 		addJFreeChartToJPanel("Energy Production", this.panelSimulationSurplusTiers, energyProductionTiersDouble,
-				"Hour", "Tier", 0, 23.5, 1,
+				"Hour", "Tier", true, 0, 23.5, 1,
 				(double) (NUM_OF_TIERS + .5), MAJOR_TICK_SPACING);
 		addJFreeChartToJPanel("Energy Consumption", this.panelSimulationDemandTiers, energyConsumptionTiersDouble,
-				"Hour", "Tier", 0, 23.5, 1,
+				"Hour", "Tier", true, 0, 23.5, 1,
 				(double) (NUM_OF_TIERS + .5), MAJOR_TICK_SPACING);
 
 		// Initialize the charts
@@ -737,6 +750,7 @@ public class GRESBIMB
 		// Set yAxisTickUnit to roughly 20 ticks
 		// Update the graph every millisecond
 
+		convertCurrentMillisecondToHourAndMinute(currentMillisecond);
 		panelSimulationDemandChart.removeAll();
 
 		// Set the data for the chart
@@ -753,9 +767,9 @@ public class GRESBIMB
 		double yAxisRange = MAX_Y_AXIS_CHART_MULTIPLIER * maximumMagnitudeOfDemandsByMillisecond;
 		double yAxisTickUnit = Math.round(MAX_Y_AXIS_CHART_MULTIPLIER * maximumMagnitudeOfDemandsByMillisecond / Y_AXIS_TICKS);
 
-		addJFreeChartToJPanel("Demands", panelSimulationDemandChart, data, "Time: " + currentMillisecond,
-				"Total Magnitude of Demands", 0, SIMULATION_CHART_WIDTH_IN_POINTS, xAxisTickUnit, yAxisRange,
-				yAxisTickUnit);
+		addJFreeChartToJPanel("Demands", panelSimulationDemandChart, data, "Time: " +
+						returnStringHour + ":" + returnStringMinute, "Total Magnitude of Demands",
+				false, 0, SIMULATION_CHART_WIDTH_IN_POINTS, xAxisTickUnit, yAxisRange, yAxisTickUnit);
 
 		// Set the progress bar values
 		pBSimulation.setValue((int) ((currentMillisecond / 240000) * 100));
@@ -771,7 +785,6 @@ public class GRESBIMB
 		}
 
 		// Set the label values
-		lblCountReachedMaxCapacity.setText("Number of grid max outs: " + countReachedMaxCapacity);
 		lblCountPowerOutage.setText("Number of power outages: " + countPowerOutage);
 
 	}
@@ -801,15 +814,35 @@ public class GRESBIMB
 		double yAxisRange = MAX_Y_AXIS_CHART_MULTIPLIER * maximumMagnitudeOfSurplusesByMillisecond;
 		double yAxisTickUnit = Math.round(MAX_Y_AXIS_CHART_MULTIPLIER * maximumMagnitudeOfSurplusesByMillisecond / Y_AXIS_TICKS);
 
-		addJFreeChartToJPanel("Surpluses", panelSimulationSurplusChart, data, "Time: " + currentMillisecond,
-				"Total Magnitude of Surpluses", 0, SIMULATION_CHART_WIDTH_IN_POINTS, xAxisTickUnit, yAxisRange,
-				yAxisTickUnit);
+		addJFreeChartToJPanel("Surpluses", panelSimulationSurplusChart, data, "Time: " +
+						returnStringHour + ":" + returnStringMinute, "Total Magnitude of Surpluses",
+				false, 0, SIMULATION_CHART_WIDTH_IN_POINTS, xAxisTickUnit, yAxisRange, yAxisTickUnit);
 	}
 
-	private String convertCurrentMillisecondToHourAndMinute(int currentMillisecond)
+	private void convertCurrentMillisecondToHourAndMinute(double currentMillisecond)
 	{
+		int hour = (int) Math.floor(currentMillisecond / 10000);
 
-		return "";
+		if (hour < 10)
+		{
+			returnStringHour = "0" + hour;
+		}
+		else
+		{
+			returnStringHour = "" + hour;
+		}
+
+		int minute = (int) Math.floor(currentMillisecond / (100000/600));
+		minute = minute % 60;
+
+		if (minute < 10)
+		{
+			returnStringMinute = "0" + minute;
+		}
+		else
+		{
+			returnStringMinute = "" + minute;
+		}
 	}
 	//endregion
 

@@ -175,7 +175,7 @@ public class EnergyForm
 		NumberAxis domain = (NumberAxis) xyPlot.getDomainAxis();
 		domain.setRange(0, 23.5);
 		domain.setTickUnit(new NumberTickUnit(1));
-		domain.setTickLabelsVisible(false);
+		domain.setTickLabelsVisible(true);
 		// Range
 		NumberAxis range = (NumberAxis) chartPlot.getRangeAxis();
 		range.setRange(0, NUM_OF_TIERS + .5);

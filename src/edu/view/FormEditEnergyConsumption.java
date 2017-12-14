@@ -37,7 +37,7 @@ public class FormEditEnergyConsumption extends EnergyForm
 				}
 
 				Controller.setSelectedCityConsumptionValues(sliderValues);
-
+				JOptionPane.showMessageDialog(null, "Values saved successfully.");
 			}
 		});
 	}

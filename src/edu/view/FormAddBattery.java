@@ -22,7 +22,6 @@ public class FormAddBattery
 	private JPanel panelBatteries;
 
 	private JList listBatteryTypes;
-	private JPanel panelCityImage;
 	private JLabel lblBatteryType;
 	//endregion
 
@@ -156,9 +155,11 @@ public class FormAddBattery
 				{
 					case 0:
 						switchAttributesPanelTo(panelGravitationalBatteries);
+						lblBatteryType.setText("Gravitational Battery");
 						break;
 					case 1:
 						switchAttributesPanelTo(panelRotationalBatteries);
+						lblBatteryType.setText("Rotational Battery");
 						break;
 					default:
 						switchAttributesPanelTo(panelGravitationalBatteries);

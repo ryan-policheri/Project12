@@ -21,7 +21,7 @@ public class Controller
 
 	//region Cities
 
-	// FULLY WORKING FUCKING CITY
+	// FULLY WORKING CITY
 	private static int[] workingEnergyConsumptionTiersDesMoines = {
 			1, 1, 1, 1, 1, 2, 2, 2, 2, 4, 5, 4, 2, 5, 5, 3, 3, 1, 1, 3, 4, 3, 3, 1};
 	private static int[] workingEnergyProductionTiersWarrenCountyWMF = {
