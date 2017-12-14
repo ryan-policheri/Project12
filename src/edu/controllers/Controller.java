@@ -120,7 +120,7 @@ public class Controller
 
 	public static double calculateCurrentGridEnergyInJoules()
 	{
-		return grid.calculateCurrentTotalGravitationalEnergyInJoules() + grid.calculateCurrentTotalRotationalEnergyInJoules();
+		return grid.calculateCurrentTotalEnergyInJoules();
 	}
 
 	public static double calculateMaxTotalEnergyInJoules()
@@ -203,6 +203,11 @@ public class Controller
 	public static WindmillFarmSimulator getWindmillFarmSimulator()
 	{
 		return windmillFarmSimulator;
+	}
+
+	public static CitySimulator getCitySimulator()
+	{
+		return citySimulator;
 	}
 
 	public static City getDesMoines()

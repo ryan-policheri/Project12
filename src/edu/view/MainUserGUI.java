@@ -5,6 +5,7 @@ import edu.controllers.Controller;
 import edu.model.EnergyCommander;
 import edu.model.batteries.*;
 import edu.model.city.City;
+import edu.model.city.CitySimulator;
 import edu.model.energySources.windmillFarm.WindmillFarm;
 import edu.model.energySources.windmillFarm.WindmillFarmSimulator;
 import org.jfree.chart.ChartFactory;
@@ -91,6 +92,9 @@ public class MainUserGUI
 	private JPanel panelSimulationEnergy;
 	private JProgressBar pBSimulation;
 	private JLabel lblEnergyLevel;
+	private JPanel panelSimulationBatteryLevel;
+	private JProgressBar pbSimulationGridEnergyLevel;
+	private JLabel lblEnergyLevel2;
 	//endregion
 	//endregion
 
@@ -99,17 +103,21 @@ public class MainUserGUI
 	private static DefaultListModel<Battery> batteryDefaultListModel = new DefaultListModel<>();
 	private static DefaultListModel<City> cityDefaultListModel = new DefaultListModel<>();
 	private static City selectedCity;
+
+	// JFreeChart stuff
 	private static final int NUM_OF_TIERS = Controller.getNumOfTiers();
 	private static final int MAJOR_TICK_SPACING = Controller.getMajorTickSpacing();
 	private static final int SIMULATION_CHART_WIDTH_IN_POINTS = 2000;
-	private static WindmillFarm selectedWindmillFarm = Controller.getSelectedWMF();
+	private static double maximumMagnitudeOfDemandsByMillisecond;
+	private static double maximumMagnitudeOfSurplusesByMillisecond;
+	private static final double MAX_Y_AXIS_CHART_MULTIPLIER = 1.3;
+	private static final double Y_AXIS_TICKS = 5.1;
+
+	// Data for the JFreeChart
 	private static ArrayList<Double> magnitudeOfDemandsByMillisecond;
 	private static ArrayList<Double> magnitudeOfSurplusesByMillisecond;
 	private static WindmillFarmSimulator windmillFarmSimulator = Controller.getWindmillFarmSimulator();
-	private static double maximumMagnitudeOfDemandsByMillisecond;
-	private static double maximumMagnitudeOfSurplusesByMillisecond;
-	private static final double MAX_Y_AXIS_CHART_MULTIPLIER = 1.1;
-	private static final double Y_AXIS_TICKS = 5.1;
+	private static CitySimulator citySimulator = Controller.getCitySimulator();
 
 	// For the simulation batteries
 	private static double maxTotalEnergyInJoules;
@@ -141,8 +149,8 @@ public class MainUserGUI
 		//endregion
 
 		//region NATHAN TESTING FOR REMOVE FUNCTIONALITY
-		// Adding 20 batteries total with random names
-		for (int i = 10; i > 0; i--)
+		// Adding 1000 batteries total with random names
+		/*for (int i = 500; i > 0; i--)
 		{
 			int a = (int) Math.round(Math.random() * 1000);
 
@@ -152,6 +160,106 @@ public class MainUserGUI
 			RotationalBattery rotationalBattery = new RotationalBattery("ROT_" + a, 100, 100,
 					new FlywheelMaterial("Titanium"), new FlywheelBearing("Mechanical"));
 			Controller.addRotationalBattery(rotationalBattery);
+		}*/
+
+		//ADD THE BATTERIES
+		double GB_Supreme_Count = 50;
+		double GB_PowerHouse_Count = 200;
+		double GB_Classic_Count = 125;
+		double GB_Lite_Count = 75;
+
+		double RB_MegaSonic_Count = 50;
+		double RB_SuperSonic_Count = 100;
+		double RB_BigSexy_Count = 175;
+		double RB_LittleTitan_Count = 100;
+		double RB_Classic_Count = 125;
+
+		//titanium
+		FlywheelMaterial titanium = new FlywheelMaterial("Titanium");
+
+		//aluminum
+		FlywheelMaterial aluminum = new FlywheelMaterial("Aluminum");
+
+		//carbon fiber
+		double densityOfCarbonFiberInKilogramsMetersCubed = 1799;
+		double tensileStressOfCarbonFiberInPascals = 4000000000.0;
+		FlywheelMaterial carbonFiber = new FlywheelMaterial("Carbon Fiber", densityOfCarbonFiberInKilogramsMetersCubed, tensileStressOfCarbonFiberInPascals);
+
+		//steel
+		double densityOfSteelInKilogramsMetersCubed = 8050;
+		double tensileStressOfSteelInPascals = 690000000.0;
+		FlywheelMaterial steel = new FlywheelMaterial("Steel", densityOfSteelInKilogramsMetersCubed, tensileStressOfSteelInPascals);
+
+		//mechanical bearing
+		double percentFrictionalLossPerSecondForStandardMecahnicalBearing = 0.0125; //number derived from (25 percent / 7200) * 360 (multiplying by 360 converts number to simulation time)
+		FlywheelBearing mechanicalBearing = new FlywheelBearing("Mechanical Bearing", percentFrictionalLossPerSecondForStandardMecahnicalBearing);
+
+		//Make using 2nd constructor
+
+		//magnetic bearing
+		FlywheelBearing magneticBearing = new FlywheelBearing("Magnetic");
+
+		//super conductor bearing
+		FlywheelBearing modernBearing = new FlywheelBearing("Modern");
+
+		//Gravitational:
+
+		//GB_Supremes:
+		for (int i = 1; i <= GB_Supreme_Count; i++)
+		{
+			Controller.addGravitationalBattery(new GravitationalBattery("GB_Supreme_" + Integer.toString(i),40000,150));
+		}
+
+		//GB_PowerHouses:
+		for (int i = 1; i <= GB_PowerHouse_Count; i++)
+		{
+			Controller.addGravitationalBattery((new GravitationalBattery("GB_PowerHouse_" + Integer.toString(i),
+					20000,120)));
+		}
+
+		//GB_Classics:
+		for (int i = 1; i <= GB_Classic_Count; i++)
+		{
+			Controller.addGravitationalBattery((new GravitationalBattery("GB_Classic_" + Integer.toString(i),30000,
+					50)));
+		}
+
+		//GB_Lites:
+		for (int i = 1; i <= GB_Lite_Count; i++)
+		{
+			Controller.addGravitationalBattery(new GravitationalBattery("GB_Lite_" + Integer.toString(i),40000,150));
+		}
+
+		//Rotational:
+
+		//RB_MegaSonics:
+		for (int i = 1; i <= RB_MegaSonic_Count; i++)
+		{
+			Controller.addRotationalBattery(new RotationalBattery("RB_MegaSonic_" + Integer.toString(i),100,0.5,carbonFiber,modernBearing));
+		}
+
+		//RB_SuperSonics:
+		for (int i = 1; i <= RB_SuperSonic_Count; i++)
+		{
+			Controller.addRotationalBattery(new RotationalBattery("RB_SuperSonic_" + Integer.toString(i),75,0.5,carbonFiber,magneticBearing));
+		}
+
+		//RB_BigSexys:
+		for (int i = 1; i <= RB_BigSexy_Count; i++)
+		{
+			Controller.addRotationalBattery(new RotationalBattery("RB_BigSexy_" + Integer.toString(i),500,1,steel,mechanicalBearing));
+		}
+
+		//RB_LittleTitans:
+		for (int i = 1; i <= RB_LittleTitan_Count; i++)
+		{
+			Controller.addRotationalBattery(new RotationalBattery("RB_LittleTitan_" + Integer.toString(i),250,0.25,titanium,magneticBearing));
+		}
+
+		//RB_Classics:
+		for (int i = 1; i <= RB_Classic_Count; i++)
+		{
+			Controller.addRotationalBattery(new RotationalBattery("RB_Classic_" + Integer.toString(i),100,0.5,aluminum,mechanicalBearing));
 		}
 		//endregion
 
@@ -434,6 +542,9 @@ public class MainUserGUI
 		magnitudeOfSurplusesByMillisecond = Controller.getMagnitudeOfSurplusesByMillisecond();
 		System.out.println("Simulating...");
 
+		// Set pbSimulationGridEnergyLevel width
+		pbSimulationGridEnergyLevel.setSize(500, 500);
+
 		// Find maximums
 		findMaximumValueInMagnitudeOfDemandsArray();
 		findMaximumValueInMagnitudeOfSurplusArray();
@@ -457,13 +568,14 @@ public class MainUserGUI
 		this.updateSimulationSurplusChartWithCurrentMillisecond(0);
 
 		windmillFarmSimulator.simulate();
+		citySimulator.simulate();
 	}
 
 	public void calculateCurrentGridEnergyInJoules()
 	{
 		currentGridEnergyInJoules = Controller.calculateCurrentGridEnergyInJoules();
-		lblEnergyLevel.setText("Current Energy in Joules: " + currentGridEnergyInJoules + "\n Maximum Total Energy in" +
-				" Joules: " + maxTotalEnergyInJoules);
+		lblEnergyLevel.setText("Current Energy in Joules: " + currentGridEnergyInJoules);
+		lblEnergyLevel2.setText("Maximum Total Energy in Joules: " + maxTotalEnergyInJoules);
 	}
 
 	private void calculateMaxTotalEnergyInJoules()
@@ -568,8 +680,9 @@ public class MainUserGUI
 				"Total Magnitude of Demands", 0, SIMULATION_CHART_WIDTH_IN_POINTS, xAxisTickUnit, yAxisRange,
 				yAxisTickUnit);
 
-		// Set the progress bar
+		// Set the progress bars
 		pBSimulation.setValue((int) ((currentMillisecond / 240000) * 100));
+		pbSimulationGridEnergyLevel.setValue((int) ((currentGridEnergyInJoules / maxTotalEnergyInJoules) * 100));
 	}
 
 	public void updateSimulationSurplusChartWithCurrentMillisecond(double currentMillisecond)

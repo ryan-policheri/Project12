@@ -648,7 +648,7 @@
               </component>
             </children>
           </grid>
-          <grid id="ab6da" layout-manager="GridLayoutManager" row-count="1" column-count="3" same-size-horizontally="false" same-size-vertically="false" hgap="-1" vgap="-1">
+          <grid id="ab6da" layout-manager="GridLayoutManager" row-count="1" column-count="2" same-size-horizontally="false" same-size-vertically="false" hgap="-1" vgap="-1">
             <margin top="0" left="0" bottom="0" right="0"/>
             <constraints>
               <grid row="1" column="0" row-span="1" col-span="1" vsize-policy="3" hsize-policy="3" anchor="0" fill="3" indent="0" use-parent-layout="false"/>
@@ -656,7 +656,7 @@
             <properties/>
             <border type="none"/>
             <children>
-              <grid id="b2158" binding="panelSimulationEnergy" layout-manager="GridLayoutManager" row-count="2" column-count="1" same-size-horizontally="false" same-size-vertically="false" hgap="-1" vgap="-1">
+              <grid id="b2158" binding="panelSimulationEnergy" layout-manager="GridLayoutManager" row-count="3" column-count="1" same-size-horizontally="false" same-size-vertically="false" hgap="-1" vgap="-1">
                 <margin top="0" left="0" bottom="0" right="0"/>
                 <constraints>
                   <grid row="0" column="0" row-span="1" col-span="1" vsize-policy="3" hsize-policy="3" anchor="0" fill="3" indent="0" use-parent-layout="false">
@@ -676,18 +676,49 @@
                   </component>
                   <grid id="dba04" layout-manager="BorderLayout" hgap="0" vgap="0">
                     <constraints>
-                      <grid row="1" column="0" row-span="1" col-span="1" vsize-policy="3" hsize-policy="3" anchor="0" fill="3" indent="0" use-parent-layout="false"/>
+                      <grid row="2" column="0" row-span="1" col-span="1" vsize-policy="3" hsize-policy="3" anchor="0" fill="3" indent="0" use-parent-layout="false"/>
                     </constraints>
                     <properties/>
                     <border type="none"/>
-                    <children/>
+                    <children>
+                      <grid id="68f13" binding="panelSimulationBatteryLevel" layout-manager="GridLayoutManager" row-count="1" column-count="1" same-size-horizontally="false" same-size-vertically="false" hgap="-1" vgap="-1">
+                        <margin top="0" left="0" bottom="0" right="0"/>
+                        <constraints border-constraint="Center"/>
+                        <properties/>
+                        <border type="none"/>
+                        <children>
+                          <component id="ef9ed" class="javax.swing.JProgressBar" binding="pbSimulationGridEnergyLevel">
+                            <constraints>
+                              <grid row="0" column="0" row-span="1" col-span="1" vsize-policy="3" hsize-policy="3" anchor="0" fill="0" indent="0" use-parent-layout="false">
+                                <preferred-size width="200" height="500"/>
+                              </grid>
+                            </constraints>
+                            <properties>
+                              <maximumSize width="200" height="146"/>
+                              <minimumSize width="200" height="146"/>
+                              <orientation value="1"/>
+                              <preferredSize width="200" height="146"/>
+                              <stringPainted value="false"/>
+                            </properties>
+                          </component>
+                        </children>
+                      </grid>
+                    </children>
                   </grid>
+                  <component id="29104" class="javax.swing.JLabel" binding="lblEnergyLevel2">
+                    <constraints>
+                      <grid row="1" column="0" row-span="1" col-span="1" vsize-policy="0" hsize-policy="0" anchor="0" fill="0" indent="0" use-parent-layout="false"/>
+                    </constraints>
+                    <properties>
+                      <text value="Label"/>
+                    </properties>
+                  </component>
                 </children>
               </grid>
               <grid id="f5d00" layout-manager="GridLayoutManager" row-count="5" column-count="1" same-size-horizontally="false" same-size-vertically="false" hgap="-1" vgap="-1">
                 <margin top="0" left="0" bottom="0" right="0"/>
                 <constraints>
-                  <grid row="0" column="2" row-span="1" col-span="1" vsize-policy="3" hsize-policy="3" anchor="0" fill="3" indent="0" use-parent-layout="false"/>
+                  <grid row="0" column="1" row-span="1" col-span="1" vsize-policy="3" hsize-policy="3" anchor="0" fill="3" indent="0" use-parent-layout="false"/>
                 </constraints>
                 <properties/>
                 <border type="none"/>
@@ -695,8 +726,9 @@
                   <grid id="1d460" binding="panelSimulationSurplusChart" layout-manager="BorderLayout" hgap="0" vgap="0">
                     <constraints>
                       <grid row="3" column="0" row-span="1" col-span="1" vsize-policy="3" hsize-policy="3" anchor="0" fill="3" indent="0" use-parent-layout="false">
-                        <preferred-size width="600" height="200"/>
-                        <maximum-size width="600" height="200"/>
+                        <minimum-size width="700" height="200"/>
+                        <preferred-size width="700" height="200"/>
+                        <maximum-size width="700" height="200"/>
                       </grid>
                     </constraints>
                     <properties/>
@@ -706,8 +738,9 @@
                   <grid id="5a0c4" binding="panelSimulationDemandChart" layout-manager="BorderLayout" hgap="0" vgap="0">
                     <constraints>
                       <grid row="4" column="0" row-span="1" col-span="1" vsize-policy="3" hsize-policy="3" anchor="0" fill="3" indent="0" use-parent-layout="false">
-                        <preferred-size width="600" height="200"/>
-                        <maximum-size width="600" height="200"/>
+                        <minimum-size width="700" height="200"/>
+                        <preferred-size width="700" height="200"/>
+                        <maximum-size width="700" height="200"/>
                       </grid>
                     </constraints>
                     <properties/>
@@ -767,11 +800,6 @@
                   </component>
                 </children>
               </grid>
-              <hspacer id="c8b1e">
-                <constraints>
-                  <grid row="0" column="1" row-span="1" col-span="1" vsize-policy="1" hsize-policy="6" anchor="0" fill="1" indent="0" use-parent-layout="false"/>
-                </constraints>
-              </hspacer>
             </children>
           </grid>
         </children>
