@@ -204,6 +204,10 @@ public class WindmillFarmSimulator
 				}
 
 				//set the next relevant milli
+				if(nextMilliWithNewDemand == this.dailySurplusTimesOfDayInMilliseconds.get(spotInDemandArray) && spotInDemandArray < lastPositionInSurplusArray)
+				{
+					milliIterator --;
+				}
 				nextMilliWithNewDemand = this.dailySurplusTimesOfDayInMilliseconds.get(spotInDemandArray);
 			}
 
