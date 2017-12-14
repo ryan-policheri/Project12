@@ -648,10 +648,10 @@ public class GRESBIMB
 
 		// Add tier charts
 		addJFreeChartToJPanel("Energy Production", this.panelSimulationSurplusTiers, energyProductionTiersDouble,
-				"Hour", "Tier", true, 0, 23.5, 1,
+				"Hour", "Tier", true, 0, 23.5, 2,
 				(double) (NUM_OF_TIERS + .5), MAJOR_TICK_SPACING);
 		addJFreeChartToJPanel("Energy Consumption", this.panelSimulationDemandTiers, energyConsumptionTiersDouble,
-				"Hour", "Tier", true, 0, 23.5, 1,
+				"Hour", "Tier", true, 0, 23.5, 2,
 				(double) (NUM_OF_TIERS + .5), MAJOR_TICK_SPACING);
 
 		// Initialize the charts
@@ -665,8 +665,8 @@ public class GRESBIMB
 	public void calculateCurrentGridEnergyInJoules()
 	{
 		currentGridEnergyInJoules = Controller.calculateCurrentGridEnergyInJoules();
-		lblEnergyLevel.setText("Current Energy in Joules: " + currentGridEnergyInJoules);
-		lblMaxEnergy.setText("Maximum Total Energy in Joules: " + maxTotalEnergyInJoules);
+		lblEnergyLevel.setText("Current Energy (joules): " + currentGridEnergyInJoules);
+		lblMaxEnergy.setText("Max Energy (joules): " + maxTotalEnergyInJoules);
 	}
 
 	private void calculateMaxTotalEnergyInJoules()
@@ -786,7 +786,7 @@ public class GRESBIMB
 		pBSimulation.setValue((int) ((currentMillisecond / 240000) * 100));
 		pbSimulationGridEnergyLevel.setValue((int) ((currentGridEnergyInJoules / maxTotalEnergyInJoules) * 100));
 
-		if (currentGridEnergyInJoules == 0)
+		if (currentGridEnergyInJoules == 0 && currentMillisecond > 1000)
 		{
 			countPowerOutage++;
 		}
@@ -843,7 +843,7 @@ public class GRESBIMB
 			returnStringHour = "" + hour;
 		}
 
-		int minute = (int) Math.floor(currentMillisecond / (100000/600));
+		int minute = (int) Math.floor(currentMillisecond / (10000/60));
 		minute = minute % 60;
 
 		if (minute < 10)
