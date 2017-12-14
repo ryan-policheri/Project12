@@ -24,7 +24,7 @@ public class Controller
 	private static int[] energyConsumptionTiersDesMoines = {
 			1, 1, 1, 1, 1, 2, 2, 2, 2, 4, 5, 4, 2, 5, 5, 3, 3, 1, 1, 3, 4, 3, 3, 1};
 	private static int[] energyProductionTiersWarrenCountyWMF = {
-			1, 1, 1, 1, 1, 2, 2, 2, 3, 3, 3, 3, 4, 4, 5, 3, 3, 3, 4, 2, 2, 2, 1, 1};
+			5, 5, 5, 1, 1, 2, 2, 2, 3, 3, 3, 3, 4, 4, 5, 3, 3, 3, 4, 2, 2, 2, 1, 1};
 	private static City desMoines = new City("Des Moines", energyConsumptionTiersDesMoines);
 	//endregion
 
@@ -86,6 +86,7 @@ public class Controller
 		currentMillisecond = windmillFarmSimulator.getCurrentMillisecond();
 		mainUserGUI.updateSimulationDemandChartWithCurrentMillisecond(currentMillisecond);
 		mainUserGUI.updateSimulationSurplusChartWithCurrentMillisecond(currentMillisecond);
+		mainUserGUI.calculateCurrentGridEnergyInJoules();
 	}
 
 	public static void addGravitationalBattery(GravitationalBattery battery)
@@ -115,6 +116,16 @@ public class Controller
 	public static void removeAllBatteries()
 	{
 		grid.removeAllBatteries();
+	}
+
+	public static double calculateCurrentGridEnergyInJoules()
+	{
+		return grid.calculateCurrentTotalGravitationalEnergyInJoules() + grid.calculateCurrentTotalRotationalEnergyInJoules();
+	}
+
+	public static double calculateMaxTotalEnergyInJoules()
+	{
+		return grid.calculateMaxTotalEnergyInJoules();
 	}
 
 	private static void addEnergySurplus()

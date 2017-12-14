@@ -90,6 +90,7 @@ public class MainUserGUI
 	private JPanel panelSimulationSurplusTiers;
 	private JPanel panelSimulationEnergy;
 	private JProgressBar pBSimulation;
+	private JLabel lblEnergyLevel;
 	//endregion
 	//endregion
 
@@ -109,6 +110,10 @@ public class MainUserGUI
 	private static double maximumMagnitudeOfSurplusesByMillisecond;
 	private static final double MAX_Y_AXIS_CHART_MULTIPLIER = 1.1;
 	private static final double Y_AXIS_TICKS = 5.1;
+
+	// For the simulation batteries
+	private static double maxTotalEnergyInJoules;
+	private static double currentGridEnergyInJoules;
 
 	// For tier charts
 	private static double[] energyProductionTiersDouble;
@@ -386,56 +391,85 @@ public class MainUserGUI
 		// If it's the Energy panel, insert the charts into the appropriate JPanels
 		if (panel.equals(this.panelEnergy))
 		{
-			this.panelEnergyProductionChart.removeAll();
-			this.panelEnergyConsumptionChart.removeAll();
-			int[] energyProductionTiers = Controller.getSelectedWMF().getEnergyProductionTiers();
-			int[] energyConsumptionTiers = selectedCity.getEnergyConsumptionTiers();
-			energyProductionTiersDouble = new double[energyProductionTiers.length];
-			energyConsumptionTiersDouble = new double[energyConsumptionTiers.length];
-
-			for (int i = 0; i < energyConsumptionTiers.length; i++)
-			{
-				energyProductionTiersDouble[i] = energyProductionTiers[i];
-				energyConsumptionTiersDouble[i] = energyConsumptionTiers[i];
-			}
-
-			addJFreeChartToJPanel("Energy Production", this.panelEnergyProductionChart, energyProductionTiersDouble,
-					"Hour", "Tier", 0, 23.5, 1,
-					(double) (NUM_OF_TIERS + .5), MAJOR_TICK_SPACING);
-			addJFreeChartToJPanel("Energy Consumption", this.panelEnergyConsumptionChart, energyConsumptionTiersDouble,
-					"Hour", "Tier", 0, 23.5, 1,
-					(double) (NUM_OF_TIERS + .5), MAJOR_TICK_SPACING);
+			createPanelEnergy();
 		}
 
 		// Switching to Simulation panel
 		if (panel.equals(this.panelSimulation))
 		{
-			// Update the Controller magnitudes + the MainUserGUI magnitudes
-			System.out.println("Updating controller magnitude by millisecond array...");
-			Controller.updateMagnitudeByMillisecondArrays();
-			magnitudeOfDemandsByMillisecond = Controller.getMagnitudeOfDemandsByMillisecond();
-			magnitudeOfSurplusesByMillisecond = Controller.getMagnitudeOfSurplusesByMillisecond();
-			System.out.println("Simulating...");
-
-			// Find maximums
-			findMaximumValueInMagnitudeOfDemandsArray();
-			findMaximumValueInMagnitudeOfSurplusArray();
-
-			// Add tier charts
-			addJFreeChartToJPanel("Energy Production", this.panelSimulationSurplusTiers, energyProductionTiersDouble,
-					"Hour", "Tier", 0, 23.5, 1,
-					(double) (NUM_OF_TIERS + .5), MAJOR_TICK_SPACING);
-			addJFreeChartToJPanel("Energy Consumption", this.panelSimulationDemandTiers, energyConsumptionTiersDouble,
-					"Hour", "Tier", 0, 23.5, 1,
-					(double) (NUM_OF_TIERS + .5), MAJOR_TICK_SPACING);
-
-			this.updateSimulationDemandChartWithCurrentMillisecond(0);
-			this.updateSimulationSurplusChartWithCurrentMillisecond(0);
-
-			windmillFarmSimulator.simulate();
+			startSimulation();
 		}
 	}
 	//endregion
+
+	private void createPanelEnergy()
+	{
+		this.panelEnergyProductionChart.removeAll();
+		this.panelEnergyConsumptionChart.removeAll();
+		int[] energyProductionTiers = Controller.getSelectedWMF().getEnergyProductionTiers();
+		int[] energyConsumptionTiers = selectedCity.getEnergyConsumptionTiers();
+		energyProductionTiersDouble = new double[energyProductionTiers.length];
+		energyConsumptionTiersDouble = new double[energyConsumptionTiers.length];
+
+		for (int i = 0; i < energyConsumptionTiers.length; i++)
+		{
+			energyProductionTiersDouble[i] = energyProductionTiers[i];
+			energyConsumptionTiersDouble[i] = energyConsumptionTiers[i];
+		}
+
+		addJFreeChartToJPanel("Energy Production", this.panelEnergyProductionChart, energyProductionTiersDouble,
+				"Hour", "Tier", 0, 23.5, 1,
+				(double) (NUM_OF_TIERS + .5), MAJOR_TICK_SPACING);
+		addJFreeChartToJPanel("Energy Consumption", this.panelEnergyConsumptionChart, energyConsumptionTiersDouble,
+				"Hour", "Tier", 0, 23.5, 1,
+				(double) (NUM_OF_TIERS + .5), MAJOR_TICK_SPACING);
+	}
+
+	private void startSimulation()
+	{
+		// Update the Controller magnitudes + the MainUserGUI magnitudes
+		System.out.println("Updating controller magnitude by millisecond array...");
+		Controller.updateMagnitudeByMillisecondArrays();
+		magnitudeOfDemandsByMillisecond = Controller.getMagnitudeOfDemandsByMillisecond();
+		magnitudeOfSurplusesByMillisecond = Controller.getMagnitudeOfSurplusesByMillisecond();
+		System.out.println("Simulating...");
+
+		// Find maximums
+		findMaximumValueInMagnitudeOfDemandsArray();
+		findMaximumValueInMagnitudeOfSurplusArray();
+
+		// Calculate the maximum total energy (for the battery display)
+		calculateMaxTotalEnergyInJoules();
+
+		// Calculate the current energy (for the battery display)
+		calculateCurrentGridEnergyInJoules();
+
+		// Add tier charts
+		addJFreeChartToJPanel("Energy Production", this.panelSimulationSurplusTiers, energyProductionTiersDouble,
+				"Hour", "Tier", 0, 23.5, 1,
+				(double) (NUM_OF_TIERS + .5), MAJOR_TICK_SPACING);
+		addJFreeChartToJPanel("Energy Consumption", this.panelSimulationDemandTiers, energyConsumptionTiersDouble,
+				"Hour", "Tier", 0, 23.5, 1,
+				(double) (NUM_OF_TIERS + .5), MAJOR_TICK_SPACING);
+
+		// Initialize the charts
+		this.updateSimulationDemandChartWithCurrentMillisecond(0);
+		this.updateSimulationSurplusChartWithCurrentMillisecond(0);
+
+		windmillFarmSimulator.simulate();
+	}
+
+	public void calculateCurrentGridEnergyInJoules()
+	{
+		currentGridEnergyInJoules = Controller.calculateCurrentGridEnergyInJoules();
+		lblEnergyLevel.setText("Current Energy in Joules: " + currentGridEnergyInJoules + "\n Maximum Total Energy in" +
+				" Joules: " + maxTotalEnergyInJoules);
+	}
+
+	private void calculateMaxTotalEnergyInJoules()
+	{
+		maxTotalEnergyInJoules = Controller.calculateMaxTotalEnergyInJoules();
+	}
 
 	private void findMaximumValueInMagnitudeOfDemandsArray()
 	{

@@ -3,10 +3,6 @@ package edu.model.batteries;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
-import java.util.Timer;
-import java.util.TimerTask;
-
-import edu.model.GraphDataPoint;
 
 public class BatteryGrid
 {
@@ -17,6 +13,7 @@ public class BatteryGrid
 	
 	private double totalRotationalEnergyInJoules;
 	private double totalGravitationalEnergyInJoules;
+	private double maxEnergyInJoules;
 
 	private final double shortTimeThresholdInSeconds = 2.5; // this would be a 15 minutes in our simulation
 	
@@ -244,11 +241,11 @@ public class BatteryGrid
 	
 	private void adjustEnergyStoredByBatteryType()
 	{
-		this.totalGravitationalEnergyInJoules = this.calculateTotalGravitationalEnergyInJoules();
-		this.totalRotationalEnergyInJoules = this.calculateTotalRotationalEnergyInJoules();
+		this.totalGravitationalEnergyInJoules = this.calculateCurrentTotalGravitationalEnergyInJoules();
+		this.totalRotationalEnergyInJoules = this.calculateCurrentTotalRotationalEnergyInJoules();
 	}
 	
-	public double calculateTotalRotationalEnergyInJoules()
+	public double calculateCurrentTotalRotationalEnergyInJoules()
 	{
 		double totalRotationalEnergyInJoules = 0;
 		
@@ -260,7 +257,7 @@ public class BatteryGrid
 		return totalRotationalEnergyInJoules;
 	}
 	
-	public double calculateTotalGravitationalEnergyInJoules()
+	public double calculateCurrentTotalGravitationalEnergyInJoules()
 	{
 		double totalGravitationalEnergyInJoules = 0;
 		
@@ -270,7 +267,26 @@ public class BatteryGrid
 		}
 		
 		return totalRotationalEnergyInJoules;
-	}	
+	}
+
+	public double calculateMaxTotalEnergyInJoules()
+	{
+		double maxEnergyInJoules = 0;
+
+		// Calculate energy of the gravitational batteries
+		for (VolatileBattery battery : this.gravitationalBatteries)
+		{
+			maxEnergyInJoules += battery.getMaxEnergyInJoules();
+		}
+
+		// Calculate energy of the rotational batteries
+		for (VolatileBattery battery : this.rotationalBatteries)
+		{
+			maxEnergyInJoules += battery.getMaxEnergyInJoules();
+		}
+
+		return maxEnergyInJoules;
+	}
 	
 	public void displayGrid()
 	{
