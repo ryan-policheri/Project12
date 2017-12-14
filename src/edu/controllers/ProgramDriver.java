@@ -181,7 +181,7 @@ public class ProgramDriver
 		//TimeUnit.SECONDS.sleep(20);
 		//System.out.println(citySimulator.getDailyDemandTimesOfDayInMilliseconds());
 		//TimeUnit.SECONDS.sleep(20);
-		System.out.println(citySimulator.constructMagnitudeByMillisecondArray());
+		//System.out.println(citySimulator.constructMagnitudeByMillisecondArray());
 		//windmillFarmSimulator.constructMagnitudeByMillisecondArray();
 		
 		

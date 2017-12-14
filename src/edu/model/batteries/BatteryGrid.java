@@ -8,8 +8,8 @@ public class BatteryGrid
 {
 	//ATTRIBUTES
 	//TODO: Find a way to sort these lists - use the Comparable library, maybe? Only the grav list sorts right now
-	private ArrayList<VolatileBattery> gravitationalBatteries = new ArrayList<VolatileBattery>();
-	private ArrayList<VolatileBattery> rotationalBatteries = new ArrayList<VolatileBattery>();
+	private ArrayList<VolatileBattery> gravitationalBatteries;
+	private ArrayList<VolatileBattery> rotationalBatteries;
 	
 	private double totalRotationalEnergyInJoules;
 	private double totalGravitationalEnergyInJoules;
@@ -22,32 +22,17 @@ public class BatteryGrid
 	{	
 		gravitationalBatteries = new ArrayList<VolatileBattery>();
 		rotationalBatteries = new ArrayList<VolatileBattery>();
-		
-		this.totalRotationalEnergyInJoules = 0;
-		this.totalGravitationalEnergyInJoules= 0;
 	}
 
 	//FUNCTIONS
 	public void addGravitationalBattery(GravitationalBattery gravitationalBattery)
 	{
 		this.gravitationalBatteries.add(gravitationalBattery);
-		sortBatteries();
 	}
 	
 	public void addRotationalBattery(RotationalBattery rotationalBattery)
 	{
 		this.rotationalBatteries.add(rotationalBattery);
-		sortBatteries();
-	}
-
-	private void sortBatteries()
-	{
-		sortGravitationalBatteries();
-	}
-
-	private void sortGravitationalBatteries()
-	{
-		Collections.sort(this.gravitationalBatteries, Comparator.comparing(VolatileBattery::getBatteryName));
 	}
 
 	public void removeBattery(int index)
@@ -106,7 +91,6 @@ public class BatteryGrid
 			}
 		}
 		
-		adjustEnergyStoredByBatteryType();
 	}
 
 	public void allocateEnergyDemand(Demand demand)
@@ -147,7 +131,6 @@ public class BatteryGrid
 			}
 		}
 		
-		adjustEnergyStoredByBatteryType();
 	}
 	
 	private Surplus giveEnergyToBatteries(Surplus surplus, ArrayList<VolatileBattery> batteries)
@@ -239,34 +222,23 @@ public class BatteryGrid
 		}	
 	}
 	
-	private void adjustEnergyStoredByBatteryType()
+	public double calculateCurrentTotalEnergyInJoules()
 	{
-		this.totalGravitationalEnergyInJoules = this.calculateCurrentTotalGravitationalEnergyInJoules();
-		this.totalRotationalEnergyInJoules = this.calculateCurrentTotalRotationalEnergyInJoules();
-	}
-	
-	public double calculateCurrentTotalRotationalEnergyInJoules()
-	{
-		double totalRotationalEnergyInJoules = 0;
-		
-		for (VolatileBattery rotBat : rotationalBatteries)
+		double currentEnergyInJoules = 0;
+
+		// Calculate energy of the gravitational batteries
+		for (VolatileBattery battery : this.gravitationalBatteries)
 		{
-			totalRotationalEnergyInJoules += rotBat.getCurrentEnergyInJoules();
+			currentEnergyInJoules += battery.getCurrentEnergyInJoules();
 		}
-		
-		return totalRotationalEnergyInJoules;
-	}
-	
-	public double calculateCurrentTotalGravitationalEnergyInJoules()
-	{
-		double totalGravitationalEnergyInJoules = 0;
-		
-		for (VolatileBattery gravBat : gravitationalBatteries)
+
+		// Calculate energy of the rotational batteries
+		for (VolatileBattery battery : this.rotationalBatteries)
 		{
-			totalRotationalEnergyInJoules += gravBat.getCurrentEnergyInJoules();
+			currentEnergyInJoules += battery.getCurrentEnergyInJoules();
 		}
-		
-		return totalRotationalEnergyInJoules;
+
+		return currentEnergyInJoules;
 	}
 
 	public double calculateMaxTotalEnergyInJoules()
