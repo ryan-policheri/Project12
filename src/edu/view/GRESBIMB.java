@@ -3,11 +3,9 @@ package edu.view;
 //region Imports
 
 import edu.controllers.Controller;
-import edu.model.EnergyCommander;
 import edu.model.batteries.*;
 import edu.model.city.City;
 import edu.model.city.CitySimulator;
-import edu.model.energySources.windmillFarm.WindmillFarm;
 import edu.model.energySources.windmillFarm.WindmillFarmSimulator;
 import org.jfree.chart.ChartFactory;
 import org.jfree.chart.ChartPanel;
@@ -26,8 +24,6 @@ import javax.swing.event.ListSelectionListener;
 import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
-import java.beans.PropertyChangeEvent;
-import java.beans.PropertyChangeListener;
 import java.util.ArrayList;
 //endregion
 
@@ -282,9 +278,9 @@ public class GRESBIMB
 		listCities.setModel(cityDefaultListModel);
 
 		//region Set the selected city
-		Controller.setSelectedCity(Controller.getDesMoines());
-		selectedCity = Controller.getSelectedCity();
-		System.out.println("Selected City: " + Controller.getSelectedCity().toString());
+		//Controller.setSelectedCity(Controller.getDesMoines());
+		//selectedCity = Controller.getSelectedCity();
+		//System.out.println("Selected City: " + Controller.getSelectedCity().toString());
 		//endregion
 
 		Surplus surplus = new Surplus(2000000000, 1);
@@ -422,7 +418,7 @@ public class GRESBIMB
 		//endregion
 
 		//region Simulate screen buttons
-		btnSimulationStop.addActionListener(new ActionListener()
+/*		btnSimulationStop.addActionListener(new ActionListener()
 		{
 			@Override
 			public void actionPerformed(ActionEvent e)
@@ -430,15 +426,15 @@ public class GRESBIMB
 				citySimulator.interruptTimer();
 				windmillFarmSimulator.interruptTimer();
 			}
-		});
-		btnSimulationExit.addActionListener(new ActionListener()
+		});*/
+/*		btnSimulationExit.addActionListener(new ActionListener()
 		{
 			@Override
 			public void actionPerformed(ActionEvent e)
 			{
 				restart();
 			}
-		});
+		});*/
 		//endregion
 		//endregion
 
@@ -449,15 +445,15 @@ public class GRESBIMB
 			{
 				panelCitiesPreview.removeAll();
 				int[] energyProductionTiers = {2, 2, 2, 3, 3, 4, 3, 3, 5, 4, 5, 5, 5, 5, 4, 3, 4, 4, 3, 5, 2, 2, 3, 3};
-				int[] energyConsumptionTiers = selectedCity.getEnergyConsumptionTiers();
+				//int[] energyConsumptionTiers = selectedCity.getConsumptionTiersByHour();
 				double[] chicagoTiersPreview = new double[energyProductionTiers.length];
-				double[] desMoinesTiersPreview = new double[energyConsumptionTiers.length];
+				//double[] desMoinesTiersPreview = new double[energyConsumptionTiers.length];
 
-				for (int i = 0; i < energyConsumptionTiers.length; i++)
+/*				for (int i = 0; i < energyConsumptionTiers.length; i++)
 				{
 					chicagoTiersPreview[i] = energyProductionTiers[i];
 					desMoinesTiersPreview[i] = energyConsumptionTiers[i];
-				}
+				}*/
 
 				// This is extremely hardcoded for Chicago on top, Des Moines on bottom
 				if (listCities.getSelectedIndex() == 0)
@@ -470,9 +466,9 @@ public class GRESBIMB
 				else if (listCities.getSelectedIndex() == 1)
 				{
 					lblPickCitySelectedCityName.setText("Selected city: Des Moines");
-					addJFreeChartToJPanel("Energy Consumption of Des Moines", panelCitiesPreview,
-							desMoinesTiersPreview, "Hour", "Tier", true, 0,
-							23.5, 1, (double) (NUM_OF_TIERS + .5), MAJOR_TICK_SPACING);
+					//addJFreeChartToJPanel("Energy Consumption of Des Moines", panelCitiesPreview,
+						//	desMoinesTiersPreview, "Hour", "Tier", true, 0,
+						//	23.5, 1, (double) (NUM_OF_TIERS + .5), MAJOR_TICK_SPACING);
 				}
 				else
 				{
@@ -541,13 +537,13 @@ public class GRESBIMB
 		panel.validate();
 	}
 
-	private void createNewWindmillFarmSimulator()
+/*	private void createNewWindmillFarmSimulator()
 	{
 		// Ignore this
 		WindmillFarmSimulator windmillFarmSimulator = new WindmillFarmSimulator(new WindmillFarm("Default"));
 		EnergyCommander energyCommander = new EnergyCommander(Controller.getGrid());
 		windmillFarmSimulator.simulate();
-	}
+	}*/
 
 	//region GUI functions
 	private static void createNewJFrame(JPanel panel, String title, int operation)
@@ -591,16 +587,16 @@ public class GRESBIMB
 	{
 		this.panelEnergyProductionChart.removeAll();
 		this.panelEnergyConsumptionChart.removeAll();
-		int[] energyProductionTiers = Controller.getSelectedWMF().getEnergyProductionTiers();
-		int[] energyConsumptionTiers = selectedCity.getEnergyConsumptionTiers();
-		energyProductionTiersDouble = new double[energyProductionTiers.length];
-		energyConsumptionTiersDouble = new double[energyConsumptionTiers.length];
+		//int[] energyProductionTiers = Controller.getSelectedWMF().getEnergyProductionTiers();
+		//int[] energyConsumptionTiers = selectedCity.getConsumptionTiersByHour();
+		//energyProductionTiersDouble = new double[energyProductionTiers.length];
+		//energyConsumptionTiersDouble = new double[energyConsumptionTiers.length];
 
-		for (int i = 0; i < energyConsumptionTiers.length; i++)
+/*		for (int i = 0; i < energyConsumptionTiers.length; i++)
 		{
 			energyProductionTiersDouble[i] = energyProductionTiers[i];
 			energyConsumptionTiersDouble[i] = energyConsumptionTiers[i];
-		}
+		}*/
 
 		addJFreeChartToJPanel("Energy Production", this.panelEnergyProductionChart, energyProductionTiersDouble,
 				"Hour", "Tier", true, 0, 23.5, 1,
@@ -614,7 +610,7 @@ public class GRESBIMB
 	{
 		// Update the Controller magnitudes + the GRESBIMB magnitudes
 		System.out.println("Updating controller magnitude by millisecond array...");
-		Controller.updateMagnitudeByMillisecondArrays();
+		/*Controller.updateMagnitudeByMillisecondArrays();*/
 		magnitudeOfDemandsByMillisecond = Controller.getMagnitudeOfDemandsByMillisecond();
 		magnitudeOfSurplusesByMillisecond = Controller.getMagnitudeOfSurplusesByMillisecond();
 		System.out.println("Simulating...");
@@ -623,8 +619,8 @@ public class GRESBIMB
 		pbSimulationGridEnergyLevel.setSize(500, 500);
 
 		// Set the citySimulator and windmillFarmSimulator
-		citySimulator = Controller.getCitySimulator();
-		windmillFarmSimulator = Controller.getWindmillFarmSimulator();
+		//citySimulator = Controller.getCitySimulator();
+		//windmillFarmSimulator = Controller.getWindmillFarmSimulator();
 
 		// Find maximums
 		findMaximumValueInMagnitudeOfDemandsArray();
@@ -658,8 +654,8 @@ public class GRESBIMB
 		this.updateSimulationDemandChartWithCurrentMillisecond(0);
 		this.updateSimulationSurplusChartWithCurrentMillisecond(0);
 
-		windmillFarmSimulator.simulate();
-		citySimulator.simulate();
+/*		windmillFarmSimulator.simulate();
+		citySimulator.simulate();*/
 	}
 
 	public void calculateCurrentGridEnergyInJoules()
@@ -857,12 +853,14 @@ public class GRESBIMB
 	}
 	//endregion
 
+/*
 	private void restart()
 	{
 		windmillFarmSimulator.interruptTimer();
 		citySimulator.interruptTimer();
 		switchToPanel(panelWelcome);
 	}
+*/
 
 	public static void main(String[] args)
 	{
