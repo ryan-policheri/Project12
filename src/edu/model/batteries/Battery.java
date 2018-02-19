@@ -34,7 +34,13 @@ public abstract class Battery
 	{
 		this.maxEnergyInJoules = (momentOfIntertia / 2) * (maxAngularVelocity * maxAngularVelocity);
 	}
-	
+
+	//Equation: PE =  (2 Dr - 2/3 Dw ) pi Gr ^ 4
+	protected void initializedMaxEnergyInJoulesForHydroelectricBattery(double maxLiftHeightInMeters, double densityOfMassInKilogramMetersCubed, double radiusInMeters){
+		this.maxEnergyInJoules = (2*densityOfMassInKilogramMetersCubed-3/2)*Math.PI*Battery.forceOfGravity*Math.pow(radiusInMeters, 4.0);
+	}
+
+
 	//functions for storing and releasing energy in children of VolatileBattery
 	
 	//Equation: PE = M * g * h
@@ -48,7 +54,8 @@ public abstract class Battery
 	{
 		this.currentEnergyInJoules = (momentOfInertia / 2) * (currentAngularVelocity * currentAngularVelocity);
 	}
-	
+
+
 	protected void adjustForFrictionalLossOnRotationalBattery(FlywheelBearing bearingType)
 	{
 		this.currentEnergyInJoules = bearingType.calculateFrictionalLoss(this.currentEnergyInJoules);
