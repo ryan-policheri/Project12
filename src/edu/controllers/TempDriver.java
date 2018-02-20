@@ -2,6 +2,7 @@ package edu.controllers;
 
 import edu.model.city.City;
 import edu.model.city.CitySimulator;
+import edu.model.energySources.solarFarm.PhotovoltaicSolarFarm;
 import edu.model.energySources.windmillFarm.WindCondition;
 import edu.model.energySources.windmillFarm.Windmill;
 import edu.model.energySources.windmillFarm.WindmillFarm;
@@ -17,24 +18,21 @@ public class TempDriver
         //CREATE CITY
         int[] workingEnergyConsumptionTiersDesMoines = {1,1,1,1,1,2,2,2,2,4,5,4,2,5,5,3,3,1,1,3,4,3,3,1};
 
-        City yeahBitch = new City("Yeah Bitch", workingEnergyConsumptionTiersDesMoines, 0.1);
+        City desMoines = new City("Des Moines", workingEnergyConsumptionTiersDesMoines, 0.1);
 
         //CREATE WINDMILL FARM
         int[] energyProductionTiersWarrenCountyWindmiillFarm = {1,1,1,1,1,2,2,5,5,5,2,1,2,1,4,3,4,5,5,4,3,2,1,1};
 
-        //WindmillFarm warrenCountyWindmillFarm = new WindmillFarm("Warren County Windmill Farm", energyProductionTiersWarrenCountyWindmiillFarm);
-        //WindmillFarmSimulator windmillFarmSimulator = new WindmillFarmSimulator(warrenCountyWindmillFarm);
-
-        Windmill windmill = new Windmill("funk dawg", 5000000);
-        WindmillFarm funkDawgFarm = new WindmillFarm("funk dawg farm", energyProductionTiersWarrenCountyWindmiillFarm, 0.1);
+        Windmill windmill = new Windmill("funk master", 5000000);
+        WindmillFarm warrenCountyWindFarm = new WindmillFarm("Warren County Wind Farm", energyProductionTiersWarrenCountyWindmiillFarm, 0.1);
 
         for (int i = 0; i < 100; i++)
         {
-            funkDawgFarm.addWindmill(new Windmill("funk dawg", 5000000));
+            warrenCountyWindFarm.addWindmill(new Windmill("funk master", 5000000));
         }
 
-        //WindmillFarmSimulator funkDawgFarmSimulator = new WindmillFarmSimulator(funkDawgFarm, energyProductionTiersWarrenCountyWindmiillFarm, .1);
-        //CitySimulator yeahBitchCitySimulator = new CitySimulator(yeahBitch, workingEnergyConsumptionTiersDesMoines, 0.1);
+        //CREATE PHOTOVOLTAIC SOLAR FARM
+        PhotovoltaicSolarFarm warrenCountySolarFarm = new PhotovoltaicSolarFarm("Warren County Solar Farm", 10000, 0.2, 2, 0.1);
 
         long intervalInMilliseconds = 1000;
         long terminateCounter = 0;
@@ -55,10 +53,11 @@ public class TempDriver
                 System.out.println("Catastrophic failure");
             }
 
-            double cityDemand = yeahBitch.nextDemand();
-            double farmSurplus = funkDawgFarm.nextSurplus();
+            double cityDemand = desMoines.nextDemand();
+            double windFarmSurplus = warrenCountyWindFarm.nextSurplus();
+            double solarFarmSurplus = warrenCountySolarFarm.nextSurplus();
             //System.out.println("City Demand: " + cityDemand + " Farm Surplus: " + farmSurplus);
-            System.out.println(cityDemand + "," + farmSurplus);
+            System.out.println(cityDemand + "," + windFarmSurplus + "," + solarFarmSurplus);
 
             if (terminateCounter == amountOfTimesRan)
             {
@@ -73,7 +72,7 @@ public class TempDriver
             for (int percentOfHour = 0; percentOfHour < 1; percentOfHour += 1)
             {
                 WindCondition windCondition = new WindCondition(windTier, 0.35);
-                total += funkDawgFarm.aggregateWindmillEnergyOutput(windCondition, 1);
+                total += warrenCountyWindFarm.aggregateWindmillEnergyOutput(windCondition, 1);
             }
         }
 

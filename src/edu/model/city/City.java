@@ -60,7 +60,7 @@ public class City
 			File file = new File(this.filePath);
 			Scanner scanner = new Scanner(file);
 
-			int lineNumber = -1;
+			int lineNumber = -1; //-1 because there is one line of header
 
 			while(scanner.hasNextLine())
 			{
