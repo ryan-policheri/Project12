@@ -35,7 +35,7 @@ public class WindCondition
             double maxPercentDeviation = this.windVariabilityAsPercentDeviation * percentageAsDecimal;
 
             Random random = new Random();
-            double randomPercentDeviation = minPercentDeviation + (maxPercentDeviation - minPercentDeviation) * random.nextDouble();
+            double randomPercentDeviation = minPercentDeviation + ((maxPercentDeviation - minPercentDeviation) * random.nextDouble());
 
             //generate sign of fluctuation
             boolean sign;

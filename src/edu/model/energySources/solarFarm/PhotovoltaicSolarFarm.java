@@ -3,6 +3,7 @@ package edu.model.energySources.solarFarm;
 import java.io.File;
 import java.io.IOException;
 import java.util.Arrays;
+import java.util.Random;
 import java.util.Scanner;
 
 public class PhotovoltaicSolarFarm
@@ -33,7 +34,7 @@ public class PhotovoltaicSolarFarm
         this.name = name;
         this.solarPanelAreaInSquareMeters = solarPanelAreaInSquareMeters;
         this.conversionEfficiencyAsPercent = conversionEfficiencyAsPercent;
-        this.currentMonthIndex = currentMonthAsNumber--;
+        this.currentMonthIndex = currentMonthAsNumber - 1;
         this.timeFrameAsPercentageOfHour = timeFrameAsPercentageOfHour;
 
         this.pullSolarData();
@@ -62,9 +63,8 @@ public class PhotovoltaicSolarFarm
             this.currentSample = 0;
         }
 
-        double wattageOutputPerMeterForTotatlFrameInKW = solarCondition.calculateSolarTierXSurplusForOneSquareMeter(this.todaysKWhPerSquareMeter, this.conversionEfficiencyAsPercent, this.timeFrameAsPercentageOfHour);
-        double wattageOutputPerMeterForTotatlFrame = wattageOutputPerMeterForTotatlFrameInKW * 1000; //converting to watts
-        double totalWattageOutput = wattageOutputPerMeterForTotatlFrame * this.solarPanelAreaInSquareMeters;
+        double wattageOutputPerMeterForTimeFrame = solarCondition.calculateSolarTierXSurplusForOneSquareMeter(this.todaysKWhPerSquareMeter, this.conversionEfficiencyAsPercent, this.timeFrameAsPercentageOfHour);
+        double totalWattageOutput = wattageOutputPerMeterForTimeFrame * this.solarPanelAreaInSquareMeters;
 
         return totalWattageOutput;
     }
@@ -76,7 +76,7 @@ public class PhotovoltaicSolarFarm
         double todaysMinimumKWhPerSquareMeter = this.averageKWhPerSquareMeterPerDay - maxAmountKWhFluctuation;
         double todaysMaximumKWhPerSquareMeter = this.averageKWhPerSquareMeterPerDay + maxAmountKWhFluctuation;
 
-        double todaysKWhPerSquareMeter = todaysMinimumKWhPerSquareMeter + (Math.random() * ((todaysMaximumKWhPerSquareMeter - todaysMinimumKWhPerSquareMeter) + 1));
+        double todaysKWhPerSquareMeter = todaysMinimumKWhPerSquareMeter + ((todaysMaximumKWhPerSquareMeter - todaysMinimumKWhPerSquareMeter) * new Random().nextDouble());
 
         return todaysKWhPerSquareMeter;
     }
