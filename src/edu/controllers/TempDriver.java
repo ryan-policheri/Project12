@@ -22,6 +22,9 @@ public class TempDriver
         ArrayList<WindmillFarm> windFarms = BuildDefaults.createListOfDefaultWindFarms(desMoines,0.1);
         System.out.println(windFarms);
 
+        ArrayList<PhotovoltaicSolarFarm> PVSolarFarms = BuildDefaults.createListOfDefaultPVSolarFarms(desMoines, 0.1);
+        System.out.println(PVSolarFarms);
+
 /*        //CREATE WINDMILL FARM
         int[] energyProductionTiersWarrenCountyWindmiillFarm = {1,1,1,1,1,2,2,5,5,5,2,1,2,1,4,3,4,5,5,4,3,2,1,1};
 

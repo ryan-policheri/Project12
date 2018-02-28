@@ -1,0 +1,36 @@
+Parsing Key:
+* Indicates a city is on the next line
+# Indicates a PV solar farm is on the next line
+@ Indicates Current Month on Next Line
+= Indicates the last line of the file
+
+@
+Current Month as Int:2
+
+*
+Des Moines
+
+#
+Farm Name:Warren County Solar Farm
+Solar Surface in Square Meters:20000
+Conversion Efficiency As Percent:0.2
+
+#
+Farm Name:PV Solar Farm of Madison County
+Solar Surface in Square Meters:35000
+Conversion Efficiency As Percent:0.19
+
+#
+Farm Name:Des Moines Solar Rooftops
+Solar Surface in Square Meters:10000
+Conversion Efficiency As Percent:0.25
+
+
+*
+Chicago
+
+#
+Farm Name:Chicago Solar Farm
+Solar Surface in Square Meters:10000
+Conversion Efficiency As Percent:0.2
+=

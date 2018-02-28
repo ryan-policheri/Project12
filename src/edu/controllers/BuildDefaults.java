@@ -1,6 +1,7 @@
 package edu.controllers;
 
 import edu.model.city.City;
+import edu.model.energySources.solarFarm.PhotovoltaicSolarFarm;
 import edu.model.energySources.windmillFarm.Windmill;
 import edu.model.energySources.windmillFarm.WindmillFarm;
 
@@ -11,8 +12,6 @@ import java.util.Scanner;
 
 public abstract class BuildDefaults
 {
-    private String filePathForPVSolarFarms = "..\\Capstone\\src\\edu\\controllers\\DefaultPVSolarFarmsByCity.txt";
-
     protected static ArrayList<WindmillFarm> createListOfDefaultWindFarms(City city, double timeFrameAsPercentageOfHour)
     {
         ArrayList<WindmillFarm> windmillFarms = new ArrayList<WindmillFarm>();
@@ -96,4 +95,70 @@ public abstract class BuildDefaults
         return windmillFarms;
     }
 
+    protected static ArrayList<PhotovoltaicSolarFarm> createListOfDefaultPVSolarFarms(City city, double timeFrameAsPercentageOfHour)
+    {
+        ArrayList<PhotovoltaicSolarFarm> PVSolarFarms = new ArrayList<PhotovoltaicSolarFarm>();
+
+        String filePathForPVSolarFarms = "..\\Capstone\\src\\edu\\controllers\\DefaultPVSolarFarmsByCity.txt";
+
+        try
+        {
+            File file = new File(filePathForPVSolarFarms);
+            Scanner scanner = new Scanner(file);
+
+            String cityName = city.toString();
+            int currentMonth = -1;
+
+            while(scanner.hasNextLine())
+            {
+                String line = scanner.nextLine();
+
+                if (line.equals("@"))
+                {
+                    line = scanner.nextLine();
+                    currentMonth = Integer.parseInt(line.split(":")[1]);
+                }
+
+                if (line.equals("*")) //denotes that there is a city name on the next line
+                {
+                    line = scanner.nextLine();
+
+                    if (line.equals(cityName)) //if this is true we found the city we are looking for
+                    {
+                        boolean done = false;
+
+                        while(done == false)
+                        {
+                            line = scanner.nextLine();
+
+                            if (line.equals("#")) //denotes that we have a farm
+                            {
+                                line = scanner.nextLine();
+                                String PVSolarFarmName = line.split(":")[1];
+                                line = scanner.nextLine();
+                                double PVSolarFarmSize = Double.parseDouble(line.split(":")[1]);
+                                line = scanner.nextLine();
+                                double PVSolarFarmConversionEfficiency = Double.parseDouble(line.split(":")[1]);
+                                PhotovoltaicSolarFarm PVSolarFarm = new PhotovoltaicSolarFarm(PVSolarFarmName, PVSolarFarmSize, PVSolarFarmConversionEfficiency, currentMonth,timeFrameAsPercentageOfHour);
+
+                                PVSolarFarms.add(PVSolarFarm);
+                            }
+                            else if (line.equals("*") || line.equals("="))
+                            {
+                                done = true;
+                            }
+                        }
+                    }
+                }
+            }
+
+            scanner.close();
+        }
+        catch(IOException ex)
+        {
+            System.out.println("Problem loading default PV solar farms");
+        }
+
+        return PVSolarFarms;
+    }
 }
