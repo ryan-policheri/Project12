@@ -12,7 +12,7 @@ public class City
 	private String cityName;
 	private double timeFrameAsPercentageOfHour;
 
-	private String filePath = "..\\Capstone\\src\\edu\\model\\city\\ConsumptionByHourData.txt";
+	private String filePath = "..\\Capstone\\src\\edu\\model\\city\\ConsumptionByHourData";
 	private HourlyConsumption[] hourlyConsumptions = new HourlyConsumption[24];
 	private double percentOfMISO = 0.0132234375;
 
@@ -21,11 +21,15 @@ public class City
 	private int currentHourlyConsumptionIndex;
 	private int samplesPerTier;
 
+	private int[] defaultWindTiersByHour = {1,1,1,1,1,2,2,5,5,5,2,1,2,1,4,3,4,5,5,4,3,2,1,1}; //this is the default wind tiers for the area surrounding the city. Only to be used when building defualts
+
 	//CONSTRUCTORS
-	public City(String cityName, int[] consumptionTiersByHour, double timeFrameAsPercentageOfHour)
+	public City(String cityName, double timeFrameAsPercentageOfHour)
 	{
 		this.cityName = cityName;
 		this.timeFrameAsPercentageOfHour = timeFrameAsPercentageOfHour;
+
+		this.filePath = this.filePath + this.cityName.replaceAll(" ", "") + ".txt";
 
 		this.samplesPerTier = (int) (1 / this.timeFrameAsPercentageOfHour);
 
@@ -36,6 +40,7 @@ public class City
 		this.currentSample = 0;
 	}
 
+	//METHODS
 	public double nextDemand()
 	{
 		this.currentSample += 1;
@@ -97,5 +102,11 @@ public class City
 	public String toString()
 	{
 		return this.cityName;
+	}
+
+	//GETTERS
+	public int[] getDefaultWindTiersByHour()
+	{
+		return defaultWindTiersByHour;
 	}
 }

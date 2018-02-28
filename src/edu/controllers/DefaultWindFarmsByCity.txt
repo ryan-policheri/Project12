@@ -1,0 +1,39 @@
+NOTE: Do not put blank lines in between wind turbine specifications ($)
+Parsing Key:
+* Indicates a city is on the next line
+# Indicates a wind farm is on the next line
+$ Indicates a turbine specification is on the next line
+= Indicates the last line of the file
+
+*
+Des Moines
+
+#
+Farm Name:Warren County Wind Farm
+$
+Wind Turbine Name:Tower of Power
+Wind Turbine Capacity:5000000
+Wind Turbine Count:100
+$
+Wind Turbine Name:Wind-City 3MW Turbine
+Wind Turbine Capacity:3000000
+Wind Turbine Count:200
+
+#
+Farm Name:Wind Farm of Madison County
+$
+Wind Turbine Name:Wind-City 3MW Turbine
+Wind Turbine Capacity:3000000
+Wind Turbine Count:200
+
+
+*
+Chicago
+
+#
+Farm Name:Lemont Wind Farm
+$
+Wind Turbine Name:Tower of Power
+Wind Turbine Capacity:5000000
+Wind Turbine Count:100
+=

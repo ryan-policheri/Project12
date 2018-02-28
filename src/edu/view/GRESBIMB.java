@@ -56,8 +56,8 @@ public class GRESBIMB
 	//region Energy panel
 	private JPanel panelEnergy;
 
-	private JButton btnEnergyProductionEdit;
-	private JButton btnEnergyConsumptionEdit;
+	private JButton btnEditWindFarm;
+	private JButton btnEditPVSolarFarm;
 	private JButton btnEnergyBack;
 	private JButton btnEnergyNext;
 	private JPanel panelEnergyProductionChart;
@@ -98,6 +98,13 @@ public class GRESBIMB
 	private JLabel lblBatteryType;
 	private JLabel lblBatteryMaxStorage;
 	private JLabel lblBatteriesTitle;
+	private JButton buildDefaultButton;
+	private JButton btnBuildDefaultWindFarms;
+	private JList listWindFarms;
+	private JList listPVSolarFarms;
+	private JButton btnAddWindFarm;
+	private JButton btnAddPVSolarFarm;
+	private JButton btnBuildDefaultPVSolarFarms;
 	//endregion
 	//endregion
 
@@ -143,32 +150,9 @@ public class GRESBIMB
 	{
 		controller = new Controller(this);
 
-		//TODO: Add cities to the list, be able to select them and change their info on the fly
-		//TODO: Add a final "Simulate" feature
-
-		//TODO: MAJOR PRIORITY - see below
-		// Get current millisecond from WindmillFarmSimulator as the xAxisStartRange
-		// Get a period of time later as the xAxisEndRange
-		// Set xAxisTickUnit to a reasonable amount
-		// Set yAxisRange to the maximum value of the entire "demands" array
-		// Set yAxisTickUnit to roughly 20 ticks
-		// Update the graph every millisecond
-
 		Controller.updateCities();
 
 		//region Add Batteries
-		// Adding 1000 batteries total with random names
-		/*for (int i = 500; i > 0; i--)
-		{
-			int a = (int) Math.round(Math.random() * 1000);
-
-			GravitationalBattery gravitationalBattery = new GravitationalBattery("GRAV_" + a, 100, 100);
-			Controller.addGravitationalBattery(gravitationalBattery);
-
-			RotationalBattery rotationalBattery = new RotationalBattery("ROT_" + a, 100, 100,
-					new FlywheelMaterial("Titanium"), new FlywheelBearing("Mechanical"));
-			Controller.addRotationalBattery(rotationalBattery);
-		}*/
 
 		//ADD THE BATTERIES
 		double GB_Supreme_Count = 50;
@@ -278,14 +262,14 @@ public class GRESBIMB
 		listCities.setModel(cityDefaultListModel);
 
 		//region Set the selected city
-		//Controller.setSelectedCity(Controller.getDesMoines());
-		//selectedCity = Controller.getSelectedCity();
-		//System.out.println("Selected City: " + Controller.getSelectedCity().toString());
+		Controller.setSelectedCity(Controller.getDesMoines());
+		selectedCity = Controller.getSelectedCity();
+		System.out.println("Selected City: " + Controller.getSelectedCity().toString());
 		//endregion
 
 		Surplus surplus = new Surplus(2000000000, 1);
 
-		// Controller.allocateEnergySurplus(surplus);
+		Controller.allocateEnergySurplus(surplus);
 
 		//region Button listeners
 		//region Switching between panels
@@ -361,7 +345,7 @@ public class GRESBIMB
 		//endregion
 
 		//region Energy screen buttons
-		btnEnergyProductionEdit.addActionListener(new ActionListener()
+		btnEditWindFarm.addActionListener(new ActionListener()
 		{
 			@Override
 			public void actionPerformed(ActionEvent e)
@@ -370,7 +354,7 @@ public class GRESBIMB
 				createNewJFrame(new FormEditEnergyProduction().getPanelMain(), title, JFrame.DISPOSE_ON_CLOSE);
 			}
 		});
-		btnEnergyConsumptionEdit.addActionListener(new ActionListener()
+		btnEditPVSolarFarm.addActionListener(new ActionListener()
 		{
 			@Override
 			public void actionPerformed(ActionEvent e)
@@ -853,14 +837,12 @@ public class GRESBIMB
 	}
 	//endregion
 
-/*
-	private void restart()
+/*	private void restart()
 	{
 		windmillFarmSimulator.interruptTimer();
 		citySimulator.interruptTimer();
 		switchToPanel(panelWelcome);
-	}
-*/
+	}*/
 
 	public static void main(String[] args)
 	{

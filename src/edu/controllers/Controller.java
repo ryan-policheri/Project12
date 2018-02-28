@@ -3,59 +3,41 @@ package edu.controllers;
 import edu.model.EnergyCommander;
 import edu.model.batteries.*;
 import edu.model.city.City;
-import edu.model.city.CitySimulator;
+import edu.model.energySources.solarFarm.PhotovoltaicSolarFarm;
+import edu.model.energySources.windmillFarm.WindmillFarm;
 import edu.view.GRESBIMB;
 
 import java.util.ArrayList;
 
 public class Controller
 {
-	//TODO: Implement the CitySimulator for a full-fledged simulation
-	//TODO: Add energy production and energy consumption arrays for graph functionality
+	private static final double defaultTimeFrameAsPercentageOfHour = 0.1;
+
 	private static BatteryGrid grid = new BatteryGrid();
 
 	private static final int NUM_OF_TIERS = 5;
 	private static final int MAJOR_TICK_SPACING = 1;
 
-	//region Cities
-
-	// FULLY WORKING CITY
-	private static int[] workingEnergyConsumptionTiersDesMoines = {
-			1, 1, 1, 1, 1, 2, 2, 2, 2, 4, 5, 4, 2, 5, 5, 3, 3, 1, 1, 3, 4, 3, 3, 1};
-	private static int[] workingEnergyProductionTiersWarrenCountyWMF = {
-			1, 1, 1, 1, 1, 2, 2, 2, 2, 3, 3, 3, 4, 2, 3, 3, 3, 3, 4, 2, 2, 2, 1, 1};
-
-
-	//region Des Moines
-	private static int[] energyConsumptionTiersDesMoines = {
-			1, 1, 1, 1, 1, 2, 2, 2, 2, 4, 5, 4, 2, 5, 5, 3, 3, 1, 1, 3, 4, 3, 3, 1};
-	private static int[] energyProductionTiersWarrenCountyWMF = {
-			1, 1, 1, 1, 1, 2, 2, 2, 2, 3, 3, 3, 4, 2, 3, 3, 3, 3, 4, 2, 2, 2, 1, 1};
-	//private static City desMoines = new City("Des Moines", energyConsumptionTiersDesMoines);
-	//endregion
-
-	//region Chicago
-	private static int[] energyConsumptionTiersChicago = {
-			1, 1, 1, 1, 1, 2, 2, 2, 2, 4, 5, 4, 2, 5, 5, 3, 3, 1, 1, 3, 4, 3, 3, 1};
-	private static int[] energyProductionTiersChicago = {
-			1, 1, 1, 1, 1, 2, 2, 2, 3, 3, 3, 3, 4, 4, 5, 3, 3, 3, 4, 2, 2, 2, 1, 1};
-	//private static City chicago = new City("Chicago", energyConsumptionTiersChicago);
-	//endregion
+	//region Available Cities
+	private static City desMoines = new City("Des Moines", defaultTimeFrameAsPercentageOfHour);
+	private static City chicago = new City("Chicago", defaultTimeFrameAsPercentageOfHour);
 
 	private static ArrayList<City> availableCities = new ArrayList<City>();
-	//private static City selectedCity = desMoines;
+	private static City selectedCity = desMoines;
 	//endregion
 
 	// Set default city
-	//private static CitySimulator citySimulator = new CitySimulator(desMoines, energyConsumptionTiersDesMoines, 0.1);
 	private static EnergyCommander energyCommander = new EnergyCommander(grid);
 
 	// Windmill farm
-	//private static WindmillFarm warrenCountyWindmillFarm = new WindmillFarm("Warren County Windmill Farm");
-	//private static WindmillFarmSimulator windmillFarmSimulator = new WindmillFarmSimulator(warrenCountyWindmillFarm, energyConsumptionTiersDesMoines, 0.35);
+	private static int[] energyProductionTiersWarrenCountyWMF = {1, 1, 1, 1, 1, 2, 2, 2, 2, 3, 3, 3, 4, 2, 3, 3, 3, 3, 4, 2, 2, 2, 1, 1};
+	private static WindmillFarm warrenCountyWindmillFarm = new WindmillFarm("Warren County Windmill Farm", energyProductionTiersWarrenCountyWMF, defaultTimeFrameAsPercentageOfHour);
 	private static ArrayList<Double> magnitudeOfDemandsByMillisecond;
 	private static ArrayList<Double> magnitudeOfSurplusesByMillisecond;
-	//private static WindmillFarm selectedWMF = warrenCountyWindmillFarm;
+	private static WindmillFarm selectedWMF = warrenCountyWindmillFarm;
+
+	// Solar farm
+	private static PhotovoltaicSolarFarm warrenCountySolarFarm = new PhotovoltaicSolarFarm("Warren County Solar Farm", 10000, 0.2, 2, defaultTimeFrameAsPercentageOfHour);
 
 	// Times
 	private static long currentMillisecond = 0;
@@ -76,10 +58,9 @@ public class Controller
 	public static void updateCities()
 	{
 		availableCities.clear();
-		//availableCities.add(chicago);
-		//availableCities.add(desMoines);
+		availableCities.add(chicago);
+		availableCities.add(desMoines);
 
-		//citySimulator = new CitySimulator(selectedCity, energyConsumptionTiersDesMoines, 0.1);
 		energyCommander = new EnergyCommander(grid);
 		//TODO: Run this when the "simulate" button is hit
 		// magnitudeByMillisecondArray = citySimulator.constructMagnitudeByMillisecondArray();
@@ -175,10 +156,10 @@ public class Controller
 		return availableCities;
 	}
 
-/*	public static WindmillFarm getSelectedWMF()
+	public static WindmillFarm getSelectedWMF()
 	{
 		return selectedWMF;
-	}*/
+	}
 
 	public static void setAvailableCities(ArrayList<City> availableCities)
 	{
@@ -200,37 +181,36 @@ public class Controller
 		return MAJOR_TICK_SPACING;
 	}
 
-/*	public static City getSelectedCity()
+	public static City getSelectedCity()
 	{
 		return selectedCity;
-	}*/
+	}
 
-/*	public static void setSelectedCity(City newCity)
+	public static void setSelectedCity(City newCity)
 	{
 		selectedCity = newCity;
-	}*/
+	}
 
-/*	public static void setSelectedCityConsumptionValues(int[] sliderValues)
+	public static void setSelectedCityConsumptionValues(int[] sliderValues)
 	{
 		// Sets the city consumption values and updates the main page
-		selectedCity.setConsumptionTiersByHour(sliderValues);
 		gresbimb.updateEnergyScreen();
-	}*/
+	}
 
-/*	public static WindmillFarmSimulator getWindmillFarmSimulator()
+	public static WindmillFarm getWindmillFarm()
 	{
-		return windmillFarmSimulator;
-	}*/
+		return selectedWMF;
+	}
 
-/*	public static CitySimulator getCitySimulator()
+	public static City getCitySimulator()
 	{
-		return citySimulator;
-	}*/
+		return selectedCity;
+	}
 
-/*	public static City getDesMoines()
+	public static City getDesMoines()
 	{
 		return desMoines;
-	}*/
+	}
 
 	public static ArrayList<Double> getMagnitudeOfDemandsByMillisecond()
 	{
