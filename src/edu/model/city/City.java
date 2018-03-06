@@ -111,27 +111,50 @@ public class City
 		return defaultWindTiersByHour;
 	}
 
-	public double[] getEnergyMinimumsByHour()
+	public double[] getEnergyMinimumsByHourInMegawatts()
 	{
 		double[] energyMinimumsByHour = new double[City.hoursInDay];
 
 		for(int i = 0; i < City.hoursInDay; i++)
 		{
-			energyMinimumsByHour[i] = hourlyConsumptions[i].getMinimumHourlyConsumptionInWatts();
- 		}
+			double energyMinimumInWatts = hourlyConsumptions[i].getMinimumHourlyConsumptionInWatts();
+			double energyMinimumInMegawatts = (energyMinimumInWatts / 1000000) / 3600; //convert to megawatt hours
+			energyMinimumsByHour[i] = energyMinimumInMegawatts;
+		}
 
  		return energyMinimumsByHour;
 	}
 
-	public double[] getEnergyMaximumsByHour()
+	public double[] getEnergyMaximumsByHourInMegawatts()
 	{
 		double[] energyMaximumsByHour = new double[City.hoursInDay];
 
 		for(int i = 0; i < this.hourlyConsumptions.length; i++)
 		{
-			energyMaximumsByHour[i] = hourlyConsumptions[i]. getMinimumHourlyConsumptionInWatts() + hourlyConsumptions[i].getMaxDeviationInWatts();
+			double energyMinimumInWatts = hourlyConsumptions[i].getMinimumHourlyConsumptionInWatts();
+			double energyMinimumInMegawattHours = (energyMinimumInWatts / 1000000) / 3600; //convert to megawatt hours
+
+			double energyDeviationInWatts = hourlyConsumptions[i].getMaxDeviationInWatts();
+			double energyDeviationInMegawattHours = (energyDeviationInWatts / 1000000) / 3600; //convert to megawatt hours
+
+			energyMaximumsByHour[i] = energyMinimumInMegawattHours + energyDeviationInMegawattHours;
 		}
 
 		return energyMaximumsByHour;
+	}
+
+	public double getHighestEnergyValue()
+	{
+		double highestEnergyValue = -1;
+
+		for (double value : this.getEnergyMaximumsByHourInMegawatts())
+		{
+			if (value > highestEnergyValue)
+			{
+				highestEnergyValue = value;
+			}
+		}
+
+		return highestEnergyValue;
 	}
 }
