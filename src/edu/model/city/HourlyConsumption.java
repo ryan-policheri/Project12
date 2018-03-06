@@ -28,4 +28,13 @@ public class HourlyConsumption
         return this.minimumHourlyConsumptionInWatts + "," + this.maxDeviationInWatts;
     }
 
+    public double getMinimumHourlyConsumptionInWatts()
+    {
+        return minimumHourlyConsumptionInWatts;
+    }
+
+    public double getMaxDeviationInWatts()
+    {
+        return maxDeviationInWatts;
+    }
 }

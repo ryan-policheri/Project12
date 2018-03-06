@@ -1,38 +1,191 @@
 package edu.model.batteries;
 
 import java.util.ArrayList;
-import java.util.Collections;
-import java.util.Comparator;
 
 public class BatteryGrid
 {
 	//ATTRIBUTES
-	//TODO: Find a way to sort these lists - use the Comparable library, maybe? Only the grav list sorts right now
 	private ArrayList<VolatileBattery> gravitationalBatteries;
 	private ArrayList<VolatileBattery> rotationalBatteries;
-	
-	private double totalRotationalEnergyInJoules;
-	private double totalGravitationalEnergyInJoules;
-	private double maxEnergyInJoules;
 
-	private final double shortTimeThresholdInSeconds = 2.5; // this would be a 15 minutes in our simulation
+	//private ArrayList<ConstantFlow> heindlBatteries;
+	
+	private double minimumVolatileEnergyInWatts; //5 Gigawatts
+
+	private double energyWasted;
+	private double energyShortageInWatts;
+	private int amountOfEnergyShortages;
 	
 	//CONSTRUCTORS
 	public BatteryGrid() 
 	{	
-		gravitationalBatteries = new ArrayList<VolatileBattery>();
-		rotationalBatteries = new ArrayList<VolatileBattery>();
+		this.gravitationalBatteries = new ArrayList<VolatileBattery>();
+		this.rotationalBatteries = new ArrayList<VolatileBattery>();
+
+		//this.heindlBatteries = new ArrayList<ConstantFlow>();
+
+		this.minimumVolatileEnergyInWatts = 5000000000.0;
+
+		this.energyWasted = 0;
+		this.energyShortageInWatts = 0;
+		this.amountOfEnergyShortages = 0;
 	}
 
 	//FUNCTIONS
+	public void allocateEnergySurplus(double energySurplusInWatts)
+	{
+		double leftOverEnergyInWatts = 0;
+
+		if (this.calculateCurrentVolatileEnergyInJoules() < this.minimumVolatileEnergyInWatts)
+		{
+			leftOverEnergyInWatts = this.giveEnergyToVolatileBatteries(this.rotationalBatteries, energySurplusInWatts,true); //true indicates that we are filling only to the minimum threshold
+		}
+
+		//fill as much constant flow batteries as you can
+		//leftOverEnergyInWatts = this.giveEnergyToConstantFlowBatteries(this.heindlBatteries, leftOverEnergyInWatts);
+
+		//put the excess energy(that could not fit in the constant flow filling process) in to volatile batteries
+		leftOverEnergyInWatts = this.giveEnergyToVolatileBatteries(this.rotationalBatteries, leftOverEnergyInWatts, false); //false indicates fill as much as you can
+
+		if(leftOverEnergyInWatts > 0)
+		{
+			this.energyWasted += leftOverEnergyInWatts;
+		}
+	}
+
+	public void allocateEnergyDemand(double energyDemandInWatts)
+	{
+		double energyStillNeededToFullfillDemand = energyDemandInWatts;
+
+		//pull what is able to be pulled from the constant flow batteries
+		//double constantFlowEnergy = this.takeEnergyFromConstantFlowBatteries(this.heindlBatteries);
+
+		//if constantFlowEnergy > energyDemandInWatts -in the case that the constant flows were geared to release more than needed
+			//double excessEnergyPulled = constantFlowEnergy - energyDemandInWatts;
+			//this.allocateEnergySurplus(excessEnergyPulled);
+			//constantFlowEnergy = energyDemandInWatts
+
+		//energyStillNeededToFullfillDemand = energyDemandInWatts - constantFlowEnergy
+
+		if (energyStillNeededToFullfillDemand > 0)
+		{
+			energyStillNeededToFullfillDemand = this.takeEnergyFromVolatileBatteries(this.rotationalBatteries, energyStillNeededToFullfillDemand);
+			if (energyStillNeededToFullfillDemand > 0)
+			{
+				this.energyShortageInWatts += energyStillNeededToFullfillDemand;
+				this.amountOfEnergyShortages += 1;
+			}
+		}
+	}
+	
+	private double giveEnergyToVolatileBatteries(ArrayList<VolatileBattery> batteries, double energySurplusInWatts, boolean fillOnlyToVolatileEnergyMinimum)
+	{
+		double highestJoules = -1;
+		int highestJoulesPosition = -1;
+
+		for (int x = 0; x < batteries.size(); x++)
+		{
+			double tempJoulesInBattery = batteries.get(x).getCurrentEnergyInJoules();
+			boolean tempIsBatteryFull = batteries.get(x).isBatteryFull();
+			
+			if(tempJoulesInBattery > highestJoules && tempIsBatteryFull == false)
+			{
+				highestJoules = batteries.get(x).getCurrentEnergyInJoules();
+				highestJoulesPosition = x;
+			}
+		}
+		
+		//all batteries were all full, return the surplus as is
+		if(highestJoulesPosition == -1)
+		{
+			return energySurplusInWatts;
+		}
+		
+		//there was at least one available battery that was not completely full
+		else
+		{
+			double remainingSurplus = batteries.get(highestJoulesPosition).storeEnergy(energySurplusInWatts);
+		
+			//if there is a remaining surplus and we want to fill indefinitely, see if there is another volatile battery to charge
+			if (remainingSurplus > 0 && fillOnlyToVolatileEnergyMinimum == false)
+			{
+				return giveEnergyToVolatileBatteries(batteries, remainingSurplus, fillOnlyToVolatileEnergyMinimum);
+			}
+			//if there is a remaining surplus and we want to stop fill ASAP and we are still below the minimum volatile energy threshold
+			else if (remainingSurplus > 0 && fillOnlyToVolatileEnergyMinimum == true && this.calculateCurrentVolatileEnergyInJoules() < this.minimumVolatileEnergyInWatts)
+			{
+				return giveEnergyToVolatileBatteries(batteries, remainingSurplus, fillOnlyToVolatileEnergyMinimum);
+			}
+			//all of the surplus has been used or we want to stop filling volatiles, return the surplus so the grid knows that
+			else
+			{
+				return remainingSurplus;
+			}
+		}
+	}
+	
+	private double takeEnergyFromVolatileBatteries(ArrayList<VolatileBattery> batteries, double energyDemandInWatts)
+	{
+		double lowestJoules = Double.MAX_VALUE;
+		int lowestJoulesPosition = -1;
+		
+		for (int x = 0; x < batteries.size(); x++)
+		{
+			double tempJoulesInBattery = batteries.get(x).getCurrentEnergyInJoules();
+			
+			if(tempJoulesInBattery < lowestJoules && tempJoulesInBattery > 0)
+			{
+				lowestJoules = batteries.get(x).getCurrentEnergyInJoules();
+				lowestJoulesPosition = x;
+			}
+		}
+		
+		//If they were all empty, return the demand as is
+		if(lowestJoulesPosition == -1)
+		{
+			return energyDemandInWatts;
+		}
+		else
+		{
+			double remainingDemand = batteries.get(lowestJoulesPosition).releaseEnergy(energyDemandInWatts);
+		
+			//if there is a remaining demand, see if there is another volatile battery that can take it
+			if (remainingDemand > 0)
+			{
+				return this.takeEnergyFromVolatileBatteries(batteries, remainingDemand);
+			}
+			//all of the demand has been allocated, return the empty demand so the grid knows that
+			else
+			{
+				return remainingDemand;
+			}
+		}	
+	}
+
+/*	private double giveEnergyToConstantFlowBatteries(ArrayList<ConstantFlow> batteries, double energySurplusInWatts)
+	{
+		return leftoverEnergyInWatts;
+	}
+
+	private double takeAllConstantFlowEnergyAvailable(ArrayList<ConstantFlow> batteries)
+	{
+		return allConstantFlowEnergyAvailableInWatts;
+	}*/
+
+	//region add and remove batteries
 	public void addGravitationalBattery(GravitationalBattery gravitationalBattery)
 	{
 		this.gravitationalBatteries.add(gravitationalBattery);
 	}
-	
+
 	public void addRotationalBattery(RotationalBattery rotationalBattery)
 	{
 		this.rotationalBatteries.add(rotationalBattery);
+	}
+
+	public void addListOfRotationalBatteries(ArrayList<VolatileBattery> volatileBatteries)
+	{
+		this.rotationalBatteries.addAll(volatileBatteries);
 	}
 
 	public void removeBattery(int index)
@@ -52,188 +205,15 @@ public class BatteryGrid
 		this.gravitationalBatteries.clear();
 		this.rotationalBatteries.clear();
 	}
-		
-	public void allocateEnergySurplus(Surplus surplus)
-	{
-		double timeIncomingEnergyLastsInSeconds = surplus.getTimeAvailableInSeconds();
-		
-		//rotational batteries are first choice
-		if (timeIncomingEnergyLastsInSeconds <= this.shortTimeThresholdInSeconds)
-		{
-			Surplus tempSurplus = giveEnergyToBatteries(surplus, this.rotationalBatteries);
-			
-			//give to gravitational batteries if there is still surplus left
-			if (tempSurplus.isSurplusGone() == false)
-			{
-				tempSurplus = giveEnergyToBatteries(tempSurplus, this.gravitationalBatteries);
-				
-				if (tempSurplus.isSurplusGone() == false)
-				{
-					//System.out.println("No place to store energy");
-				}
-			}
-		}
-		
-		//gravitational batteries are first choice
-		else
-		{
-			Surplus tempSurplus = giveEnergyToBatteries(surplus, this.gravitationalBatteries);
-			
-			//give to rotational batteries if there is still surplus left
-			if (tempSurplus.isSurplusGone() == false)
-			{
-				tempSurplus = giveEnergyToBatteries(tempSurplus, this.rotationalBatteries);
-				
-				if (tempSurplus.isSurplusGone() == false)
-				{
-					//System.out.println("No place to store energy");
-				}
-			}
-		}
-		
-	}
+	//endregion
 
-	public void allocateEnergyDemand(Demand demand)
-	{
-		double timeDemandIsNeededInSeconds = demand.getTimeNeededInSeconds();
-		
-		//rotational batteries are first choice
-		if (timeDemandIsNeededInSeconds <= this.shortTimeThresholdInSeconds)
-		{
-			Demand tempDemand = takeEnergyFromBatteries(demand, this.rotationalBatteries);
-			
-			//give to gravitational batteries if there is still demand left
-			if (tempDemand.isDemandGone() == false)
-			{
-				tempDemand = takeEnergyFromBatteries(tempDemand, this.gravitationalBatteries);
-				
-				if (tempDemand.isDemandGone() == false)
-				{
-					//System.out.println("No stored energy");
-				}
-			}
-		}
-		
-		//gravitational batteries are first choice
-		else
-		{
-			Demand tempDemand = takeEnergyFromBatteries(demand, this.gravitationalBatteries);
-			
-			//give to rotational batteries if there is still demand left
-			if (tempDemand.isDemandGone() == false)
-			{
-				tempDemand = takeEnergyFromBatteries(tempDemand, this.rotationalBatteries);
-				
-				if (tempDemand.isDemandGone() == false)
-				{
-					//System.out.println("No stored energy");
-				}
-			}
-		}
-		
-	}
-	
-	private Surplus giveEnergyToBatteries(Surplus surplus, ArrayList<VolatileBattery> batteries)
-	{
-		//double incomingEnergyInWatts = surplus.getEnergyAvailableInWatts();
-		//double timeIncomingEnergyLastsInSeconds = surplus.getTimeAvailableInSeconds();
-
-		double highestJoules = -1;
-		int highestJoulesPosition = -1;
-
-		for (int x = 0; x < batteries.size(); x++)
-		{
-			double tempJoulesInBattery = batteries.get(x).getCurrentEnergyInJoules();
-			boolean tempIsBatteryFull = batteries.get(x).isBatteryFull();
-			boolean tempIsBatteryInUse = batteries.get(x).isBatteryInUse();
-			
-			if(tempJoulesInBattery > highestJoules && tempIsBatteryFull == false && tempIsBatteryInUse == false)
-			{
-				highestJoules = batteries.get(x).getCurrentEnergyInJoules();
-				highestJoulesPosition = x;
-			}
-		}
-		
-		//there were no available batteries or they were all full, return the surplus as is
-		if(highestJoulesPosition == -1)
-		{
-			return surplus;
-		}
-		
-		//there was at least one available battery that was not completely full
-		else
-		{
-			Surplus remainingSurplus = batteries.get(highestJoulesPosition).storeEnergy(surplus);
-		
-			//if there is a remaining surplus, see if there is another gravitational battery to charge
-			if (remainingSurplus.isSurplusGone() == false)
-			{
-				return giveEnergyToBatteries(remainingSurplus, batteries);
-			}
-			//all of the surplus has been used, return the empty surplus so the grid knows that
-			else
-			{
-				//System.out.println("Surplus successfully allocated");
-				return remainingSurplus;
-			}
-		}
-	}
-	
-	private Demand takeEnergyFromBatteries(Demand demand, ArrayList<VolatileBattery> batteries)
-	{
-		//double energyDemandInWatts = demand.getEnergyNeededInWatts();
-		//double timeDemandIsNeededInSeconds = demand.getTimeNeededInSeconds();
-
-		double lowestJoules = Double.MAX_VALUE;
-		int lowestJoulesPosition = -1;
-		
-		for (int x = 0; x < batteries.size(); x++)
-		{
-			double tempJoulesInBattery = batteries.get(x).getCurrentEnergyInJoules();
-			boolean tempIsBatteryInUse = batteries.get(x).isBatteryInUse();
-			
-			if(tempJoulesInBattery < lowestJoules && tempJoulesInBattery > 0 && tempIsBatteryInUse == false)
-			{
-				lowestJoules = batteries.get(x).getCurrentEnergyInJoules();
-				lowestJoulesPosition = x;
-			}
-		}
-		
-		//there were no available batteries or they were all empty, return the demand as is
-		if(lowestJoulesPosition == -1)
-		{
-			return demand;
-		}
-		else
-		{
-			Demand remainingDemand = batteries.get(lowestJoulesPosition).releaseEnergy(demand);
-		
-			//if there is a remaining demand, see if there is another gravitational battery that can take it
-			if (remainingDemand.isDemandGone() == false)
-			{
-				return takeEnergyFromBatteries(remainingDemand, batteries);
-			}
-			//all of the demand has been allocated, return the empty demand so the grid knows that
-			else
-			{
-				//System.out.println("Demand successfully allocated");
-				return remainingDemand;
-			}
-		}	
-	}
-	
-	public double calculateCurrentTotalEnergyInJoules()
+	//region sum current battery energy and battery energy capacity
+	public double calculateCurrentVolatileEnergyInJoules()
 	{
 		double currentEnergyInJoules = 0;
 
-		// Calculate energy of the gravitational batteries
-		for (VolatileBattery battery : this.gravitationalBatteries)
-		{
-			currentEnergyInJoules += battery.getCurrentEnergyInJoules();
-		}
-
 		// Calculate energy of the rotational batteries
-		for (VolatileBattery battery : this.rotationalBatteries)
+		for (Battery battery : this.rotationalBatteries)
 		{
 			currentEnergyInJoules += battery.getCurrentEnergyInJoules();
 		}
@@ -241,43 +221,57 @@ public class BatteryGrid
 		return currentEnergyInJoules;
 	}
 
-	public double calculateMaxTotalEnergyInJoules()
+	public double calculateCurrentConstantFlowEnergyInJoules()
+	{
+		double currentEnergyInJoules = 0;
+
+/*		// Calculate energy of the rotational batteries
+		for (Battery battery : this.heindlBatteries)
+		{
+			currentEnergyInJoules += battery.getCurrentEnergyInJoules();
+		}*/
+
+		return currentEnergyInJoules;
+	}
+
+	public double calculateMaxVolatileEnergyInJoules()
 	{
 		double maxEnergyInJoules = 0;
 
-		// Calculate energy of the gravitational batteries
-		for (VolatileBattery battery : this.gravitationalBatteries)
-		{
-			maxEnergyInJoules += battery.getMaxEnergyInJoules();
-		}
-
 		// Calculate energy of the rotational batteries
-		for (VolatileBattery battery : this.rotationalBatteries)
+		for (Battery battery : this.rotationalBatteries)
 		{
 			maxEnergyInJoules += battery.getMaxEnergyInJoules();
 		}
 
 		return maxEnergyInJoules;
 	}
-	
+
+	public double calculateMaxConstantFlowEnergyInJoules()
+	{
+		double maxEnergyInJoules = 0;
+
+/*		// Calculate energy of the constant flow batteries
+		for (Battery battery : this.heindlBatteries)
+		{
+			maxEnergyInJoules += battery.getMaxEnergyInJoules();
+		}*/
+
+		return maxEnergyInJoules;
+	}
+	//endregion
+
 	public void displayGrid()
 	{
-		for (VolatileBattery gravitationalBattery : this.gravitationalBatteries)
+/*		for (Battery battery : this.heindlBatteries)
 		{
-			System.out.println(gravitationalBattery.displayBattery());
-		}
+			System.out.println(battery.displayBattery());
+		}*/
 
-		for (VolatileBattery rotationalBattery : this.rotationalBatteries)
+		for (Battery rotationalBattery : this.rotationalBatteries)
 		{
 			System.out.println(rotationalBattery.displayBattery());
 		}
-	}
-
-	//TODO: This
-	// Returns the sum of all energy (returned as an int) to be called when the Controller asks.
-	public int sumOfDemandsAtTime(double time)
-	{
-		return 0;
 	}
 
 	//region Getters/Setters
@@ -289,6 +283,21 @@ public class BatteryGrid
 	public ArrayList<VolatileBattery> getRotationalBatteries()
 	{
 		return this.rotationalBatteries;
+	}
+
+	public double getEnergyShortageInWatts()
+	{
+		return energyShortageInWatts;
+	}
+
+	public int getAmountOfEnergyShortages()
+	{
+		return amountOfEnergyShortages;
+	}
+
+	public double getEnergyWasted()
+	{
+		return energyWasted;
 	}
 	//endregion
 	

@@ -1,8 +1,6 @@
 package edu.model;
 
 import edu.model.batteries.BatteryGrid;
-import edu.model.batteries.Demand;
-import edu.model.batteries.Surplus;
 
 public class EnergyCommander
 {
@@ -13,15 +11,19 @@ public class EnergyCommander
 		this.batteryGrid = batteryGrid;
 	}
 
-	public static void commandEnergy(Surplus surplus)
+	public static void commandEnergy(double energyProduced, double energyDemanded)
 	{
-		batteryGrid.allocateEnergySurplus(surplus);
-		//batteryGrid.displayGrid();
+		//if there is more energy produced that needed, then store energy
+		if (energyProduced - energyDemanded >= 0)
+		{
+			double energySurplusInWatts = energyProduced - energyDemanded;
+			batteryGrid.allocateEnergySurplus(energySurplusInWatts);
+		}
+		else
+		{
+			double energyDemandInWatts = energyDemanded - energyProduced;
+			batteryGrid.allocateEnergyDemand(energyDemandInWatts);
+		}
 	}
-	
-	public static void commandEnergy(Demand demand)
-	{
-		batteryGrid.allocateEnergyDemand(demand);
-		//batteryGrid.displayGrid();
-	}
+
 }

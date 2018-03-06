@@ -1,10 +1,13 @@
 package edu.controllers;
 
+import edu.model.batteries.*;
 import edu.model.city.City;
 import edu.model.energySources.solarFarm.PhotovoltaicSolarFarm;
 import edu.model.energySources.windmillFarm.Windmill;
 import edu.model.energySources.windmillFarm.WindmillFarm;
+import org.jfree.util.Rotation;
 
+import java.awt.font.GlyphJustificationInfo;
 import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
@@ -12,6 +15,8 @@ import java.util.Scanner;
 
 public abstract class BuildDefaults
 {
+    private static String splitCharacter = ":";
+
     protected static ArrayList<WindmillFarm> createListOfDefaultWindFarms(City city, double timeFrameAsPercentageOfHour)
     {
         ArrayList<WindmillFarm> windmillFarms = new ArrayList<WindmillFarm>();
@@ -45,7 +50,7 @@ public abstract class BuildDefaults
                             if (line.equals("#")) //denotes that we have a farm
                             {
                                 line = scanner.nextLine();
-                                String windFarmName = line.split(":")[1];
+                                String windFarmName = line.split(splitCharacter)[1];
                                 WindmillFarm windFarm = new WindmillFarm(windFarmName, defualtWindTiersForCity, timeFrameAsPercentageOfHour);
 
                                 boolean done2 = false;
@@ -57,11 +62,11 @@ public abstract class BuildDefaults
                                     if (line.equals("$")) //denotes a set of turbines in the farm
                                     {
                                         line = scanner.nextLine();
-                                        String windTurbineName = line.split(":")[1];
+                                        String windTurbineName = line.split(splitCharacter)[1];
                                         line = scanner.nextLine();
-                                        double windTurbineMaxCapacity = Double.parseDouble(line.split(":")[1]);
+                                        double windTurbineMaxCapacity = Double.parseDouble(line.split(splitCharacter)[1]);
                                         line = scanner.nextLine();
-                                        int windTurbineCount = Integer.parseInt(line.split(":")[1]);
+                                        int windTurbineCount = Integer.parseInt(line.split(splitCharacter)[1]);
 
                                         for (int i = 0; i < windTurbineCount; i++)
                                         {
@@ -116,7 +121,7 @@ public abstract class BuildDefaults
                 if (line.equals("@"))
                 {
                     line = scanner.nextLine();
-                    currentMonth = Integer.parseInt(line.split(":")[1]);
+                    currentMonth = Integer.parseInt(line.split(splitCharacter)[1]);
                 }
 
                 if (line.equals("*")) //denotes that there is a city name on the next line
@@ -134,11 +139,11 @@ public abstract class BuildDefaults
                             if (line.equals("#")) //denotes that we have a farm
                             {
                                 line = scanner.nextLine();
-                                String PVSolarFarmName = line.split(":")[1];
+                                String PVSolarFarmName = line.split(splitCharacter)[1];
                                 line = scanner.nextLine();
-                                double PVSolarFarmSize = Double.parseDouble(line.split(":")[1]);
+                                double PVSolarFarmSize = Double.parseDouble(line.split(splitCharacter)[1]);
                                 line = scanner.nextLine();
-                                double PVSolarFarmConversionEfficiency = Double.parseDouble(line.split(":")[1]);
+                                double PVSolarFarmConversionEfficiency = Double.parseDouble(line.split(splitCharacter)[1]);
                                 PhotovoltaicSolarFarm PVSolarFarm = new PhotovoltaicSolarFarm(PVSolarFarmName, PVSolarFarmSize, PVSolarFarmConversionEfficiency, currentMonth,timeFrameAsPercentageOfHour);
 
                                 PVSolarFarms.add(PVSolarFarm);
@@ -160,5 +165,57 @@ public abstract class BuildDefaults
         }
 
         return PVSolarFarms;
+    }
+
+    protected static ArrayList<VolatileBattery> createListOfDefaultVolatileBatteries()
+    {
+        ArrayList<VolatileBattery> volatileBatteries = new ArrayList<VolatileBattery>();
+
+        String filePathForDefaultVolatileBatteries = "..\\Capstone\\src\\edu\\controllers\\DefaultVolatileBatteries.txt";
+
+        try
+        {
+            File file = new File(filePathForDefaultVolatileBatteries);
+            Scanner scanner = new Scanner(file);
+
+            while(scanner.hasNextLine())
+            {
+                String line = scanner.nextLine();
+
+                if (line.equals("()")) //denotes that there is a rotational battery starting on next line
+                {
+                    line = scanner.nextLine();
+                    String batteryName = line.split(splitCharacter)[1];
+                    line = scanner.nextLine();
+                    double massInKilograms = Double.parseDouble(line.split(splitCharacter)[1]);
+                    line = scanner.nextLine();
+                    double radiusInMeters = Double.parseDouble(line.split(splitCharacter)[1]);
+                    line = scanner.nextLine();
+                    String materialName = line.split(splitCharacter)[1];
+                    line = scanner.nextLine();
+                    String bearingName = line.split(splitCharacter)[1];
+                    line = scanner.nextLine();
+                    int amountOfBatteriesOfThisType = Integer.parseInt(line.split(splitCharacter)[1]);
+
+                    FlywheelMaterial flywheelMaterial = new FlywheelMaterial(materialName);
+                    FlywheelBearing flywheelBearing = new FlywheelBearing(bearingName);
+
+                    for(int i = 0; i < amountOfBatteriesOfThisType; i++)
+                    {
+                        RotationalBattery rotationalBattery = new RotationalBattery(batteryName, massInKilograms, radiusInMeters, flywheelMaterial, flywheelBearing);
+                        volatileBatteries.add(rotationalBattery);
+                    }
+                }
+
+            }
+
+            scanner.close();
+        }
+        catch(IOException ex)
+        {
+            System.out.println("Problem loading default volatile batteries");
+        }
+
+        return volatileBatteries;
     }
 }

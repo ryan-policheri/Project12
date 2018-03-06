@@ -89,4 +89,9 @@ public class WindmillFarm
 		return new int[24];
 	}
 
+	public String toString()
+	{
+		return this.windmillFarmName;
+	}
+
 }

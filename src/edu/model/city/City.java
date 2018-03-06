@@ -3,17 +3,18 @@ package edu.model.city;
 
 import java.io.File;
 import java.io.IOException;
-import java.util.Arrays;
 import java.util.Scanner;
 
 public class City
 {
 	//ATTRIBUTES
+	public static int hoursInDay = 24;
+
 	private String cityName;
 	private double timeFrameAsPercentageOfHour;
 
 	private String filePath = "..\\Capstone\\src\\edu\\model\\city\\ConsumptionByHourData";
-	private HourlyConsumption[] hourlyConsumptions = new HourlyConsumption[24];
+	private HourlyConsumption[] hourlyConsumptions = new HourlyConsumption[City.hoursInDay];
 	private double percentOfMISO = 0.0132234375;
 
 	private HourlyConsumption currentHourlyConsumption;
@@ -78,10 +79,10 @@ public class City
 					double deviation = Double.parseDouble(lineSplit[1]) * this.percentOfMISO;
 
 					//convert from megawatt hours to watts
-					minimum *= 1000000; //meagwatt hours to watt hours
-					minimum *= 3600; //watts hours to watts
-					deviation *= 1000000; //meagwatt hours to watt hours
-					deviation *= 3600; //watts hours to watts
+					minimum *= 1000000; //megawatt hours to watt hours
+					minimum *= 3600; //watt hours to watts
+					deviation *= 1000000; //megawatt hours to watt hours
+					deviation *= 3600; //watt hours to watts
 
 					hourlyConsumptions[lineNumber] = new HourlyConsumption(minimum, deviation);
 				}
@@ -108,5 +109,29 @@ public class City
 	public int[] getDefaultWindTiersByHour()
 	{
 		return defaultWindTiersByHour;
+	}
+
+	public double[] getEnergyMinimumsByHour()
+	{
+		double[] energyMinimumsByHour = new double[City.hoursInDay];
+
+		for(int i = 0; i < City.hoursInDay; i++)
+		{
+			energyMinimumsByHour[i] = hourlyConsumptions[i].getMinimumHourlyConsumptionInWatts();
+ 		}
+
+ 		return energyMinimumsByHour;
+	}
+
+	public double[] getEnergyMaximumsByHour()
+	{
+		double[] energyMaximumsByHour = new double[City.hoursInDay];
+
+		for(int i = 0; i < this.hourlyConsumptions.length; i++)
+		{
+			energyMaximumsByHour[i] = hourlyConsumptions[i]. getMinimumHourlyConsumptionInWatts() + hourlyConsumptions[i].getMaxDeviationInWatts();
+		}
+
+		return energyMaximumsByHour;
 	}
 }

@@ -62,7 +62,7 @@ public class GravitationalBattery extends VolatileBattery
 		this.currentHeightInMeters = this.calculateCurrentHeightInMeters(this.getCurrentEnergyInJoules());
 		
 		double timeInUseInSeconds = timeIncomingEnergyLastsInSeconds - remainingTimeOfIncomingEnergy;
-		this.startInUseTimer(timeInUseInSeconds);
+		//this.startInUseTimer(timeInUseInSeconds);
 		
 		Surplus returnSurplus = new Surplus(incomingEnergyInWatts, remainingTimeOfIncomingEnergy);
 		
@@ -113,7 +113,7 @@ public class GravitationalBattery extends VolatileBattery
 			timeInUseInSeconds = secondsDemandCanBeProvided;
 		}
 		
-		this.startInUseTimer(timeInUseInSeconds);
+		//this.startInUseTimer(timeInUseInSeconds);
 		
 		Demand returnDemand = new Demand(energyDemandInWatts, secondsLeftWattageIsNeeded);
 		

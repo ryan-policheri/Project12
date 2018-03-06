@@ -138,7 +138,7 @@ public class ProgramDriver
 		
 		for(int i = 0; i < 5; i++)
 		{
-			batteryGrid.allocateEnergySurplus(new Surplus(19200000,5));
+			batteryGrid.allocateEnergySurplus(19200000);
 		}
 		
 		TimeUnit.SECONDS.sleep(10);

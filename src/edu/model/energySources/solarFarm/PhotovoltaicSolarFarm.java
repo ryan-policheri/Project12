@@ -113,4 +113,9 @@ public class PhotovoltaicSolarFarm
         }
     }
 
+    public String toString()
+    {
+        return this.name;
+    }
+
 }

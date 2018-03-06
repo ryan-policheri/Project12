@@ -5,9 +5,6 @@ import java.util.TimerTask;
 
 public abstract class VolatileBattery extends Battery
 {
-	//ATTRIBUTES
-	private boolean inUse = false;
-	
 	//CONSTRUCTORS
 	public VolatileBattery(String batteryName, double massInKilograms)
 	{
@@ -17,44 +14,13 @@ public abstract class VolatileBattery extends Battery
 	//FUNCTIONS
 	
 	//functions overridden in child classes
-	public Surplus storeEnergy(Surplus surplus)
+	public double storeEnergy(double energySurplusInWatts)
 	{
-		return null;
+		return -1;
 	}
 
-	public Demand releaseEnergy(Demand demand)
+	public double releaseEnergy(double enerfyDemandInWatts)
 	{
-		return null;
+		return -1;
 	}
-	
-	//functions used in child classes
-	protected void startInUseTimer(double timeInUseInSeconds)
-	{
-		this.inUse = true;
-		long timeInUseInMilliseconds = (long) (timeInUseInSeconds * 1000);
-		
-		Timer timer = new Timer();
-		timer.schedule(new TimerTask() {
-										  @Override
-										  public void run()
-										  {
-											  markBatteryNotInUse();
-											  timer.cancel();
-										  }
-									   }
-						, timeInUseInMilliseconds);
-	}
-	
-	private void markBatteryNotInUse()
-	{
-		this.inUse = false;
-	}
-	
-	//other functions
-	public boolean isBatteryInUse()
-	{
-		return this.inUse;
-	}
-	
-	
 }

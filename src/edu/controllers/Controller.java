@@ -4,6 +4,7 @@ import edu.model.EnergyCommander;
 import edu.model.batteries.*;
 import edu.model.city.City;
 import edu.model.energySources.solarFarm.PhotovoltaicSolarFarm;
+import edu.model.energySources.windmillFarm.Windmill;
 import edu.model.energySources.windmillFarm.WindmillFarm;
 import edu.view.GRESBIMB;
 
@@ -11,33 +12,29 @@ import java.util.ArrayList;
 
 public class Controller
 {
+	private static final int NUM_OF_TIERS = 5;
+	private static final int MAJOR_TICK_SPACING = 1;
+
 	private static final double defaultTimeFrameAsPercentageOfHour = 0.1;
 
 	private static BatteryGrid grid = new BatteryGrid();
-
-	private static final int NUM_OF_TIERS = 5;
-	private static final int MAJOR_TICK_SPACING = 1;
 
 	//region Available Cities
 	private static City desMoines = new City("Des Moines", defaultTimeFrameAsPercentageOfHour);
 	private static City chicago = new City("Chicago", defaultTimeFrameAsPercentageOfHour);
 
 	private static ArrayList<City> availableCities = new ArrayList<City>();
-	private static City selectedCity = desMoines;
+
+	private static City selectedCity;
+	//endregion
+
+	//region Energy Sources
+	private static ArrayList<WindmillFarm> windFarms = BuildDefaults.createListOfDefaultWindFarms(desMoines,defaultTimeFrameAsPercentageOfHour);
+	private static ArrayList<PhotovoltaicSolarFarm> PVSolarFarms = BuildDefaults.createListOfDefaultPVSolarFarms(desMoines, defaultTimeFrameAsPercentageOfHour);
 	//endregion
 
 	// Set default city
 	private static EnergyCommander energyCommander = new EnergyCommander(grid);
-
-	// Windmill farm
-	private static int[] energyProductionTiersWarrenCountyWMF = {1, 1, 1, 1, 1, 2, 2, 2, 2, 3, 3, 3, 4, 2, 3, 3, 3, 3, 4, 2, 2, 2, 1, 1};
-	private static WindmillFarm warrenCountyWindmillFarm = new WindmillFarm("Warren County Windmill Farm", energyProductionTiersWarrenCountyWMF, defaultTimeFrameAsPercentageOfHour);
-	private static ArrayList<Double> magnitudeOfDemandsByMillisecond;
-	private static ArrayList<Double> magnitudeOfSurplusesByMillisecond;
-	private static WindmillFarm selectedWMF = warrenCountyWindmillFarm;
-
-	// Solar farm
-	private static PhotovoltaicSolarFarm warrenCountySolarFarm = new PhotovoltaicSolarFarm("Warren County Solar Farm", 10000, 0.2, 2, defaultTimeFrameAsPercentageOfHour);
 
 	// Times
 	private static long currentMillisecond = 0;
@@ -50,20 +47,32 @@ public class Controller
 		this.gresbimb = gresbimb;
 	}
 
-	public static void allocateEnergySurplus(Surplus surplus)
+	public static void buildDefaultWindFarms()
 	{
-		grid.allocateEnergySurplus(surplus);
+		ArrayList<WindmillFarm> defaultWindFarms = BuildDefaults.createListOfDefaultWindFarms(desMoines,defaultTimeFrameAsPercentageOfHour);
+		windFarms.addAll(defaultWindFarms);
 	}
 
-	public static void updateCities()
+	public static void buildDefaultPVSolarFarms()
+	{
+		ArrayList<PhotovoltaicSolarFarm> defaultPVSolarFarms = BuildDefaults.createListOfDefaultPVSolarFarms(desMoines, defaultTimeFrameAsPercentageOfHour);
+		PVSolarFarms.addAll(defaultPVSolarFarms);
+	}
+
+	public static ArrayList<WindmillFarm> getWindFarms()
+	{
+		return windFarms;
+	}
+	public static ArrayList<PhotovoltaicSolarFarm> getPVSolarFarms()
+	{
+		return PVSolarFarms;
+	}
+
+	public static void buildDefaultCities()
 	{
 		availableCities.clear();
 		availableCities.add(chicago);
 		availableCities.add(desMoines);
-
-		energyCommander = new EnergyCommander(grid);
-		//TODO: Run this when the "simulate" button is hit
-		// magnitudeByMillisecondArray = citySimulator.constructMagnitudeByMillisecondArray();
 	}
 
 /*	public static void updateMagnitudeByMillisecondArrays()
@@ -111,12 +120,12 @@ public class Controller
 
 	public static double calculateCurrentGridEnergyInJoules()
 	{
-		return grid.calculateCurrentTotalEnergyInJoules();
+		return grid.calculateCurrentVolatileEnergyInJoules();
 	}
 
 	public static double calculateMaxTotalEnergyInJoules()
 	{
-		return grid.calculateMaxTotalEnergyInJoules();
+		return grid.calculateMaxVolatileEnergyInJoules();
 	}
 
 	private static void addEnergySurplus()
@@ -156,10 +165,10 @@ public class Controller
 		return availableCities;
 	}
 
-	public static WindmillFarm getSelectedWMF()
+/*	public static WindmillFarm getSelectedWMF()
 	{
 		return selectedWMF;
-	}
+	}*/
 
 	public static void setAvailableCities(ArrayList<City> availableCities)
 	{
@@ -186,9 +195,9 @@ public class Controller
 		return selectedCity;
 	}
 
-	public static void setSelectedCity(City newCity)
+	public static void setSelectedCity(int index)
 	{
-		selectedCity = newCity;
+		selectedCity = availableCities.get(index);
 	}
 
 	public static void setSelectedCityConsumptionValues(int[] sliderValues)
@@ -197,30 +206,9 @@ public class Controller
 		gresbimb.updateEnergyScreen();
 	}
 
-	public static WindmillFarm getWindmillFarm()
+/*	public static WindmillFarm getWindmillFarm()
 	{
 		return selectedWMF;
-	}
-
-	public static City getCitySimulator()
-	{
-		return selectedCity;
-	}
-
-	public static City getDesMoines()
-	{
-		return desMoines;
-	}
-
-	public static ArrayList<Double> getMagnitudeOfDemandsByMillisecond()
-	{
-		return magnitudeOfDemandsByMillisecond;
-	}
-
-	public static ArrayList<Double> getMagnitudeOfSurplusesByMillisecond()
-	{
-		return magnitudeOfSurplusesByMillisecond;
-	}
-
+	}*/
 	//endregion
 }

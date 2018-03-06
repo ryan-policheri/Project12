@@ -6,6 +6,8 @@ import edu.controllers.Controller;
 import edu.model.batteries.*;
 import edu.model.city.City;
 import edu.model.city.CitySimulator;
+import edu.model.energySources.solarFarm.PhotovoltaicSolarFarm;
+import edu.model.energySources.windmillFarm.WindmillFarm;
 import edu.model.energySources.windmillFarm.WindmillFarmSimulator;
 import org.jfree.chart.ChartFactory;
 import org.jfree.chart.ChartPanel;
@@ -112,6 +114,8 @@ public class GRESBIMB
 	private Controller controller;
 	private static DefaultListModel<Battery> batteryDefaultListModel = new DefaultListModel<>();
 	private static DefaultListModel<City> cityDefaultListModel = new DefaultListModel<>();
+	private static DefaultListModel<WindmillFarm> windFarmDefaultListModel = new DefaultListModel<>();
+	private static DefaultListModel<PhotovoltaicSolarFarm> PVSolarFarmDefaultListModel = new DefaultListModel<>();
 	private static City selectedCity;
 
 	// JFreeChart stuff
@@ -150,126 +154,21 @@ public class GRESBIMB
 	{
 		controller = new Controller(this);
 
-		Controller.updateCities();
-
-		//region Add Batteries
-
-		//ADD THE BATTERIES
-		double GB_Supreme_Count = 50;
-		double GB_PowerHouse_Count = 200;
-		double GB_Classic_Count = 125;
-		double GB_Lite_Count = 75;
-
-		double RB_MegaSonic_Count = 50;
-		double RB_SuperSonic_Count = 100;
-		double RB_BigSexy_Count = 175;
-		double RB_LittleTitan_Count = 100;
-		double RB_Classic_Count = 125;
-
-		//titanium
-		FlywheelMaterial titanium = new FlywheelMaterial("Titanium");
-
-		//aluminum
-		FlywheelMaterial aluminum = new FlywheelMaterial("Aluminum");
-
-		//carbon fiber
-		double densityOfCarbonFiberInKilogramsMetersCubed = 1799;
-		double tensileStressOfCarbonFiberInPascals = 4000000000.0;
-		FlywheelMaterial carbonFiber = new FlywheelMaterial("Carbon Fiber", densityOfCarbonFiberInKilogramsMetersCubed, tensileStressOfCarbonFiberInPascals);
-
-		//steel
-		double densityOfSteelInKilogramsMetersCubed = 8050;
-		double tensileStressOfSteelInPascals = 690000000.0;
-		FlywheelMaterial steel = new FlywheelMaterial("Steel", densityOfSteelInKilogramsMetersCubed, tensileStressOfSteelInPascals);
-
-		//mechanical bearing
-		double percentFrictionalLossPerSecondForStandardMecahnicalBearing = 0.0125; //number derived from (25 percent / 7200) * 360 (multiplying by 360 converts number to simulation time)
-		FlywheelBearing mechanicalBearing = new FlywheelBearing("Mechanical Bearing", percentFrictionalLossPerSecondForStandardMecahnicalBearing);
-
-		//Make using 2nd constructor
-
-		//magnetic bearing
-		FlywheelBearing magneticBearing = new FlywheelBearing("Magnetic");
-
-		//super conductor bearing
-		FlywheelBearing modernBearing = new FlywheelBearing("Modern");
-
-		//Gravitational:
-
-		//GB_Supremes:
-		for (int i = 1; i <= GB_Supreme_Count; i++)
-		{
-			Controller.addGravitationalBattery(new GravitationalBattery("GB_Supreme_" + Integer.toString(i),40000,150));
-		}
-
-		//GB_PowerHouses:
-		for (int i = 1; i <= GB_PowerHouse_Count; i++)
-		{
-			Controller.addGravitationalBattery((new GravitationalBattery("GB_PowerHouse_" + Integer.toString(i),
-					20000,120)));
-		}
-
-		//GB_Classics:
-		for (int i = 1; i <= GB_Classic_Count; i++)
-		{
-			Controller.addGravitationalBattery((new GravitationalBattery("GB_Classic_" + Integer.toString(i),30000,
-					50)));
-		}
-
-		//GB_Lites:
-		for (int i = 1; i <= GB_Lite_Count; i++)
-		{
-			Controller.addGravitationalBattery(new GravitationalBattery("GB_Lite_" + Integer.toString(i),40000,150));
-		}
-
-		//Rotational:
-
-		//RB_MegaSonics:
-		for (int i = 1; i <= RB_MegaSonic_Count; i++)
-		{
-			Controller.addRotationalBattery(new RotationalBattery("RB_MegaSonic_" + Integer.toString(i),100,0.5,carbonFiber,modernBearing));
-		}
-
-		//RB_SuperSonics:
-		for (int i = 1; i <= RB_SuperSonic_Count; i++)
-		{
-			Controller.addRotationalBattery(new RotationalBattery("RB_SuperSonic_" + Integer.toString(i),75,0.5,carbonFiber,magneticBearing));
-		}
-
-		//RB_BigSexys:
-		for (int i = 1; i <= RB_BigSexy_Count; i++)
-		{
-			Controller.addRotationalBattery(new RotationalBattery("RB_BigSexy_" + Integer.toString(i),500,1,steel,mechanicalBearing));
-		}
-
-		//RB_LittleTitans:
-		for (int i = 1; i <= RB_LittleTitan_Count; i++)
-		{
-			Controller.addRotationalBattery(new RotationalBattery("RB_LittleTitan_" + Integer.toString(i),250,0.25,titanium,magneticBearing));
-		}
-
-		//RB_Classics:
-		for (int i = 1; i <= RB_Classic_Count; i++)
-		{
-			Controller.addRotationalBattery(new RotationalBattery("RB_Classic_" + Integer.toString(i),100,0.5,aluminum,mechanicalBearing));
-		}
-		//endregion
-
-		// Set the battery list batteryDefaultListModel
+		// Set lists
 		listBatteries.setModel(batteryDefaultListModel);
-
-		// Set the cities list batteryDefaultListModel
 		listCities.setModel(cityDefaultListModel);
+		listWindFarms.setModel(windFarmDefaultListModel);
+		listPVSolarFarms.setModel(PVSolarFarmDefaultListModel);
 
 		//region Set the selected city
-		Controller.setSelectedCity(Controller.getDesMoines());
-		selectedCity = Controller.getSelectedCity();
-		System.out.println("Selected City: " + Controller.getSelectedCity().toString());
+/*		Controller.setSelectedCity(Controller.getCity());
+		selectedCity = Controller.getSelectedCity();*/
+		//System.out.println("Selected City: " + Controller.getSelectedCity().toString());
 		//endregion
 
 		Surplus surplus = new Surplus(2000000000, 1);
 
-		Controller.allocateEnergySurplus(surplus);
+		//Controller.allocateEnergySurplus(2000000000);
 
 		//region Button listeners
 		//region Switching between panels
@@ -339,12 +238,38 @@ public class GRESBIMB
 			@Override
 			public void actionPerformed(ActionEvent e)
 			{
+				Controller.buildDefaultCities();
+				updateCityListModel();
 				switchToPanel(panelPickCity);
 			}
 		});
 		//endregion
 
 		//region Energy screen buttons
+		btnBuildDefaultWindFarms.addActionListener(new ActionListener()
+		{
+			@Override
+			public void actionPerformed(ActionEvent e)
+			{
+				updateWindFarmList();
+			}
+		});
+		btnBuildDefaultPVSolarFarms.addActionListener(new ActionListener()
+		{
+			@Override
+			public void actionPerformed(ActionEvent e)
+			{
+				updatePVSolarList();
+			}
+		});
+		btnBuildDefaultWindFarms.addActionListener(new ActionListener()
+		{
+			@Override
+			public void actionPerformed(ActionEvent e)
+			{
+				updateWindFarmList();
+			}
+		});
 		btnEditWindFarm.addActionListener(new ActionListener()
 		{
 			@Override
@@ -428,31 +353,25 @@ public class GRESBIMB
 			public void valueChanged(ListSelectionEvent e)
 			{
 				panelCitiesPreview.removeAll();
-				int[] energyProductionTiers = {2, 2, 2, 3, 3, 4, 3, 3, 5, 4, 5, 5, 5, 5, 4, 3, 4, 4, 3, 5, 2, 2, 3, 3};
-				//int[] energyConsumptionTiers = selectedCity.getConsumptionTiersByHour();
-				double[] chicagoTiersPreview = new double[energyProductionTiers.length];
-				//double[] desMoinesTiersPreview = new double[energyConsumptionTiers.length];
-
-/*				for (int i = 0; i < energyConsumptionTiers.length; i++)
-				{
-					chicagoTiersPreview[i] = energyProductionTiers[i];
-					desMoinesTiersPreview[i] = energyConsumptionTiers[i];
-				}*/
+				int selectedCityIndex = listCities.getSelectedIndex();
+				Controller.setSelectedCity(selectedCityIndex);
+				selectedCity = Controller.getSelectedCity();
+				double[] energyMinimumsByHour = selectedCity.getEnergyMinimumsByHour();
 
 				// This is extremely hardcoded for Chicago on top, Des Moines on bottom
 				if (listCities.getSelectedIndex() == 0)
 				{
 					lblPickCitySelectedCityName.setText("Selected city: Chicago");
 					addJFreeChartToJPanel("Energy Consumption of Chicago", panelCitiesPreview,
-							chicagoTiersPreview, "Hour", "Tier", true, 0,
+							energyMinimumsByHour, "Hour", "Tier", true, 0,
 							23.5, 1, (double) (NUM_OF_TIERS + .5), MAJOR_TICK_SPACING);
 				}
 				else if (listCities.getSelectedIndex() == 1)
 				{
 					lblPickCitySelectedCityName.setText("Selected city: Des Moines");
-					//addJFreeChartToJPanel("Energy Consumption of Des Moines", panelCitiesPreview,
-						//	desMoinesTiersPreview, "Hour", "Tier", true, 0,
-						//	23.5, 1, (double) (NUM_OF_TIERS + .5), MAJOR_TICK_SPACING);
+					addJFreeChartToJPanel("Energy Consumption of Des Moines", panelCitiesPreview,
+							energyMinimumsByHour, "Hour", "Tier", true, 0,
+							23.5, 1, (double) (NUM_OF_TIERS + .5), MAJOR_TICK_SPACING);
 				}
 				else
 				{
@@ -550,7 +469,7 @@ public class GRESBIMB
 		// If it's the Energy panel, insert the charts into the appropriate JPanels
 		if (panel.equals(this.panelEnergy))
 		{
-			lblEnergyTitle.setText("Energy of " + selectedCity.toString());
+			lblEnergyTitle.setText("Energy Sources For " + selectedCity.toString());
 			createPanelEnergy();
 		}
 
@@ -595,8 +514,8 @@ public class GRESBIMB
 		// Update the Controller magnitudes + the GRESBIMB magnitudes
 		System.out.println("Updating controller magnitude by millisecond array...");
 		/*Controller.updateMagnitudeByMillisecondArrays();*/
-		magnitudeOfDemandsByMillisecond = Controller.getMagnitudeOfDemandsByMillisecond();
-		magnitudeOfSurplusesByMillisecond = Controller.getMagnitudeOfSurplusesByMillisecond();
+		//magnitudeOfDemandsByMillisecond = Controller.getMagnitudeOfDemandsByMillisecond();
+		//magnitudeOfSurplusesByMillisecond = Controller.getMagnitudeOfSurplusesByMillisecond();
 		System.out.println("Simulating...");
 
 		// Set pbSimulationGridEnergyLevel width
@@ -691,7 +610,27 @@ public class GRESBIMB
 
 	private void allocateEnergySurplus(Surplus surplus)
 	{
-		Controller.allocateEnergySurplus(surplus);
+		//Controller.allocateEnergySurplus(surplus);
+	}
+
+	private void updateWindFarmList()
+	{
+		windFarmDefaultListModel.clear();
+
+		for (WindmillFarm windFarm : Controller.getWindFarms())
+		{
+			windFarmDefaultListModel.addElement(windFarm);
+		}
+	}
+
+	private void updatePVSolarList()
+	{
+		PVSolarFarmDefaultListModel.clear();
+
+		for (PhotovoltaicSolarFarm PVSolarFarm : Controller.getPVSolarFarms())
+		{
+			PVSolarFarmDefaultListModel.addElement(PVSolarFarm);
+		}
 	}
 
 	// updates the list's batteryDefaultListModel according to the Controller's battery lists
@@ -718,10 +657,7 @@ public class GRESBIMB
 	{
 		cityDefaultListModel.clear();
 
-		ArrayList<City> availableCities = Controller.getAvailableCities();
-
-		// add gravitational batteries
-		for (City city : availableCities)
+		for (City city : Controller.getAvailableCities())
 		{
 			cityDefaultListModel.addElement(city);
 		}
