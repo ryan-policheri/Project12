@@ -77,8 +77,8 @@ public class EnergyForm
 	protected static ArrayList<JSlider> sliders = new ArrayList<>();
 	protected static final int NUM_OF_TIERS = Controller.getNumOfTiers();
 	protected static final int MAJOR_TICK_SPACING = Controller.getMajorTickSpacing();
-	protected static City city = Controller.getSelectedCity();
-	protected static WindmillFarm windmillFarm = Controller.getSelectedWMF();
+	//protected static City city = Controller.getSelectedCity();
+	//protected static WindmillFarm windmillFarm = Controller.getSelectedWMF();
 	//endregion
 
 	public EnergyForm()

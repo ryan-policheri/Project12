@@ -1,7 +1,6 @@
 package edu.view;
 
 import edu.controllers.Controller;
-import javafx.scene.control.Slider;
 
 import javax.swing.*;
 import java.awt.event.ActionEvent;
@@ -12,18 +11,18 @@ public class FormEditEnergyConsumption extends EnergyForm
 	public FormEditEnergyConsumption()
 	{
 		// Set default slider values
-		for (int i = 0; i < sliders.size(); i++)
+/*		for (int i = 0; i < sliders.size(); i++)
 		{
-			sliders.get(i).setValue(city.getEnergyConsumptionTiers()[i]);
-		}
+			sliders.get(i).setValue(city.getConsumptionTiersByHour()[i]);
+		}*/
 
 		// Set title
-		String title = "Energy Consumption for " + city.toString();
-		this.lblTitle.setText(title);
+		//String title = "Energy Consumption for " + city.toString();
+		//this.lblTitle.setText(title);
 
 		// Create charts based on the city's energyConsumptionTiers
-		addJFreeChartToJPanel(this.panelPreviousGraph, city.getEnergyConsumptionTiers(), true);
-		addJFreeChartToJPanel(this.panelNewGraph, city.getEnergyConsumptionTiers(), false);
+		//addJFreeChartToJPanel(this.panelPreviousGraph, city.getConsumptionTiersByHour(), true);
+		//addJFreeChartToJPanel(this.panelNewGraph, city.getConsumptionTiersByHour(), false);
 
 		btnSave.addActionListener(new ActionListener()
 		{
@@ -36,7 +35,7 @@ public class FormEditEnergyConsumption extends EnergyForm
 					sliderValues[i] = sliders.get(i).getValue();
 				}
 
-				Controller.setSelectedCityConsumptionValues(sliderValues);
+				//Controller.setSelectedCityConsumptionValues(sliderValues);
 				JOptionPane.showMessageDialog(null, "Values saved successfully.");
 			}
 		});

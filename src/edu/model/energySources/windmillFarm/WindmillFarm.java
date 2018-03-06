@@ -1,147 +1,97 @@
 package edu.model.energySources.windmillFarm;
 
+import java.util.ArrayList;
+
 public class WindmillFarm
 {
-
-	private double powerOutput;
-	private int lowestPowerOutput = 500;
-	private int[] energyProductionTiers;
 	private String windmillFarmName;
-	
-	public WindmillFarm(String windmillFarmName)
-	{
-		this.energyProductionTiers = new int[24];
+	private int[] windTiersByHour;
+	private double timeFrameAsPercentageOfHour;
 
-		for (int i = 0; i < this.energyProductionTiers.length; i++)
-		{
-			this.energyProductionTiers[i] = 1;
-		}
-	}
-	
-	public WindmillFarm(String windmillFarmName, int[] energyProductionTiers)//, int[] energyProductionTiers)
+	private ArrayList<Windmill> windmills;
+
+	private double windVariabilityAsPercentDeviation;
+
+	private int samplesPerTier;
+	private int currentWindTier;
+	private int currentWindTierIndex;
+	private int currentSample;
+
+	public WindmillFarm(String windmillFarmName, int[] windTiersByHour, double timeFrameAsPercentageOfHour)
 	{
 		this.windmillFarmName = windmillFarmName;
-		this.energyProductionTiers = energyProductionTiers;
-	}
-	
-	public double calculateWindmillFarmOutput(int hourOfDay, int expectedSurplusesPerHour)
-	{
-		double powerSurplus = -1;
+		this.windTiersByHour = windTiersByHour;	//should come in as an array of length 24. 1 slot for each hour
+		this.timeFrameAsPercentageOfHour = timeFrameAsPercentageOfHour;
 
-		// Tier 1 through 5
-		switch (this.energyProductionTiers[hourOfDay])
+		this.windmills = new ArrayList<Windmill>();
+
+		this.windVariabilityAsPercentDeviation = 0.35;
+
+		this.currentWindTier = this.windTiersByHour[0];
+		this.samplesPerTier = (int) (1 / this.timeFrameAsPercentageOfHour);
+
+		this.currentWindTierIndex = 0;
+		this.currentSample = 0;
+	}
+
+	public double nextSurplus()
+	{
+		WindCondition windCondition = new WindCondition(this.currentWindTier, this.windVariabilityAsPercentDeviation);
+		this.currentSample += 1;
+
+		if (this.currentSample == this.samplesPerTier)
 		{
-			case 1:
-				powerSurplus = randomizeTier1Surplus(expectedSurplusesPerHour);
-				break;
-			case 2:
-				powerSurplus = randomizeTier2Surplus(expectedSurplusesPerHour);
-				break;
-			case 3:
-				powerSurplus = randomizeTier3Surplus(expectedSurplusesPerHour);
-				break;
-			case 4:
-				powerSurplus = randomizeTier4Surplus(expectedSurplusesPerHour);
-				break;
-			case 5:
-				powerSurplus = randomizeTier5Surplus(expectedSurplusesPerHour);
-				break;
+			this.currentWindTierIndex += 1;
+			this.currentWindTier = this.windTiersByHour[this.currentWindTierIndex];
+			this.currentSample = 0;
 		}
 
-		return powerSurplus;
-	}
-	
-	//region New tiers code
-	//TODO: Figure out reasonable surpluses for each tier.
-	private double randomizeTier1Surplus(int expectedSurplusesPerHour)
-	{
-		double minimumSurplus = 1000000 / expectedSurplusesPerHour; // 1,000,000 watts split up among how ever many average surpluses are in an hour
-		double maximumSurplus = 1000000000 / expectedSurplusesPerHour; // 1,000,000,000
-		
-		double randomDemand = minimumSurplus + (Math.random() * ((maximumSurplus - minimumSurplus) + 1));
-		
-		return randomDemand;
+		double wattageOutputForTotalTime = this.aggregateWindmillEnergyOutput(windCondition, this.timeFrameAsPercentageOfHour);
+
+		//Surplus surplus = new Surplus(1,1);
+		return wattageOutputForTotalTime;
 	}
 
-	private double randomizeTier2Surplus(int expectedSurplusesPerHour)
+	private double aggregateWindmillEnergyOutput(WindCondition windCondition, double timeFrameAsPercentageOfHour)
 	{
-		double minimumSurplus = 1000000000 / expectedSurplusesPerHour; // 1,000,000,000
-		double maximumSurplus = 2000000000 / expectedSurplusesPerHour; // 2,000,000,000
-		
-		double randomDemand = minimumSurplus + (Math.random() * ((maximumSurplus - minimumSurplus) + 1));
-		
-		return randomDemand;
-	}
+		double totalOutput = 0;
 
-	private double randomizeTier3Surplus(int expectedSurplusesPerHour)
-	{
-		double minimumSurplus = 2000000000 / expectedSurplusesPerHour; // 2,000,000,000
-		double maximumSurplus = 3000000000L / expectedSurplusesPerHour; // 3,000,000,000
-		
-		double randomDemand = minimumSurplus + (Math.random() * ((maximumSurplus - minimumSurplus) + 1));
-		
-		return randomDemand;
-	}
-
-	private double randomizeTier4Surplus(int expectedSurplusesPerHour)
-	{
-		double minimumSurplus = 3000000000L / expectedSurplusesPerHour; // 3,000,000,000
-		double maximumSurplus = 4000000000L / expectedSurplusesPerHour; // 4,000,000,000
-		
-		double randomDemand = minimumSurplus + (Math.random() * ((maximumSurplus - minimumSurplus) + 1));
-		
-		return randomDemand;
-	}
-	
-	private double randomizeTier5Surplus(int expectedSurplusesPerHour)
-	{
-		double minimumSurplus = 4000000000L / expectedSurplusesPerHour; // 4,000,000,000
-		double maximumSurplus = 5000000000L / expectedSurplusesPerHour; // 5,000,000,000
-		
-		double randomDemand = minimumSurplus + (Math.random() * ((maximumSurplus - minimumSurplus) + 1));
-		
-		return randomDemand;
-	}
-	
-	//endregion
-	
-	/*private void randomizeHighOutput() 
-	{
-		int minimumOutput = 5000000; //5 MW
-		int maximumOutput = 10000000; //10 MW
-		
-		this.powerOutput = minimumOutput + (Math.random() * ((maximumOutput - minimumOutput) + 1));
-	}
-
-	private void randomizeModerateOutput()
-	{
-		int minimumOutput = 500000; // 0.5 MW
-		int maximumOutput = 5000000; //5 MW
-		
-		this.powerOutput = minimumOutput + (Math.random() * ((maximumOutput - minimumOutput) + 1));
-	}
-	
-	private void randomizeLowOutput()
-	{
-		int minimumOutput = 0; //NOTHING
-		int maximumOutput = 500000; //0.5 MW
-		
-		this.powerOutput = minimumOutput + (Math.random() * ((maximumOutput - minimumOutput) + 1));
-		
-		if (this.powerOutput < this.lowestPowerOutput)
+		for (Windmill windmill : this.windmills)
 		{
-			this.powerOutput = 0;
+			totalOutput += windmill.calculateCurrentMegawattHours(windCondition, timeFrameAsPercentageOfHour);
 		}
-	}*/
-	
+
+		return totalOutput;
+	}
+
+	public void addWindmill(Windmill windmill)
+	{
+		this.windmills.add(windmill);
+	}
+
+	public void modifyWindVariabilityAsPercentDeviation(double newWindVariabilityAsPercentDeviation)
+	{
+		this.windVariabilityAsPercentDeviation = newWindVariabilityAsPercentDeviation;
+	}
+
+	public void modifyWindTiers(int index, int newTier)
+	{
+		this.windTiersByHour[index] = newTier;
+	}
+
+	public int[] getWindTiersByHour()
+	{
+		return this.windTiersByHour;
+	}
+
 	public int[] getEnergyProductionTiers()
 	{
-		return this.energyProductionTiers;
+		return new int[24];
 	}
 
-	public void setEnergyProductionTiers(int[] energyProductionTiers)
+	public String toString()
 	{
-		this.energyProductionTiers = energyProductionTiers;
+		return this.windmillFarmName;
 	}
 
 }

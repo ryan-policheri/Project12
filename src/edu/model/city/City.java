@@ -1,171 +1,160 @@
 package edu.model.city;
+//https://www.eia.gov/todayinenergy/detail.php?id=830
 
-import edu.model.batteries.Demand;
+import java.io.File;
+import java.io.IOException;
+import java.util.Scanner;
 
-import java.util.ArrayList;
-import java.util.List;
-
-public class City 
+public class City
 {
 	//ATTRIBUTES
-	//Do we even need these?
-	//Keeping just in case
+	public static int hoursInDay = 24;
+
 	private String cityName;
-	private int[] energyConsumptionTiers;
-	private int estimatedLandAvailableInAcres;
-	private int cityPopulation;
-	private int statePopulation;
-	private int demandsThroughOutADay;
-	private double cityEnergyConsumedYearly;
-	private double cityEnergyProducedYearly;
-	private double cityRenewableEnergyProducedYearly;
-	private int lowestPowerDemand = 50000;
-	private long millisecondsInDay = (long) (8640000000L);
-	long randomMillisecondInDay = (long)(Math.random() * millisecondsInDay);
-	
-	
+	private double timeFrameAsPercentageOfHour;
+
+	private String filePath = "..\\Capstone\\src\\edu\\model\\city\\ConsumptionByHourData";
+	private HourlyConsumption[] hourlyConsumptions = new HourlyConsumption[City.hoursInDay];
+	private double percentOfMISO = 0.0132234375;
+
+	private HourlyConsumption currentHourlyConsumption;
+	private int currentSample;
+	private int currentHourlyConsumptionIndex;
+	private int samplesPerTier;
+
+	private int[] defaultWindTiersByHour = {1,1,1,1,1,2,2,5,5,5,2,1,2,1,4,3,4,5,5,4,3,2,1,1}; //this is the default wind tiers for the area surrounding the city. Only to be used when building defualts
+
 	//CONSTRUCTORS
-	public City(String cityName)
-	{	
-		this.cityName = cityName;
-		this.energyConsumptionTiers = new int[24];
-
-		for (int i = 0; i < this.energyConsumptionTiers.length; i++)
-		{
-			this.energyConsumptionTiers[i] = 1;
-		}
-	}
-	public City(String cityName, int[] energyConsumptionTiers)//, int[] energyProductionTiers)
+	public City(String cityName, double timeFrameAsPercentageOfHour)
 	{
 		this.cityName = cityName;
-		this.energyConsumptionTiers = energyConsumptionTiers;
-		//this.energyProductionTiers = energyProductionTiers;
-	}
-	
-	//FUNTIONS
-	
-/*	public double powerNeed(double energyNeededInWatts, double amountOfTimeInSeconds)
-	{
-		// Get energy to Megawatts    multiplied    by how many hours.
-		double energyInMegawattHours = (energyNeededInWatts / 1000000) * (3600 / amountOfTimeInSeconds);
-		// Below is just in case it is needed
-		//double energyInJoules = energyNeededInWatts * amountOfTimeInSeconds;
-		return energyInMegawattHours;
-	}
-	*/
+		this.timeFrameAsPercentageOfHour = timeFrameAsPercentageOfHour;
 
-	public double calculateCityDemand(int hourOfDay, int expectedDemandsPerHour)
-	{
-		double powerDemand = -1;
+		this.filePath = this.filePath + this.cityName.replaceAll(" ", "") + ".txt";
 
-		// Tier 1 through 5
-		switch (this.energyConsumptionTiers[hourOfDay])
+		this.samplesPerTier = (int) (1 / this.timeFrameAsPercentageOfHour);
+
+		this.buildHourlyConsumptionsArray();
+
+		this.currentHourlyConsumption = this.hourlyConsumptions[0];
+		this.currentHourlyConsumptionIndex = 0;
+		this.currentSample = 0;
+	}
+
+	//METHODS
+	public double nextDemand()
+	{
+		this.currentSample += 1;
+
+		if (this.currentSample == this.samplesPerTier)
 		{
-			case 1:
-				powerDemand = randomizeTier1Demand(expectedDemandsPerHour);
-				break;
-			case 2:
-				powerDemand = randomizeTier2Demand(expectedDemandsPerHour);
-				break;
-			case 3:
-				powerDemand = randomizeTier3Demand(expectedDemandsPerHour);
-				break;
-			case 4:
-				powerDemand = randomizeTier4Demand(expectedDemandsPerHour);
-				break;
-			case 5:
-				powerDemand = randomizeTier5Demand(expectedDemandsPerHour);
-				break;
+			this.currentHourlyConsumptionIndex += 1;
+			this.currentHourlyConsumption = this.hourlyConsumptions[this.currentHourlyConsumptionIndex];
+			this.currentSample = 0;
 		}
 
-		return powerDemand;
+		double wattageOutputForTotalTime = this.currentHourlyConsumption.calculateConsumption(this.timeFrameAsPercentageOfHour);
 
-		//// Old code
-		//if((hourOfDay >= 0 && hourOfDay <= 5) || (hourOfDay >= 21 && hourOfDay <= 23))
-		//{
-		//	randomizeLowDemand();
-		//}
-		//else if((hourOfDay >= 6 && hourOfDay <= 9) || (hourOfDay >= 13 && hourOfDay <= 17))
-		//{
-		//	randomizeModerateDemand();
-		//}
-		//else if((hourOfDay >= 10 && hourOfDay <= 12) || (hourOfDay >= 18 && hourOfDay <= 20))
-		//{
-		//	randomizeHighDemand();
-		//}
-		//
-		//return this.powerDemand;
+		//Demand demand = new Demand(1,1);
+		return wattageOutputForTotalTime;
 	}
 
-	//region New tiers code
-	//TODO: Figure out reasonable demands for each tier.
-	private double randomizeTier1Demand(int expectedDemandsPerHour)
+	private void buildHourlyConsumptionsArray()
 	{
-		double minimumDemand = 300000000 / expectedDemandsPerHour; // 300,000,000 watts split up among how ever many average demands are in an hour
-		double maximumDemand = 800000000 / expectedDemandsPerHour; // 800,000,000
-		
-		double randomDemand = minimumDemand + (Math.random() * ((maximumDemand - minimumDemand) + 1));
-		
-		return randomDemand;
-	}
+		try
+		{
+			File file = new File(this.filePath);
+			Scanner scanner = new Scanner(file);
 
-	private double randomizeTier2Demand(int expectedDemandsPerHour)
-	{
-		double minimumDemand = 800000000 / expectedDemandsPerHour; // 800,000,000
-		double maximumDemand = 1800000000 / expectedDemandsPerHour; // 1,800,000,000
-		
-		double randomDemand = minimumDemand + (Math.random() * ((maximumDemand - minimumDemand) + 1));
-		
-		return randomDemand;
-	}
+			int lineNumber = -1; //-1 because there is one line of header
 
-	private double randomizeTier3Demand(int expectedDemandsPerHour)
-	{
-		double minimumDemand = 1800000000 / expectedDemandsPerHour; // 1,800,000,000
-		double maximumDemand = 3200000000L / expectedDemandsPerHour; // 3,200,000,000
-	
-		double randomDemand = minimumDemand + (Math.random() * ((maximumDemand - minimumDemand) + 1));
-		
-		return randomDemand;
-	}
+			while(scanner.hasNextLine())
+			{
+				String line = scanner.nextLine();
+				String[] lineSplit = line.split(",");
 
-	private double randomizeTier4Demand(int expectedDemandsPerHour)
-	{
-		double minimumDemand = 3200000000L / expectedDemandsPerHour; // 3,200,000,000
-		double maximumDemand = 6400000000L / expectedDemandsPerHour; // 6,400,000,000
-		
-		double randomDemand = minimumDemand + (Math.random() * ((maximumDemand - minimumDemand) + 1));
-		
-		return randomDemand;
-	}
+				if(lineNumber > -1)
+				{
+					double minimum = Double.parseDouble(lineSplit[0]) * this.percentOfMISO;
+					double deviation = Double.parseDouble(lineSplit[1]) * this.percentOfMISO;
 
-	private double randomizeTier5Demand(int expectedDemandsPerHour)
-	{
-		double minimumDemand = 6400000000L / expectedDemandsPerHour; // 6,400,000,000
-		double maximumDemand = 10000000000L  / expectedDemandsPerHour; // 10,000,000,000
-		
-		double randomDemand = minimumDemand + (Math.random() * ((maximumDemand - minimumDemand) + 1));
-		
-		return randomDemand;
-	}
-	//endregion
+					//convert from megawatt hours to watts
+					minimum *= 1000000; //megawatt hours to watt hours
+					minimum *= 3600; //watt hours to watts
+					deviation *= 1000000; //megawatt hours to watt hours
+					deviation *= 3600; //watt hours to watts
 
-	//region Getters/Setters
+					hourlyConsumptions[lineNumber] = new HourlyConsumption(minimum, deviation);
+				}
 
-	public int[] getEnergyConsumptionTiers()
-	{
-		return energyConsumptionTiers;
-	}
+				lineNumber ++;
+			}
 
-	public void setEnergyConsumptionTiers(int[] energyConsumptionTiers)
-	{
-		this.energyConsumptionTiers = energyConsumptionTiers;
+			scanner.close();
+		}
+		catch(IOException ex)
+		{
+			System.out.println("Problem loading hourly consumption file");
+		}
+
 	}
-	//endregion
 
 	@Override
 	public String toString()
 	{
 		return this.cityName;
+	}
+
+	//GETTERS
+	public int[] getDefaultWindTiersByHour()
+	{
+		return defaultWindTiersByHour;
+	}
+
+	public double[] getEnergyMinimumsByHourInMegawatts()
+	{
+		double[] energyMinimumsByHour = new double[City.hoursInDay];
+
+		for(int i = 0; i < City.hoursInDay; i++)
+		{
+			double energyMinimumInWatts = hourlyConsumptions[i].getMinimumHourlyConsumptionInWatts();
+			double energyMinimumInMegawatts = (energyMinimumInWatts / 1000000) / 3600; //convert to megawatt hours
+			energyMinimumsByHour[i] = energyMinimumInMegawatts;
+		}
+
+ 		return energyMinimumsByHour;
+	}
+
+	public double[] getEnergyMaximumsByHourInMegawatts()
+	{
+		double[] energyMaximumsByHour = new double[City.hoursInDay];
+
+		for(int i = 0; i < this.hourlyConsumptions.length; i++)
+		{
+			double energyMinimumInWatts = hourlyConsumptions[i].getMinimumHourlyConsumptionInWatts();
+			double energyMinimumInMegawattHours = (energyMinimumInWatts / 1000000) / 3600; //convert to megawatt hours
+
+			double energyDeviationInWatts = hourlyConsumptions[i].getMaxDeviationInWatts();
+			double energyDeviationInMegawattHours = (energyDeviationInWatts / 1000000) / 3600; //convert to megawatt hours
+
+			energyMaximumsByHour[i] = energyMinimumInMegawattHours + energyDeviationInMegawattHours;
+		}
+
+		return energyMaximumsByHour;
+	}
+
+	public double getHighestEnergyValue()
+	{
+		double highestEnergyValue = -1;
+
+		for (double value : this.getEnergyMaximumsByHourInMegawatts())
+		{
+			if (value > highestEnergyValue)
+			{
+				highestEnergyValue = value;
+			}
+		}
+
+		return highestEnergyValue;
 	}
 }

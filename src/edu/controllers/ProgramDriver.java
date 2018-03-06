@@ -138,7 +138,7 @@ public class ProgramDriver
 		
 		for(int i = 0; i < 5; i++)
 		{
-			batteryGrid.allocateEnergySurplus(new Surplus(19200000,5));
+			batteryGrid.allocateEnergySurplus(19200000);
 		}
 		
 		TimeUnit.SECONDS.sleep(10);
@@ -149,15 +149,15 @@ public class ProgramDriver
 		//CREATE CITY
 		int[] energyConsumptionTiersDesMoines = {1, 1, 1, 1, 1, 2, 2, 2, 2, 4, 5, 4, 2, 5, 5, 3, 3, 1, 1, 3, 4, 3, 3, 1};
 		
-		City desMoines = new City("Des Moines", energyConsumptionTiersDesMoines);
-		CitySimulator citySimulator = new CitySimulator(desMoines);
+		//City desMoines = new City("Des Moines", energyConsumptionTiersDesMoines);
+		//CitySimulator citySimulator = new CitySimulator(desMoines, energyConsumptionTiersDesMoines, 0.1);
 		
 		
 		//CREATE WINDMILL FARM
 		int[] energyProductionTiersWarrenCountyWindmiillFarm = {1, 1, 1, 1, 1, 2, 2, 2, 3, 3, 3, 3, 4, 4, 5, 3, 3, 3, 4, 2, 2, 2, 1, 1};
 		
-		WindmillFarm warrenCountyWindmillFarm = new WindmillFarm("Warren County Windmill Farm", energyProductionTiersWarrenCountyWindmiillFarm);
-		WindmillFarmSimulator windmillFarmSimulator = new WindmillFarmSimulator(warrenCountyWindmillFarm);
+		//WindmillFarm warrenCountyWindmillFarm = new WindmillFarm("Warren County Windmill Farm");
+		//WindmillFarmSimulator windmillFarmSimulator = new WindmillFarmSimulator(warrenCountyWindmillFarm, energyProductionTiersWarrenCountyWindmiillFarm, 0.35);
 		
 		
 		//CREATE ENERGY COMMANDER

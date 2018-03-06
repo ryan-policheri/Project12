@@ -1,0 +1,14 @@
+Des Moines
+Month,Average KWh/m^2/day
+Jan,3.58
+Feb,3.75
+Mar,4.4
+Apr,4.84
+May,5.47
+Jun,6.13
+Jul,6.08
+Aug,5.55
+Sep,5.15
+Oct,4.47
+Nov,3.47
+Dec,3.29
