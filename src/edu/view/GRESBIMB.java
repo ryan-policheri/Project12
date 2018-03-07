@@ -58,8 +58,8 @@ public class GRESBIMB
 	//region Energy panel
 	private JPanel panelEnergy;
 
-	private JButton btnEditWindFarm;
-	private JButton btnEditPVSolarFarm;
+	private JButton btnRemoveAllWindFarms;
+	private JButton btnRemoveAllPVSolarFarms;
 	private JButton btnEnergyBack;
 	private JButton btnEnergyNext;
 	private JPanel panelEnergyProductionChart;
@@ -243,51 +243,73 @@ public class GRESBIMB
 				switchToPanel(panelPickCity);
 			}
 		});
+		btnExit.addActionListener(new ActionListener()
+		{
+			@Override
+			public void actionPerformed(ActionEvent e)
+			{
+				System.exit(0);
+			}
+		});
 		//endregion
 
-		//region Energy screen buttons
+		//region Energy Sources screen buttons
+		//region wind farm buttons
 		btnBuildDefaultWindFarms.addActionListener(new ActionListener()
 		{
 			@Override
 			public void actionPerformed(ActionEvent e)
 			{
+				Controller.buildDefaultWindFarms();
 				updateWindFarmList();
 			}
 		});
+		btnAddWindFarm.addActionListener(new ActionListener()
+		{
+			@Override
+			public void actionPerformed(ActionEvent e)
+			{
+				new WindFarmAddForm();
+			}
+		});
+		btnRemoveAllWindFarms.addActionListener(new ActionListener()
+		{
+			@Override
+			public void actionPerformed(ActionEvent e)
+			{
+				Controller.removeAllWindFarms();
+				updateWindFarmList();
+			}
+		});
+		//endregion
+		//region PV solar farm buttons
 		btnBuildDefaultPVSolarFarms.addActionListener(new ActionListener()
 		{
 			@Override
 			public void actionPerformed(ActionEvent e)
 			{
+				Controller.buildDefaultPVSolarFarms();
 				updatePVSolarList();
 			}
 		});
-		btnBuildDefaultWindFarms.addActionListener(new ActionListener()
+		btnAddPVSolarFarm.addActionListener(new ActionListener()
 		{
 			@Override
 			public void actionPerformed(ActionEvent e)
 			{
-				updateWindFarmList();
+				new PVSolarFarmAddForm();
 			}
 		});
-		btnEditWindFarm.addActionListener(new ActionListener()
+		btnRemoveAllPVSolarFarms.addActionListener(new ActionListener()
 		{
 			@Override
 			public void actionPerformed(ActionEvent e)
 			{
-				String title = "Edit Energy Production";
-				createNewJFrame(new FormEditEnergyProduction().getPanelMain(), title, JFrame.DISPOSE_ON_CLOSE);
+				Controller.removeAllPVSolarFarms();
+				updatePVSolarList();
 			}
 		});
-		btnEditPVSolarFarm.addActionListener(new ActionListener()
-		{
-			@Override
-			public void actionPerformed(ActionEvent e)
-			{
-				String title = "Edit Energy Consumption";
-				createNewJFrame(new FormEditEnergyConsumption().getPanelMain(), title, JFrame.DISPOSE_ON_CLOSE);
-			}
-		});
+		//endregion
 		//endregion
 
 		//region Batteries screen buttons
@@ -367,8 +389,6 @@ public class GRESBIMB
 				double highestGraphValue = selectedCity.getHighestEnergyValue();
 				highestGraphValue *= 1.3; //for scaling
 
-				System.out.println(highestGraphValue);
-
 				lblPickCitySelectedCityName.setText("Selected city: " + cityName);
 
 				addJFreeChartToJPanel("Energy Consumption of " + cityName, panelCitiesPreview,
@@ -443,7 +463,7 @@ public class GRESBIMB
 	}
 
 	//region GUI functions
-	private static void createNewJFrame(JPanel panel, String title, int operation)
+	protected static void createNewJFrame(JPanel panel, String title, int operation)
 	{
 		JFrame frame = new JFrame(title);
 		frame.setContentPane(panel);
@@ -482,8 +502,8 @@ public class GRESBIMB
 
 	public void createPanelEnergy()
 	{
-		this.panelEnergyProductionChart.removeAll();
-		this.panelEnergyConsumptionChart.removeAll();
+		//this.panelEnergyProductionChart.removeAll();
+		//this.panelEnergyConsumptionChart.removeAll();
 		//int[] energyProductionTiers = Controller.getSelectedWMF().getEnergyProductionTiers();
 		//int[] energyConsumptionTiers = selectedCity.getConsumptionTiersByHour();
 		//energyProductionTiersDouble = new double[energyProductionTiers.length];
@@ -494,7 +514,7 @@ public class GRESBIMB
 			energyProductionTiersDouble[i] = energyProductionTiers[i];
 			energyConsumptionTiersDouble[i] = energyConsumptionTiers[i];
 		}*/
-		double [][] data = new double[1][];
+/*		double [][] data = new double[1][];
 		data[0] = energyProductionTiersDouble;
 
 		addJFreeChartToJPanel("Energy Production", this.panelEnergyProductionChart, data,
@@ -506,7 +526,7 @@ public class GRESBIMB
 
 		addJFreeChartToJPanel("Energy Consumption", this.panelEnergyConsumptionChart, data2,
 				"Hour", "Tier", true, 0, 23.5, 1,
-				(double) (NUM_OF_TIERS + .5), MAJOR_TICK_SPACING);
+				(double) (NUM_OF_TIERS + .5), MAJOR_TICK_SPACING);*/
 	}
 
 	private void startSimulation()
@@ -613,7 +633,7 @@ public class GRESBIMB
 		//Controller.allocateEnergySurplus(surplus);
 	}
 
-	private void updateWindFarmList()
+	protected static void updateWindFarmList()
 	{
 		windFarmDefaultListModel.clear();
 
@@ -623,7 +643,7 @@ public class GRESBIMB
 		}
 	}
 
-	private void updatePVSolarList()
+	protected static void updatePVSolarList()
 	{
 		PVSolarFarmDefaultListModel.clear();
 

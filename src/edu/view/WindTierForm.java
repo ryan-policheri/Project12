@@ -1,8 +1,6 @@
 package edu.view;
 
 import edu.controllers.Controller;
-import edu.model.city.City;
-import edu.model.energySources.windmillFarm.WindmillFarm;
 import edu.view.misc.SliderListener;
 import org.jfree.chart.ChartFactory;
 import org.jfree.chart.ChartPanel;
@@ -11,8 +9,6 @@ import org.jfree.chart.axis.NumberAxis;
 import org.jfree.chart.axis.NumberTickUnit;
 import org.jfree.chart.plot.PlotOrientation;
 import org.jfree.chart.plot.XYPlot;
-import org.jfree.chart.renderer.xy.StackedXYAreaRenderer;
-import org.jfree.chart.renderer.xy.XYAreaRenderer;
 import org.jfree.chart.renderer.xy.XYLineAndShapeRenderer;
 import org.jfree.data.xy.XYSeries;
 import org.jfree.data.xy.XYSeriesCollection;
@@ -23,9 +19,10 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.util.ArrayList;
 
-public class EnergyForm
+public class WindTierForm extends JFrame
 {
 	//region Initialize swing elements
+
 	protected JPanel panelMain;
 
 	protected JPanel panelHeader;
@@ -59,33 +56,52 @@ public class EnergyForm
 	protected JSlider slider11PM;
 	//endregion
 
-	//region Image panel
-	protected JPanel panelImage;
-
-	protected JPanel panelPreviousGraph;
-	protected JPanel panelNewGraph;
+	protected JPanel panelWindTierGraph;
 	//endregion
 
 	//region Buttons panel
 	protected JPanel panelButtons;
-	protected JButton btnSave;
-	protected JButton btnCancel;
+	protected JButton btnOk;
 	//endregion
 	//endregion
 
 	//region Initialize attributes
+
 	protected static ArrayList<JSlider> sliders = new ArrayList<>();
 	protected static final int NUM_OF_TIERS = Controller.getNumOfTiers();
 	protected static final int MAJOR_TICK_SPACING = Controller.getMajorTickSpacing();
-	//protected static City city = Controller.getSelectedCity();
-	//protected static WindmillFarm windmillFarm = Controller.getSelectedWMF();
+	protected static int[] windTiers = WindFarmAddForm.getWindTiers();
 	//endregion
 
-	public EnergyForm()
+	public WindTierForm()
 	{
+		setTitle("WindTierForm");
+		setContentPane(getPanelMain());
+		setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
+		pack();
+		setVisible(true);
+
 		// Set default settings for sliders
 		addSlidersToSliderList();
 		setSliderDefaultSettings();
+		setDefaultPanelSliderValues();
+
+		btnOk.addActionListener(new ActionListener()
+		{
+			@Override
+			public void actionPerformed(ActionEvent e)
+			{
+				for(int i = 0; i < windTiers.length; i++)
+				{
+					windTiers[i] = sliders.get(i).getValue();
+				}
+
+				WindFarmAddForm.setWindTiers(windTiers);
+
+				dispose();
+			}
+
+		});
 	}
 
 	private void addSlidersToSliderList()
@@ -131,18 +147,34 @@ public class EnergyForm
 		}
 	}
 
-	public void updateGraphs()
+	private void setDefaultPanelSliderValues()
 	{
+		for(int i = 0; i < windTiers.length; i++)
+		{
+			sliders.get(i).setValue(windTiers[i]);
+		}
 	}
 
-	protected void addJFreeChartToJPanel(JPanel panel, int[] energyConsumptionTiers, boolean isPrevious)
+	public void updateGraphs()
+	{
+		int[] modifiedEnergyProductionTiers = new int[24];
+
+		for (int i = 0; i < modifiedEnergyProductionTiers.length; i++)
+		{
+			modifiedEnergyProductionTiers[i] = sliders.get(i).getValue();
+		}
+
+		addJFreeChartToJPanel(this.panelWindTierGraph, modifiedEnergyProductionTiers, false);
+	}
+
+	protected void addJFreeChartToJPanel(JPanel panel, int[] windTiers, boolean isPrevious)
 	{
 		XYSeries series = new XYSeries("XYGraph");
 
 		// Add city energyConsumptionTiers data to the series
-		for (int i = 0; i < energyConsumptionTiers.length; i++)
+		for (int i = 0; i < windTiers.length; i++)
 		{
-			series.add(i, energyConsumptionTiers[i]);
+			series.add(i, windTiers[i]);
 		}
 
 		// Add the series to your data set
@@ -150,16 +182,9 @@ public class EnergyForm
 		dataset.addSeries(series);
 
 		// Generate the graph
-		String title;
-		if (isPrevious)
-		{
-			title = "Previous";
-		}
-		else
-		{
-			title = "With Changes";
-		}
-		JFreeChart chart = ChartFactory.createXYLineChart(title,"Hour","Tier", dataset,
+		String title = "Wind Tiers by Hour";
+
+		JFreeChart chart = ChartFactory.createXYLineChart(title,"Hour","Wind Tier", dataset,
 				PlotOrientation.VERTICAL, false, false, false);
 
 		// Make data points visible
@@ -193,4 +218,5 @@ public class EnergyForm
 		return panelMain;
 	}
 	//endregion
+
 }

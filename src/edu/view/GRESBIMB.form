@@ -43,7 +43,7 @@
                 </constraints>
                 <properties>
                   <font size="24"/>
-                  <text value="Green Renewable Energy Saved by Implementing Mechanical Batteries"/>
+                  <text value="Mechanical Mass-Energy Storage Systems: Making Green, Renewable Energy Work"/>
                 </properties>
               </component>
               <vspacer id="f4060">
@@ -53,7 +53,7 @@
               </vspacer>
             </children>
           </grid>
-          <grid id="3af86" layout-manager="GridLayoutManager" row-count="6" column-count="1" same-size-horizontally="false" same-size-vertically="false" hgap="-1" vgap="-1">
+          <grid id="3af86" layout-manager="GridLayoutManager" row-count="8" column-count="1" same-size-horizontally="false" same-size-vertically="false" hgap="-1" vgap="-1">
             <margin top="0" left="0" bottom="0" right="0"/>
             <constraints border-constraint="Center"/>
             <properties/>
@@ -64,22 +64,13 @@
                   <grid row="1" column="0" row-span="1" col-span="1" vsize-policy="0" hsize-policy="0" anchor="0" fill="0" indent="0" use-parent-layout="false"/>
                 </constraints>
                 <properties>
-                  <text value="Created by"/>
-                </properties>
-              </component>
-              <component id="4f358" class="javax.swing.JLabel">
-                <constraints>
-                  <grid row="2" column="0" row-span="1" col-span="1" vsize-policy="0" hsize-policy="0" anchor="0" fill="0" indent="0" use-parent-layout="false"/>
-                </constraints>
-                <properties>
-                  <font size="16"/>
-                  <text value="Joey Gale | Nathan Hawkins | Ryan Policheri"/>
+                  <text value="Authors:"/>
                 </properties>
               </component>
               <grid id="246a8" layout-manager="GridLayoutManager" row-count="2" column-count="1" same-size-horizontally="false" same-size-vertically="false" hgap="-1" vgap="-1">
                 <margin top="0" left="0" bottom="0" right="0"/>
                 <constraints>
-                  <grid row="4" column="0" row-span="1" col-span="1" vsize-policy="3" hsize-policy="3" anchor="0" fill="3" indent="0" use-parent-layout="false"/>
+                  <grid row="6" column="0" row-span="1" col-span="1" vsize-policy="3" hsize-policy="3" anchor="0" fill="3" indent="0" use-parent-layout="false"/>
                 </constraints>
                 <properties/>
                 <border type="none"/>
@@ -129,14 +120,40 @@
               </vspacer>
               <vspacer id="d361e">
                 <constraints>
-                  <grid row="3" column="0" row-span="1" col-span="1" vsize-policy="6" hsize-policy="1" anchor="0" fill="2" indent="0" use-parent-layout="false"/>
+                  <grid row="5" column="0" row-span="1" col-span="1" vsize-policy="6" hsize-policy="1" anchor="0" fill="2" indent="0" use-parent-layout="false"/>
                 </constraints>
               </vspacer>
               <vspacer id="c7e69">
                 <constraints>
-                  <grid row="5" column="0" row-span="1" col-span="1" vsize-policy="6" hsize-policy="1" anchor="0" fill="2" indent="0" use-parent-layout="false"/>
+                  <grid row="7" column="0" row-span="1" col-span="1" vsize-policy="6" hsize-policy="1" anchor="0" fill="2" indent="0" use-parent-layout="false"/>
                 </constraints>
               </vspacer>
+              <component id="4f358" class="javax.swing.JLabel">
+                <constraints>
+                  <grid row="2" column="0" row-span="1" col-span="1" vsize-policy="0" hsize-policy="0" anchor="0" fill="0" indent="0" use-parent-layout="false"/>
+                </constraints>
+                <properties>
+                  <font size="16"/>
+                  <text value="Ryan Policheri   |   Aaron Smith"/>
+                </properties>
+              </component>
+              <component id="ef18d" class="javax.swing.JLabel">
+                <constraints>
+                  <grid row="3" column="0" row-span="1" col-span="1" vsize-policy="0" hsize-policy="0" anchor="0" fill="0" indent="0" use-parent-layout="false"/>
+                </constraints>
+                <properties>
+                  <text value="Former Contributers:"/>
+                </properties>
+              </component>
+              <component id="cf934" class="javax.swing.JLabel">
+                <constraints>
+                  <grid row="4" column="0" row-span="1" col-span="1" vsize-policy="0" hsize-policy="0" anchor="0" fill="0" indent="0" use-parent-layout="false"/>
+                </constraints>
+                <properties>
+                  <font size="16"/>
+                  <text value="Nathan Hawkins   |   Joey Gale"/>
+                </properties>
+              </component>
             </children>
           </grid>
         </children>
@@ -307,7 +324,7 @@
             <properties/>
             <border type="none"/>
             <children>
-              <grid id="95d13" layout-manager="GridLayoutManager" row-count="2" column-count="3" same-size-horizontally="false" same-size-vertically="false" hgap="-1" vgap="-1">
+              <grid id="95d13" layout-manager="GridLayoutManager" row-count="2" column-count="5" same-size-horizontally="false" same-size-vertically="false" hgap="-1" vgap="-1">
                 <margin top="0" left="0" bottom="0" right="0"/>
                 <constraints>
                   <grid row="0" column="0" row-span="1" col-span="1" vsize-policy="3" hsize-policy="3" anchor="0" fill="3" indent="0" use-parent-layout="false"/>
@@ -315,30 +332,30 @@
                 <properties/>
                 <border type="none" title="Wind Farms"/>
                 <children>
-                  <component id="65cae" class="javax.swing.JButton" binding="btnEditWindFarm">
-                    <constraints>
-                      <grid row="1" column="0" row-span="1" col-span="1" vsize-policy="0" hsize-policy="3" anchor="0" fill="0" indent="0" use-parent-layout="false"/>
-                    </constraints>
-                    <properties>
-                      <text value="Edit Selected Wind Farm"/>
-                    </properties>
-                  </component>
-                  <component id="efec5" class="javax.swing.JButton" binding="btnBuildDefaultWindFarms">
-                    <constraints>
-                      <grid row="1" column="2" row-span="1" col-span="1" vsize-policy="0" hsize-policy="3" anchor="0" fill="1" indent="0" use-parent-layout="false"/>
-                    </constraints>
-                    <properties>
-                      <text value="Build Default Wind Farms"/>
-                    </properties>
-                  </component>
                   <component id="dee96" class="javax.swing.JList" binding="listWindFarms">
                     <constraints>
-                      <grid row="0" column="0" row-span="1" col-span="3" vsize-policy="6" hsize-policy="2" anchor="0" fill="3" indent="0" use-parent-layout="false">
+                      <grid row="0" column="0" row-span="1" col-span="5" vsize-policy="6" hsize-policy="2" anchor="0" fill="3" indent="0" use-parent-layout="false">
                         <preferred-size width="150" height="50"/>
                       </grid>
                     </constraints>
                     <properties>
                       <model/>
+                    </properties>
+                  </component>
+                  <component id="9947e" class="javax.swing.JButton" binding="btnRemoveAllWindFarms">
+                    <constraints>
+                      <grid row="1" column="2" row-span="1" col-span="3" vsize-policy="0" hsize-policy="3" anchor="0" fill="1" indent="0" use-parent-layout="false"/>
+                    </constraints>
+                    <properties>
+                      <text value="Remove All Wind Farms"/>
+                    </properties>
+                  </component>
+                  <component id="efec5" class="javax.swing.JButton" binding="btnBuildDefaultWindFarms">
+                    <constraints>
+                      <grid row="1" column="0" row-span="1" col-span="1" vsize-policy="0" hsize-policy="3" anchor="0" fill="1" indent="0" use-parent-layout="false"/>
+                    </constraints>
+                    <properties>
+                      <text value="Build Default Wind Farms"/>
                     </properties>
                   </component>
                   <component id="139fb" class="javax.swing.JButton" binding="btnAddWindFarm">
@@ -351,7 +368,7 @@
                   </component>
                 </children>
               </grid>
-              <grid id="79596" layout-manager="GridLayoutManager" row-count="2" column-count="4" same-size-horizontally="false" same-size-vertically="false" hgap="-1" vgap="-1">
+              <grid id="79596" layout-manager="GridLayoutManager" row-count="2" column-count="10" same-size-horizontally="false" same-size-vertically="false" hgap="-1" vgap="-1">
                 <margin top="0" left="0" bottom="0" right="0"/>
                 <constraints>
                   <grid row="0" column="1" row-span="1" col-span="1" vsize-policy="3" hsize-policy="3" anchor="0" fill="3" indent="0" use-parent-layout="false"/>
@@ -361,7 +378,7 @@
                 <children>
                   <component id="60684" class="javax.swing.JList" binding="listPVSolarFarms">
                     <constraints>
-                      <grid row="0" column="0" row-span="1" col-span="4" vsize-policy="6" hsize-policy="2" anchor="0" fill="3" indent="0" use-parent-layout="false">
+                      <grid row="0" column="0" row-span="1" col-span="10" vsize-policy="6" hsize-policy="2" anchor="0" fill="3" indent="0" use-parent-layout="false">
                         <preferred-size width="150" height="50"/>
                       </grid>
                     </constraints>
@@ -369,28 +386,28 @@
                       <model/>
                     </properties>
                   </component>
-                  <component id="12093" class="javax.swing.JButton" binding="btnEditPVSolarFarm">
+                  <component id="83568" class="javax.swing.JButton" binding="btnAddPVSolarFarm">
                     <constraints>
-                      <grid row="1" column="0" row-span="1" col-span="1" vsize-policy="0" hsize-policy="3" anchor="0" fill="0" indent="0" use-parent-layout="false"/>
+                      <grid row="1" column="2" row-span="1" col-span="1" vsize-policy="0" hsize-policy="3" anchor="0" fill="1" indent="0" use-parent-layout="false"/>
                     </constraints>
                     <properties>
-                      <text value="Edit Selected PV Solar Farm"/>
+                      <text value="Add PV Solar Farm"/>
                     </properties>
                   </component>
                   <component id="b119e" class="javax.swing.JButton" binding="btnBuildDefaultPVSolarFarms">
                     <constraints>
-                      <grid row="1" column="2" row-span="1" col-span="1" vsize-policy="0" hsize-policy="3" anchor="0" fill="1" indent="0" use-parent-layout="false"/>
+                      <grid row="1" column="1" row-span="1" col-span="1" vsize-policy="0" hsize-policy="3" anchor="0" fill="1" indent="0" use-parent-layout="false"/>
                     </constraints>
                     <properties>
                       <text value="Build Default PV Solar Farms"/>
                     </properties>
                   </component>
-                  <component id="83568" class="javax.swing.JButton" binding="btnAddPVSolarFarm">
+                  <component id="1613b" class="javax.swing.JButton" binding="btnRemoveAllPVSolarFarms">
                     <constraints>
-                      <grid row="1" column="1" row-span="1" col-span="1" vsize-policy="0" hsize-policy="3" anchor="0" fill="1" indent="0" use-parent-layout="false"/>
+                      <grid row="1" column="3" row-span="1" col-span="7" vsize-policy="0" hsize-policy="3" anchor="0" fill="1" indent="0" use-parent-layout="false"/>
                     </constraints>
                     <properties>
-                      <text value="Add PV Solar Farm"/>
+                      <text value="Remove All PV Solar Farms"/>
                     </properties>
                   </component>
                 </children>
@@ -413,14 +430,6 @@
                   <text value="&lt; Back"/>
                 </properties>
               </component>
-              <component id="2d671" class="javax.swing.JButton" binding="btnEnergyNext">
-                <constraints>
-                  <grid row="1" column="2" row-span="1" col-span="1" vsize-policy="0" hsize-policy="3" anchor="4" fill="0" indent="0" use-parent-layout="false"/>
-                </constraints>
-                <properties>
-                  <text value="Next &gt;"/>
-                </properties>
-              </component>
               <vspacer id="99eb5">
                 <constraints>
                   <grid row="0" column="0" row-span="1" col-span="1" vsize-policy="6" hsize-policy="1" anchor="0" fill="2" indent="0" use-parent-layout="false"/>
@@ -431,6 +440,14 @@
                   <grid row="1" column="1" row-span="1" col-span="1" vsize-policy="6" hsize-policy="1" anchor="0" fill="2" indent="0" use-parent-layout="false"/>
                 </constraints>
               </vspacer>
+              <component id="2d671" class="javax.swing.JButton" binding="btnEnergyNext">
+                <constraints>
+                  <grid row="1" column="2" row-span="1" col-span="1" vsize-policy="0" hsize-policy="3" anchor="4" fill="0" indent="0" use-parent-layout="false"/>
+                </constraints>
+                <properties>
+                  <text value="Next &gt;"/>
+                </properties>
+              </component>
             </children>
           </grid>
         </children>

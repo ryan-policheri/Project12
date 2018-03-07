@@ -27,4 +27,9 @@ public class Windmill
         return windCondition.randomizeWindTierXSurplus(this.maxCapacityInWatts, timeFrameAsPercentageOfHour);
     }
 
+    public String toString()
+    {
+        return this.modelName + " " + this.maxCapacityInWatts;
+    }
+
 }

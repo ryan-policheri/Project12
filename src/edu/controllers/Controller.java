@@ -29,8 +29,8 @@ public class Controller
 	//endregion
 
 	//region Energy Sources
-	private static ArrayList<WindmillFarm> windFarms = BuildDefaults.createListOfDefaultWindFarms(desMoines,defaultTimeFrameAsPercentageOfHour);
-	private static ArrayList<PhotovoltaicSolarFarm> PVSolarFarms = BuildDefaults.createListOfDefaultPVSolarFarms(desMoines, defaultTimeFrameAsPercentageOfHour);
+	private static ArrayList<WindmillFarm> windFarms = new ArrayList<WindmillFarm>();
+	private static ArrayList<PhotovoltaicSolarFarm> PVSolarFarms = new ArrayList<PhotovoltaicSolarFarm>();
 	//endregion
 
 	// Set default city
@@ -47,17 +47,57 @@ public class Controller
 		this.gresbimb = gresbimb;
 	}
 
+	//region modifying wind farms functions
 	public static void buildDefaultWindFarms()
 	{
 		ArrayList<WindmillFarm> defaultWindFarms = BuildDefaults.createListOfDefaultWindFarms(desMoines,defaultTimeFrameAsPercentageOfHour);
+		windFarms.clear();
 		windFarms.addAll(defaultWindFarms);
 	}
 
+	public static void addWindFarm(String name, int[] windTiers)
+	{
+		WindmillFarm windFarm = new WindmillFarm(name, windTiers, defaultTimeFrameAsPercentageOfHour);
+		windFarms.add(windFarm);
+	}
+
+	public static void addWindTurbineTypesToWindFarm(int indexOfFarm, String modelName, double maxCapacityInMegawatts, int numberOfTurbines)
+	{
+		double maxCapacityInWatts = maxCapacityInMegawatts * 1000000; //convert to megawatts
+
+		for(int i = 0; i < numberOfTurbines; i++)
+		{
+
+			Windmill windmill = new Windmill(modelName, maxCapacityInWatts);
+			windFarms.get(indexOfFarm).addWindmill(windmill);
+		}
+	}
+
+	public static void removeAllWindFarms()
+	{
+		windFarms.clear();
+	}
+	//endregion
+
+	//region modifying solar farm functions
 	public static void buildDefaultPVSolarFarms()
 	{
 		ArrayList<PhotovoltaicSolarFarm> defaultPVSolarFarms = BuildDefaults.createListOfDefaultPVSolarFarms(desMoines, defaultTimeFrameAsPercentageOfHour);
+		PVSolarFarms.clear();
 		PVSolarFarms.addAll(defaultPVSolarFarms);
 	}
+
+	public static void addPVSolarFarm(String name, double areaInSquareMeters, double conversionEfficencyAsPercent, int currenMonthAsInt)
+	{
+		PhotovoltaicSolarFarm PVSolarFarm = new PhotovoltaicSolarFarm(name, areaInSquareMeters, conversionEfficencyAsPercent, currenMonthAsInt, defaultTimeFrameAsPercentageOfHour);
+		PVSolarFarms.add(PVSolarFarm);
+	}
+
+	public static void removeAllPVSolarFarms()
+	{
+		PVSolarFarms.clear();
+	}
+	//endregion
 
 	public static ArrayList<WindmillFarm> getWindFarms()
 	{
