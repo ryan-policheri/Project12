@@ -188,16 +188,9 @@ public class BatteryGrid
 		this.rotationalBatteries.addAll(volatileBatteries);
 	}
 
-	public void removeBattery(int index)
+	public void removeRotationalBattery(int index)
 	{
-		if (index < this.gravitationalBatteries.size())
-		{
-			this.gravitationalBatteries.remove(index);
-		}
-		else
-		{
-			this.rotationalBatteries.remove(index - this.gravitationalBatteries.size());
-		}
+		this.rotationalBatteries.remove(index);
 	}
 
 	public void removeAllBatteries()

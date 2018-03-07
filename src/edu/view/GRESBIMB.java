@@ -70,6 +70,7 @@ public class GRESBIMB
 	private JPanel panelBatteries;
 
 	private JList listBatteries;
+	private JButton btnBuildDefualtBatteries;
 	private JButton btnBatteriesAdd;
 	private JButton btnBatteriesRemove;
 	private JButton btnBatteriesRemoveAll;
@@ -149,7 +150,6 @@ public class GRESBIMB
 	private static int countPowerOutage = 0;
 	//endregion
 
-	//region Methods
 	public GRESBIMB()
 	{
 		controller = new Controller(this);
@@ -313,13 +313,21 @@ public class GRESBIMB
 		//endregion
 
 		//region Batteries screen buttons
+		btnBuildDefualtBatteries.addActionListener(new ActionListener()
+		{
+			@Override
+			public void actionPerformed(ActionEvent e)
+			{
+				Controller.buildDefaultVolatileBatteries();
+				updateBatteryListModel();
+			}
+		});
 		btnBatteriesAdd.addActionListener(new ActionListener()
 		{
 			@Override
 			public void actionPerformed(ActionEvent e)
 			{
-				String title = "Add Battery";
-				createNewJFrame(new FormAddBattery().getPanelMain(), title, JFrame.DISPOSE_ON_CLOSE);
+				new BatteryAddForm();
 			}
 		});
 		btnBatteriesRemove.addActionListener(new ActionListener()
@@ -332,6 +340,7 @@ public class GRESBIMB
 				if (selectedBatteryIndex != -1)
 				{
 					Controller.removeBattery(selectedBatteryIndex);
+					updateBatteryListModel();
 				}
 
 				listBatteries.setSelectedIndex(selectedBatteryIndex);
@@ -343,7 +352,7 @@ public class GRESBIMB
 			public void actionPerformed(ActionEvent e)
 			{
 				Controller.removeAllBatteries();
-				update();
+				updateBatteryListModel();
 			}
 		});
 		//endregion
@@ -413,6 +422,8 @@ public class GRESBIMB
 		});
 	}
 
+	//region GUI functions
+	//region make JFreeChart
 	private void addJFreeChartToJPanel(String title, JPanel panel, double[][] data, String xAxisLabel, String yAxisLabel,
 									   boolean hasTicks, double xAxisStartRange, double xAxisEndRange,
 									   double xAxisTickUnit, double yAxisRange, double yAxisTickUnit)
@@ -461,8 +472,8 @@ public class GRESBIMB
 		panel.add(CP, BorderLayout.CENTER);
 		panel.validate();
 	}
+	//endregion
 
-	//region GUI functions
 	protected static void createNewJFrame(JPanel panel, String title, int operation)
 	{
 		JFrame frame = new JFrame(title);
@@ -480,11 +491,9 @@ public class GRESBIMB
 		this.panelMain.repaint();
 		this.panelMain.revalidate();
 
-		// If it's the Energy panel, insert the charts into the appropriate JPanels
 		if (panel.equals(this.panelEnergy))
 		{
 			lblEnergyTitle.setText("Energy Sources For " + selectedCity.toString());
-			createPanelEnergy();
 		}
 
 		if (panel.equals(this.panelBatteries))
@@ -499,35 +508,6 @@ public class GRESBIMB
 		}
 	}
 	//endregion
-
-	public void createPanelEnergy()
-	{
-		//this.panelEnergyProductionChart.removeAll();
-		//this.panelEnergyConsumptionChart.removeAll();
-		//int[] energyProductionTiers = Controller.getSelectedWMF().getEnergyProductionTiers();
-		//int[] energyConsumptionTiers = selectedCity.getConsumptionTiersByHour();
-		//energyProductionTiersDouble = new double[energyProductionTiers.length];
-		//energyConsumptionTiersDouble = new double[energyConsumptionTiers.length];
-
-/*		for (int i = 0; i < energyConsumptionTiers.length; i++)
-		{
-			energyProductionTiersDouble[i] = energyProductionTiers[i];
-			energyConsumptionTiersDouble[i] = energyConsumptionTiers[i];
-		}*/
-/*		double [][] data = new double[1][];
-		data[0] = energyProductionTiersDouble;
-
-		addJFreeChartToJPanel("Energy Production", this.panelEnergyProductionChart, data,
-				"Hour", "Tier", true, 0, 23.5, 1,
-				(double) (NUM_OF_TIERS + .5), MAJOR_TICK_SPACING);
-
-		double [][] data2 = new double[1][];
-		data[0] = energyConsumptionTiersDouble;
-
-		addJFreeChartToJPanel("Energy Consumption", this.panelEnergyConsumptionChart, data2,
-				"Hour", "Tier", true, 0, 23.5, 1,
-				(double) (NUM_OF_TIERS + .5), MAJOR_TICK_SPACING);*/
-	}
 
 	private void startSimulation()
 	{
@@ -564,14 +544,6 @@ public class GRESBIMB
 
 		// Calculate the current energy (for the battery display)
 		calculateCurrentGridEnergyInJoules();
-
-		// Add tier charts
-/*		addJFreeChartToJPanel("Energy Production", this.panelSimulationSurplusTiers, energyProductionTiersDouble,
-				"Hour", "Tier", true, 0, 23.5, 2,
-				(double) (NUM_OF_TIERS + .5), MAJOR_TICK_SPACING);
-		addJFreeChartToJPanel("Energy Consumption", this.panelSimulationDemandTiers, energyConsumptionTiersDouble,
-				"Hour", "Tier", true, 0, 23.5, 2,
-				(double) (NUM_OF_TIERS + .5), MAJOR_TICK_SPACING);*/
 
 		// Initialize the charts
 		this.updateSimulationDemandChartWithCurrentMillisecond(0);
@@ -622,17 +594,12 @@ public class GRESBIMB
 	}
 
 	//region Update functions
-	public static void update()
-	{
-		updateBatteryListModel();
-		updateCityListModel();
-	}
-
 	private void allocateEnergySurplus(Surplus surplus)
 	{
 		//Controller.allocateEnergySurplus(surplus);
 	}
 
+	//region update lists
 	protected static void updateWindFarmList()
 	{
 		windFarmDefaultListModel.clear();
@@ -653,12 +620,11 @@ public class GRESBIMB
 		}
 	}
 
-	// updates the list's batteryDefaultListModel according to the Controller's battery lists
-	private static void updateBatteryListModel()
+	protected static void updateBatteryListModel()
 	{
 		batteryDefaultListModel.clear();
 
-		BatteryGrid grid = Controller.getGrid();
+		BatteryGrid grid = Controller.getBatteryGrid();
 
 		// add gravitational batteries
 		for (Battery battery : grid.getGravitationalBatteries())
@@ -673,7 +639,7 @@ public class GRESBIMB
 		}
 	}
 
-	private static void updateCityListModel()
+	protected static void updateCityListModel()
 	{
 		cityDefaultListModel.clear();
 
@@ -682,10 +648,16 @@ public class GRESBIMB
 			cityDefaultListModel.addElement(city);
 		}
 	}
+	//endregion
 
-	public void updateEnergyScreen()
+	public void setupSimulation()
 	{
-		createPanelEnergy();
+		pbSimulationGridEnergyLevel.setSize(500, 500);
+	}
+
+	public void updateBatteryGridEnergyLevel(double currentGridEnergyInJoules, double maxTotalEnergyInJoules)
+	{
+		pbSimulationGridEnergyLevel.setValue((int) ((currentGridEnergyInJoules / maxTotalEnergyInJoules) * 100));
 	}
 
 	public void updateSimulationDemandChartWithCurrentMillisecond(double currentMillisecond)
@@ -805,5 +777,4 @@ public class GRESBIMB
 		String title = "GRESBIMB";
 		createNewJFrame(new GRESBIMB().panelMain, title, JFrame.EXIT_ON_CLOSE);
 	}
-	//endregion
 }

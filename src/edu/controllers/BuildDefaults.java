@@ -5,9 +5,7 @@ import edu.model.city.City;
 import edu.model.energySources.solarFarm.PhotovoltaicSolarFarm;
 import edu.model.energySources.windmillFarm.Windmill;
 import edu.model.energySources.windmillFarm.WindmillFarm;
-import org.jfree.util.Rotation;
 
-import java.awt.font.GlyphJustificationInfo;
 import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
@@ -202,7 +200,7 @@ public abstract class BuildDefaults
 
                     for(int i = 0; i < amountOfBatteriesOfThisType; i++)
                     {
-                        RotationalBattery rotationalBattery = new RotationalBattery(batteryName, massInKilograms, radiusInMeters, flywheelMaterial, flywheelBearing);
+                        RotationalBattery rotationalBattery = new RotationalBattery(batteryName + i, massInKilograms, radiusInMeters, flywheelMaterial, flywheelBearing);
                         volatileBatteries.add(rotationalBattery);
                     }
                 }

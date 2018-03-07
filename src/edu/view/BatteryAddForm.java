@@ -12,14 +12,13 @@ import javax.swing.event.ListSelectionListener;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 
-public class FormAddBattery
+public class BatteryAddForm extends JFrame
 {
 	//region Initialize swing elements
-	private static JFrame frameMain;
 	private JPanel panelMain;
 
-	//region Batteries panel
-	private JPanel panelBatteries;
+	//region Battery Type panel
+	private JPanel panelBatteryType;
 
 	private JList listBatteryTypes;
 	private JLabel lblBatteryType;
@@ -56,7 +55,6 @@ public class FormAddBattery
 	private JPanel panelButtons;
 
 	private JButton btnAdd;
-	private JButton btnCancel;
 	//endregion
 
 	//region Info panel
@@ -74,10 +72,13 @@ public class FormAddBattery
 	private final int rotationalBatterySelectedIndex = 1;
 	//endregion
 
-	//region Methods
-	public FormAddBattery()
+	public BatteryAddForm()
 	{
-		//TODO: make panelInfo provide info based on what's added in the text fields (ex: total battery capacity)
+		setTitle("Add Battery Form");
+		setContentPane(panelMain);
+		setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
+		pack();
+		setVisible(true);
 
 		// Add batteries to the model/list, then change the selected index to the first item
 		model.clear();
@@ -110,14 +111,13 @@ public class FormAddBattery
 		txtRotMass.setText(defaultRotMass);
 		txtRotRadius.setText(defaultRotRadius);
 
-		//region Listeners
 		//region Button click listeners
 		btnAdd.addActionListener(new ActionListener()
 		{
 			@Override
 			public void actionPerformed(ActionEvent e)
 			{
-				if (checkValidInputs())
+				try
 				{
 					switch (listBatteryTypes.getSelectedIndex())
 					{
@@ -130,22 +130,18 @@ public class FormAddBattery
 							addRotationalBattery(flywheelMaterial, flywheelBearing);
 							break;
 					}
+
+					dispose();
 				}
-			}
-		});
-		btnCancel.addActionListener(new ActionListener()
-		{
-			@Override
-			public void actionPerformed(ActionEvent e)
-			{
-				Controller.getGrid().displayGrid();
-				frameMain.setVisible(false);
+				catch (Exception ex)
+				{
+					JOptionPane.showMessageDialog(null,"Something was entered incorrectly. Try again.");
+				}
 			}
 		});
 		//endregion
 
 		//region Switch selection listeners
-		// switch the attributes panel based on the selected index
 		listBatteryTypes.addListSelectionListener(new ListSelectionListener()
 		{
 			@Override
@@ -167,7 +163,6 @@ public class FormAddBattery
 			}
 		});
 		//endregion
-		//endregion
 	}
 
 	private void switchAttributesPanelTo(JPanel panel)
@@ -176,11 +171,6 @@ public class FormAddBattery
 		panelAttributes.add(panel);
 		panelAttributes.repaint();
 		panelAttributes.revalidate();
-	}
-
-	private boolean checkValidInputs()
-	{
-		return true;
 	}
 
 	//region Add batteries to the Controller's battery grid
@@ -192,6 +182,7 @@ public class FormAddBattery
 
 		GravitationalBattery battery = new GravitationalBattery(batteryName, massInKilograms, maxHeightInMeters);
 		Controller.addGravitationalBattery(battery);
+		GRESBIMB.updateBatteryListModel();
 
 		JOptionPane.showMessageDialog(null, batteryName + " added successfully.");
 	}
@@ -204,68 +195,9 @@ public class FormAddBattery
 		FlywheelMaterial flywheelMaterial = new FlywheelMaterial(material);
 		FlywheelBearing flywheelBearing = new FlywheelBearing(bearing);
 
-		RotationalBattery battery = new RotationalBattery(batteryName, massInKilograms, radiusInMeters,
-				flywheelMaterial, flywheelBearing);
+		RotationalBattery battery = new RotationalBattery(batteryName, massInKilograms, radiusInMeters, flywheelMaterial, flywheelBearing);
 		Controller.addRotationalBattery(battery);
-
-		//region OLD CODE
-		//String materialName;
-		//double materialDensity;
-		//double materialTensileStress;
-		//String bearingName;
-		//double bearingLoss;
-		//
-		////region Checking which materials are selected
-		//if (rbRotMaterialTitanium.isSelected())
-		//{
-		//	materialName = "Titanium";
-		//	materialDensity = 4506;
-		//	materialTensileStress = 8.8 * java.lang.Math.pow(10, 8);
-		//}
-		//else if (rbRotMaterialCarbonFiber.isSelected())
-		//{
-		//	materialName = "Carbon Fiber";
-		//	materialDensity = 1799;
-		//	materialTensileStress = 4000000000.0;
-		//}
-		//else if (rbRotMaterialSteel.isSelected())
-		//{
-		//	materialName = "Steel";
-		//	materialDensity = 8050;
-		//	materialTensileStress = 6.9 * java.lang.Math.pow(10, 8);
-		//}
-		//else
-		//{
-		//	materialName = "Aluminum";
-		//	materialDensity = 2700;
-		//	materialTensileStress = 5 * java.lang.Math.pow(10, 8);
-		//}
-		//
-		//if (rbRotBearingMechanical.isSelected())
-		//{
-		//	bearingName = "Mechanical";
-		//	bearingLoss = 3.472222222 * java.lang.Math.pow(10, -5);
-		//}
-		//else if (rbRotBearingMagnetic.isSelected())
-		//{
-		//	bearingName = "Magnetic";
-		//	bearingLoss = 4.166666667 * java.lang.Math.pow(10, -6);
-		//}
-		//else
-		//{
-		//	bearingName = "Super";
-		//	bearingLoss = 6.944444444 * java.lang.Math.pow(10, -8);
-		//}
-		//endregion
-
-		//FlywheelMaterial material = new FlywheelMaterial(materialName, materialDensity, materialTensileStress);
-		//FlywheelBearing bearing = new FlywheelBearing(bearingName, bearingLoss);
-
-		// RotationalBattery battery = new RotationalBattery(txtRotName.getText(), Double.parseDouble(txtRotMass.getText()),
-		// 		Double.parseDouble(txtRotRadius.getText()), flywheelMaterial, flywheelBearing);
-
-		// Controller.addRotationalBattery(battery);
-		//endregion
+		GRESBIMB.updateBatteryListModel();
 
 		JOptionPane.showMessageDialog(null, batteryName + " added successfully.");
 	}
@@ -316,20 +248,4 @@ public class FormAddBattery
 	}
 	//endregion
 
-	//region Getters/Setters
-	public JPanel getPanelMain()
-	{
-		return panelMain;
-	}
-	//endregion
-
-	public static void main(String[] args)
-	{
-		frameMain = new JFrame("FormAddBattery");
-		frameMain.setContentPane(new FormAddBattery().panelMain);
-		frameMain.setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
-		frameMain.pack();
-		frameMain.setVisible(true);
-	}
-	//endregion
 }

@@ -17,7 +17,8 @@ public class Controller
 
 	private static final double defaultTimeFrameAsPercentageOfHour = 0.1;
 
-	private static BatteryGrid grid = new BatteryGrid();
+	private static BatteryGrid batteryGrid = new BatteryGrid();
+	private static EnergyCommander energyCommander = new EnergyCommander(batteryGrid);
 
 	//region Available Cities
 	private static City desMoines = new City("Des Moines", defaultTimeFrameAsPercentageOfHour);
@@ -33,9 +34,6 @@ public class Controller
 	private static ArrayList<PhotovoltaicSolarFarm> PVSolarFarms = new ArrayList<PhotovoltaicSolarFarm>();
 	//endregion
 
-	// Set default city
-	private static EnergyCommander energyCommander = new EnergyCommander(grid);
-
 	// Times
 	private static long currentMillisecond = 0;
 
@@ -47,7 +45,16 @@ public class Controller
 		this.gresbimb = gresbimb;
 	}
 
-	//region modifying wind farms functions
+	//region building default cities
+	public static void buildDefaultCities()
+	{
+		availableCities.clear();
+		availableCities.add(chicago);
+		availableCities.add(desMoines);
+	}
+	//endregion
+
+	//region creating wind farms functions
 	public static void buildDefaultWindFarms()
 	{
 		ArrayList<WindmillFarm> defaultWindFarms = BuildDefaults.createListOfDefaultWindFarms(desMoines,defaultTimeFrameAsPercentageOfHour);
@@ -79,7 +86,7 @@ public class Controller
 	}
 	//endregion
 
-	//region modifying solar farm functions
+	//region creating pv solar farms functions
 	public static void buildDefaultPVSolarFarms()
 	{
 		ArrayList<PhotovoltaicSolarFarm> defaultPVSolarFarms = BuildDefaults.createListOfDefaultPVSolarFarms(desMoines, defaultTimeFrameAsPercentageOfHour);
@@ -99,20 +106,40 @@ public class Controller
 	}
 	//endregion
 
-	public static ArrayList<WindmillFarm> getWindFarms()
+	//region creating batteries functions
+	public static void buildDefaultVolatileBatteries()
 	{
-		return windFarms;
-	}
-	public static ArrayList<PhotovoltaicSolarFarm> getPVSolarFarms()
-	{
-		return PVSolarFarms;
+		ArrayList<VolatileBattery> defaultVolatileBatteries = BuildDefaults.createListOfDefaultVolatileBatteries();
+		batteryGrid.removeAllBatteries();
+
+		batteryGrid.addListOfRotationalBatteries(defaultVolatileBatteries);
 	}
 
-	public static void buildDefaultCities()
+	public static void addGravitationalBattery(GravitationalBattery battery)
 	{
-		availableCities.clear();
-		availableCities.add(chicago);
-		availableCities.add(desMoines);
+		batteryGrid.addGravitationalBattery(battery);
+	}
+
+	public static void addRotationalBattery(RotationalBattery battery)
+	{
+		batteryGrid.addRotationalBattery(battery);
+	}
+
+	public static void removeBattery(int index)
+	{
+		batteryGrid.removeRotationalBattery(index);
+	}
+
+	public static void removeAllBatteries()
+	{
+		batteryGrid.removeAllBatteries();
+	}
+	//endregion
+
+
+	public static void simulate()
+	{
+
 	}
 
 /*	public static void updateMagnitudeByMillisecondArrays()
@@ -129,43 +156,14 @@ public class Controller
 		gresbimb.calculateCurrentGridEnergyInJoules();
 	}
 
-	public static void addGravitationalBattery(GravitationalBattery battery)
-	{
-		grid.addGravitationalBattery(battery);
-
-		// updateCities the view
-		GRESBIMB.update();
-	}
-
-	public static void addRotationalBattery(RotationalBattery battery)
-	{
-		grid.addRotationalBattery(battery);
-
-		// updateCities the view
-		GRESBIMB.update();
-	}
-
-	public static void removeBattery(int index)
-	{
-		grid.removeBattery(index);
-
-		// updateCities the view
-		GRESBIMB.update();
-	}
-
-	public static void removeAllBatteries()
-	{
-		grid.removeAllBatteries();
-	}
-
 	public static double calculateCurrentGridEnergyInJoules()
 	{
-		return grid.calculateCurrentVolatileEnergyInJoules();
+		return batteryGrid.calculateCurrentVolatileEnergyInJoules();
 	}
 
 	public static double calculateMaxTotalEnergyInJoules()
 	{
-		return grid.calculateMaxVolatileEnergyInJoules();
+		return batteryGrid.calculateMaxVolatileEnergyInJoules();
 	}
 
 	private static void addEnergySurplus()
@@ -178,7 +176,7 @@ public class Controller
 
 		Surplus surplus = new Surplus(incomingEnergyInWatts, timeIncomingEnergyLastsInSeconds);
 
-		grid.allocateEnergySurplus(surplus);*/
+		batteryGrid.allocateEnergySurplus(surplus);*/
 	}
 
 	private static void demandEnergy()
@@ -191,43 +189,13 @@ public class Controller
 
 		Demand demand = new Demand(energyDemandInWatts, timeDemandIsNeededInSeconds);
 
-		grid.allocateEnergyDemand(demand);*/
+		batteryGrid.allocateEnergyDemand(demand);*/
 	}
 
-	private static void displayBatteryStats()
-	{
-		grid.displayGrid();
-	}
-	
 	//region Getters/Setters
 	public static ArrayList<City> getAvailableCities()
 	{
 		return availableCities;
-	}
-
-/*	public static WindmillFarm getSelectedWMF()
-	{
-		return selectedWMF;
-	}*/
-
-	public static void setAvailableCities(ArrayList<City> availableCities)
-	{
-		Controller.availableCities = availableCities;
-	}
-
-	public static BatteryGrid getGrid()
-	{
-		return grid;
-	}
-
-	public static int getNumOfTiers()
-	{
-		return NUM_OF_TIERS;
-	}
-
-	public static int getMajorTickSpacing()
-	{
-		return MAJOR_TICK_SPACING;
 	}
 
 	public static City getSelectedCity()
@@ -240,15 +208,30 @@ public class Controller
 		selectedCity = availableCities.get(index);
 	}
 
-	public static void setSelectedCityConsumptionValues(int[] sliderValues)
+	public static ArrayList<WindmillFarm> getWindFarms()
 	{
-		// Sets the city consumption values and updates the main page
-		gresbimb.updateEnergyScreen();
+		return windFarms;
 	}
 
-/*	public static WindmillFarm getWindmillFarm()
+	public static ArrayList<PhotovoltaicSolarFarm> getPVSolarFarms()
 	{
-		return selectedWMF;
-	}*/
+		return PVSolarFarms;
+	}
+
+	public static BatteryGrid getBatteryGrid()
+	{
+		return batteryGrid;
+	}
+
+	public static int getNumOfTiers()
+	{
+		return NUM_OF_TIERS;
+	}
+
+	public static int getMajorTickSpacing()
+	{
+		return MAJOR_TICK_SPACING;
+	}
 	//endregion
+
 }
