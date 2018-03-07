@@ -4,6 +4,7 @@ public abstract class Battery
 {
 	//ATTRIBUTES
 	protected static final double forceOfGravity = 9.81; //CONSTANT
+	protected static final double densityOfWater = 1000;
 	
 	private final String batteryName;
 	private final double massInKilograms;
@@ -35,9 +36,9 @@ public abstract class Battery
 		this.maxEnergyInJoules = (momentOfIntertia / 2) * (maxAngularVelocity * maxAngularVelocity);
 	}
 
-	//Equation: PE =  (2 Dr - 2/3 Dw ) pi Gr ^ 4
+	//Equation: PE =  (2 Dr - 2/3 Dw ) pi G H R^3
 	protected void initializedMaxEnergyInJoulesForHydroelectricBattery(double maxLiftHeightInMeters, double densityOfMassInKilogramMetersCubed, double radiusInMeters){
-		this.maxEnergyInJoules = (2*densityOfMassInKilogramMetersCubed-3/2)*Math.PI*Battery.forceOfGravity*Math.pow(radiusInMeters, 4.0);
+		this.maxEnergyInJoules = (2*densityOfMassInKilogramMetersCubed-3/2*densityOfWater)*Math.PI*Battery.forceOfGravity*Math.pow(radiusInMeters,3.0)*maxLiftHeightInMeters;
 	}
 
 
@@ -60,7 +61,12 @@ public abstract class Battery
 	{
 		this.currentEnergyInJoules = bearingType.calculateFrictionalLoss(this.currentEnergyInJoules);
 	}
-	
+
+	//Equation: PE =  (2 Dr - 2/3 Dw ) pi G H R ^ 3
+	protected void adjustCurrentEnergyInJoulesForHydroelectricBattery(double currentLiftHeightInMeters, double densityOfMassInKilogramMetersCubed, double radiusInMeters){
+		this.maxEnergyInJoules = (2*densityOfMassInKilogramMetersCubed-3/2*densityOfWater)*Math.PI*Battery.forceOfGravity*Math.pow(radiusInMeters,3.0)*currentLiftHeightInMeters;
+	}
+
 	protected void setCurrentEnergyInJoulesToZero()
 	{
 		this.currentEnergyInJoules = 0;
