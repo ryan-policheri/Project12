@@ -101,13 +101,13 @@ public class GRESBIMB
 	private JLabel lblBatteryType;
 	private JLabel lblBatteryMaxStorage;
 	private JLabel lblBatteriesTitle;
-	private JButton buildDefaultButton;
 	private JButton btnBuildDefaultWindFarms;
 	private JList listWindFarms;
 	private JList listPVSolarFarms;
 	private JButton btnAddWindFarm;
 	private JButton btnAddPVSolarFarm;
 	private JButton btnBuildDefaultPVSolarFarms;
+	private JButton btnLaunchSimulation;
 	//endregion
 	//endregion
 
@@ -129,49 +129,25 @@ public class GRESBIMB
 	private static final double MAX_Y_AXIS_CHART_MULTIPLIER = 1.3;
 	private static final double Y_AXIS_TICKS = 5.1;
 
-	// Data for the JFreeChart
-	private static ArrayList<Double> magnitudeOfDemandsByMillisecond;
-	private static ArrayList<Double> magnitudeOfSurplusesByMillisecond;
-	private static WindmillFarmSimulator windmillFarmSimulator;
-	private static CitySimulator citySimulator;
-	private String returnStringHour;
-	private String returnStringMinute;
-
-	// For the simulation batteries
-	private static double maxTotalEnergyInJoules;
-	private static double currentGridEnergyInJoules;
-
-	// For tier charts
-	private static double[] energyProductionTiersDouble;
-	private static double[] energyConsumptionTiersDouble;
-
 	// For counting simulation
 	private static int countReachedMaxCapacity = 0;
 	private static int countPowerOutage = 0;
 	//endregion
 
+	private static double[][] graphData = new double[4][240];
+
 	public GRESBIMB()
 	{
 		controller = new Controller(this);
 
-		// Set lists
+		//region Set lists
 		listBatteries.setModel(batteryDefaultListModel);
 		listCities.setModel(cityDefaultListModel);
 		listWindFarms.setModel(windFarmDefaultListModel);
 		listPVSolarFarms.setModel(PVSolarFarmDefaultListModel);
-
-		//region Set the selected city
-/*		Controller.setSelectedCity(Controller.getCity());
-		selectedCity = Controller.getSelectedCity();*/
-		//System.out.println("Selected City: " + Controller.getSelectedCity().toString());
 		//endregion
 
-		Surplus surplus = new Surplus(2000000000, 1);
-
-		//Controller.allocateEnergySurplus(2000000000);
-
-		//region Button listeners
-		//region Switching between panels
+		//region Switching between panels listeners
 		btnPickCityBack.addActionListener(new ActionListener()
 		{
 			@Override
@@ -227,12 +203,9 @@ public class GRESBIMB
 				switchToPanel(panelSimulation);
 			}
 		});
-		//endregion
+		//endregion   listen
 
-		//region Cities
-		//endregion
-
-		//region Welcome screen buttons
+		//region Welcome screen listeners
 		btnStartNewSimulation.addActionListener(new ActionListener()
 		{
 			@Override
@@ -253,7 +226,52 @@ public class GRESBIMB
 		});
 		//endregion
 
-		//region Energy Sources screen buttons
+		//region City listeners
+		listCities.addListSelectionListener(new ListSelectionListener()
+		{
+			@Override
+			public void valueChanged(ListSelectionEvent e)
+			{
+				panelCitiesPreview.removeAll();
+
+				int selectedCityIndex = listCities.getSelectedIndex();
+				Controller.setSelectedCity(selectedCityIndex);
+				selectedCity = Controller.getSelectedCity();
+
+				String cityName = selectedCity.toString();
+				double[] energyMinimumsByHour = selectedCity.getEnergyMinimumsByHourInMegawatts();
+				double[] energyMaximumsByHour = selectedCity.getEnergyMaximumsByHourInMegawatts();
+				double[][] data = new double[2][24];
+				data[0] = energyMinimumsByHour;
+				data[1] = energyMaximumsByHour;
+				double highestGraphValue = selectedCity.getHighestEnergyValue();
+				highestGraphValue *= 1.3; //for scaling
+
+				lblPickCitySelectedCityName.setText("Selected city: " + cityName);
+
+				addJFreeChartToJPanel("Energy Consumption of " + cityName, panelCitiesPreview,
+						data, "Hour", "Megawatt Hours", true, 0,
+						23.5, 1, highestGraphValue, 100);
+
+			}
+		});
+		listBatteries.addListSelectionListener(new ListSelectionListener()
+		{
+			@Override
+			public void valueChanged(ListSelectionEvent e)
+			{
+				int selectedIndex = listBatteries.getSelectedIndex();
+				if (selectedIndex != -1)
+				{
+					lblBatteriesSelectedBatteryName.setText(batteryDefaultListModel.get(selectedIndex).getBatteryName());
+					lblBatteryType.setText(batteryDefaultListModel.get(selectedIndex).getBatteryType());
+					lblBatteryMaxStorage.setText(batteryDefaultListModel.get(selectedIndex).getMaxEnergyInJoules() + "");
+				}
+			}
+		});
+		//endregion
+
+		//region Energy sources screen listeners
 		//region wind farm buttons
 		btnBuildDefaultWindFarms.addActionListener(new ActionListener()
 		{
@@ -312,7 +330,7 @@ public class GRESBIMB
 		//endregion
 		//endregion
 
-		//region Batteries screen buttons
+		//region Batteries screen listeners
 		btnBuildDefualtBatteries.addActionListener(new ActionListener()
 		{
 			@Override
@@ -357,69 +375,32 @@ public class GRESBIMB
 		});
 		//endregion
 
-		//region Simulate screen buttons
-/*		btnSimulationStop.addActionListener(new ActionListener()
+		//region Simulate screen listeners
+		btnSimulationStop.addActionListener(new ActionListener()
 		{
 			@Override
 			public void actionPerformed(ActionEvent e)
 			{
-				citySimulator.interruptTimer();
-				windmillFarmSimulator.interruptTimer();
+
 			}
-		});*/
-/*		btnSimulationExit.addActionListener(new ActionListener()
+		});
+		btnSimulationExit.addActionListener(new ActionListener()
 		{
 			@Override
 			public void actionPerformed(ActionEvent e)
 			{
-				restart();
-			}
-		});*/
-		//endregion
-		//endregion
-
-		listCities.addListSelectionListener(new ListSelectionListener()
-		{
-			@Override
-			public void valueChanged(ListSelectionEvent e)
-			{
-				panelCitiesPreview.removeAll();
-
-				int selectedCityIndex = listCities.getSelectedIndex();
-				Controller.setSelectedCity(selectedCityIndex);
-				selectedCity = Controller.getSelectedCity();
-
-				String cityName = selectedCity.toString();
-				double[] energyMinimumsByHour = selectedCity.getEnergyMinimumsByHourInMegawatts();
-				double[] energyMaximumsByHour = selectedCity.getEnergyMaximumsByHourInMegawatts();
-				double[][] data = new double[2][24];
-				data[0] = energyMinimumsByHour;
-				data[1] = energyMaximumsByHour;
-				double highestGraphValue = selectedCity.getHighestEnergyValue();
-				highestGraphValue *= 1.3; //for scaling
-
-				lblPickCitySelectedCityName.setText("Selected city: " + cityName);
-
-				addJFreeChartToJPanel("Energy Consumption of " + cityName, panelCitiesPreview,
-						data, "Hour", "Megawatt Hours", true, 0,
-						23.5, 1, highestGraphValue, 100);
-
+				System.exit(0);
 			}
 		});
-		listBatteries.addListSelectionListener(new ListSelectionListener()
+		btnLaunchSimulation.addActionListener(new ActionListener()
 		{
 			@Override
-			public void valueChanged(ListSelectionEvent e)
+			public void actionPerformed(ActionEvent e)
 			{
-				int selectedIndex = listBatteries.getSelectedIndex();
-				if (selectedIndex != -1)
-				{
-					lblBatteriesSelectedBatteryName.setText(batteryDefaultListModel.get(selectedIndex).getBatteryName());
-					lblBatteryType.setText(batteryDefaultListModel.get(selectedIndex).getBatteryType());
-					lblBatteryMaxStorage.setText(batteryDefaultListModel.get(selectedIndex).getMaxEnergyInJoules() + "");
-				}
+				Controller.launchSimulation();
 			}
 		});
+		//endregion
 	}
 
 	//region GUI functions
@@ -504,102 +485,12 @@ public class GRESBIMB
 		// Switching to Simulation panel
 		if (panel.equals(this.panelSimulation))
 		{
-			startSimulation();
+			Controller.preFlightSetup();
 		}
 	}
 	//endregion
 
-	private void startSimulation()
-	{
-		// Update the Controller magnitudes + the GRESBIMB magnitudes
-		System.out.println("Updating controller magnitude by millisecond array...");
-		/*Controller.updateMagnitudeByMillisecondArrays();*/
-		//magnitudeOfDemandsByMillisecond = Controller.getMagnitudeOfDemandsByMillisecond();
-		//magnitudeOfSurplusesByMillisecond = Controller.getMagnitudeOfSurplusesByMillisecond();
-		System.out.println("Simulating...");
-
-		// Set pbSimulationGridEnergyLevel width
-		pbSimulationGridEnergyLevel.setSize(500, 500);
-
-		// Set the citySimulator and windmillFarmSimulator
-		//citySimulator = Controller.getCitySimulator();
-		//windmillFarmSimulator = Controller.getWindmillFarmSimulator();
-
-		// Find maximums
-		findMaximumValueInMagnitudeOfDemandsArray();
-		findMaximumValueInMagnitudeOfSurplusArray();
-
-		if (maximumMagnitudeOfDemandsByMillisecond > maximumMagnitudeOfSurplusesByMillisecond)
-		{
-			maximumMagnitudeByMillisecond = maximumMagnitudeOfDemandsByMillisecond;
-		}
-		else
-		{
-			maximumMagnitudeByMillisecond = maximumMagnitudeOfSurplusesByMillisecond;
-		}
-
-
-		// Calculate the maximum total energy (for the battery display)
-		calculateMaxTotalEnergyInJoules();
-
-		// Calculate the current energy (for the battery display)
-		calculateCurrentGridEnergyInJoules();
-
-		// Initialize the charts
-		this.updateSimulationDemandChartWithCurrentMillisecond(0);
-		this.updateSimulationSurplusChartWithCurrentMillisecond(0);
-
-/*		windmillFarmSimulator.simulate();
-		citySimulator.simulate();*/
-	}
-
-	public void calculateCurrentGridEnergyInJoules()
-	{
-		currentGridEnergyInJoules = Controller.calculateCurrentGridEnergyInJoules();
-		lblEnergyLevel.setText("Current Energy (joules): " + currentGridEnergyInJoules);
-		lblMaxEnergy.setText("Max Energy (joules): " + maxTotalEnergyInJoules);
-	}
-
-	private void calculateMaxTotalEnergyInJoules()
-	{
-		maxTotalEnergyInJoules = Controller.calculateMaxTotalEnergyInJoules();
-	}
-
-	private void findMaximumValueInMagnitudeOfDemandsArray()
-	{
-		int max = 1;
-		for (int i = 0; i < magnitudeOfDemandsByMillisecond.size(); i++)
-		{
-			if (magnitudeOfDemandsByMillisecond.get(i) > max)
-			{
-				max = (int) Math.round(magnitudeOfDemandsByMillisecond.get(i));
-			}
-		}
-
-		maximumMagnitudeOfDemandsByMillisecond = max;
-	}
-
-	private void findMaximumValueInMagnitudeOfSurplusArray()
-	{
-		int max = 1;
-		for (int i = 0; i < magnitudeOfSurplusesByMillisecond.size(); i++)
-		{
-			if (magnitudeOfSurplusesByMillisecond.get(i) > max)
-			{
-				max = (int) Math.round(magnitudeOfSurplusesByMillisecond.get(i));
-			}
-		}
-
-		maximumMagnitudeOfSurplusesByMillisecond = max;
-	}
-
-	//region Update functions
-	private void allocateEnergySurplus(Surplus surplus)
-	{
-		//Controller.allocateEnergySurplus(surplus);
-	}
-
-	//region update lists
+	//region Update lists functions
 	protected static void updateWindFarmList()
 	{
 		windFarmDefaultListModel.clear();
@@ -650,96 +541,42 @@ public class GRESBIMB
 	}
 	//endregion
 
-	public void setupSimulation()
-	{
-		pbSimulationGridEnergyLevel.setSize(500, 500);
-	}
-
-	public void updateBatteryGridEnergyLevel(double currentGridEnergyInJoules, double maxTotalEnergyInJoules)
+	//region Update simulation
+	public void updateSimulationScreen(double currentGridEnergyInJoules, double maxTotalEnergyInJoules, double energyProduced, double windEnergyProduced, double PVSolarEnergyProduced, double energyDemanded, long graphIndex)
 	{
 		pbSimulationGridEnergyLevel.setValue((int) ((currentGridEnergyInJoules / maxTotalEnergyInJoules) * 100));
-	}
+		lblEnergyLevel.setText(Double.toString(currentGridEnergyInJoules));
+		lblMaxEnergy.setText(Double.toString(maxTotalEnergyInJoules));
 
-	public void updateSimulationDemandChartWithCurrentMillisecond(double currentMillisecond)
-	{
-		// Get current millisecond from WindmillFarmSimulator as the xAxisStartRange
-		// Get a period of time later as the xAxisEndRange
-		// Set xAxisTickUnit to a reasonable amount
-		// Set yAxisRange to the maximum value of the entire "demands" array
-		// Set yAxisTickUnit to roughly 20 ticks
-		// Update the graph every millisecond
+		pBSimulation.setValue((int) ((graphIndex / 239) * 100));
 
-		convertCurrentMillisecondToHourAndMinute(currentMillisecond);
 		panelSimulationDemandChart.removeAll();
-
-		// Set the data for the chart
-		double xAxisStartRange = currentMillisecond;
-		double xAxisEndRange = xAxisStartRange + SIMULATION_CHART_WIDTH_IN_POINTS;
-		double[] data = new double[SIMULATION_CHART_WIDTH_IN_POINTS];
-
-		for (int i = 0; i < data.length; i++)
-		{
-			data[i] = magnitudeOfDemandsByMillisecond.get((int) (xAxisStartRange + i)).intValue();
-		}
-
-		double xAxisTickUnit = SIMULATION_CHART_WIDTH_IN_POINTS / 2;
-		double yAxisRange = MAX_Y_AXIS_CHART_MULTIPLIER * maximumMagnitudeByMillisecond;
-		double yAxisTickUnit = Math.round(MAX_Y_AXIS_CHART_MULTIPLIER * maximumMagnitudeByMillisecond / Y_AXIS_TICKS);
-
-/*		addJFreeChartToJPanel("Demands", panelSimulationDemandChart, data, "Time: " +
-						returnStringHour + ":" + returnStringMinute, "Total Magnitude of Demands",
-				false, 0, SIMULATION_CHART_WIDTH_IN_POINTS, xAxisTickUnit, yAxisRange, yAxisTickUnit);*/
-
-		// Set the progress bar values
-		pBSimulation.setValue((int) ((currentMillisecond / 240000) * 100));
-		pbSimulationGridEnergyLevel.setValue((int) ((currentGridEnergyInJoules / maxTotalEnergyInJoules) * 100));
-
-		if (currentGridEnergyInJoules == 0 && currentMillisecond > 1000)
-		{
-			countPowerOutage++;
-		}
-		else if (currentGridEnergyInJoules == maxTotalEnergyInJoules)
-		{
-			maxTotalEnergyInJoules++;
-		}
-
-		// Set the label values
-		lblCountPowerOutage.setText("Number of power outages: " + countPowerOutage);
-
-	}
-
-	public void updateSimulationSurplusChartWithCurrentMillisecond(double currentMillisecond)
-	{
-		// Get current millisecond from WindmillFarmSimulator as the xAxisStartRange
-		// Get a period of time later as the xAxisEndRange
-		// Set xAxisTickUnit to a reasonable amount
-		// Set yAxisRange to the maximum value of the entire "demands" array
-		// Set yAxisTickUnit to roughly 20 ticks
-		// Update the graph every millisecond
-
 		panelSimulationSurplusChart.removeAll();
 
-		// Set the data for the chart
-		double xAxisStartRange = currentMillisecond;
-		double xAxisEndRange = xAxisStartRange + SIMULATION_CHART_WIDTH_IN_POINTS;
-		double[] data = new double[SIMULATION_CHART_WIDTH_IN_POINTS];
+		graphData[0][(int) graphIndex] = energyProduced / 1000000;
+		graphData[1][(int) graphIndex] = windEnergyProduced / 1000000;
+		graphData[2][(int) graphIndex] = PVSolarEnergyProduced / 1000000;
+		graphData[3][(int) graphIndex] = energyDemanded / 1000000000;
 
-		for (int i = 0; i < data.length; i++)
-		{
-			data[i] = magnitudeOfSurplusesByMillisecond.get((int) (xAxisStartRange + i)).intValue();
-		}
+		double xAxisTickUnit = 1;
+		double yAxisRange = 1000;
+		double yAxisTickUnit = 200;
 
-		double xAxisTickUnit = SIMULATION_CHART_WIDTH_IN_POINTS / 2;
-		double yAxisRange = MAX_Y_AXIS_CHART_MULTIPLIER * maximumMagnitudeByMillisecond;
-		double yAxisTickUnit = Math.round(MAX_Y_AXIS_CHART_MULTIPLIER * maximumMagnitudeByMillisecond / Y_AXIS_TICKS);
+		addJFreeChartToJPanel("Hourly View", panelSimulationDemandChart, graphData, "Time", "Total Magnitude of Demands",
+				false, 0, 240, xAxisTickUnit, yAxisRange, yAxisTickUnit);
 
-/*		addJFreeChartToJPanel("Surpluses", panelSimulationSurplusChart, data, "Time: " +
-						returnStringHour + ":" + returnStringMinute, "Total Magnitude of Surpluses",
-				false, 0, SIMULATION_CHART_WIDTH_IN_POINTS, xAxisTickUnit, yAxisRange, yAxisTickUnit);*/
+		addJFreeChartToJPanel("Overview", panelSimulationSurplusChart,
+				graphData, "Sample", "Gigawatts", false, 0,
+				240, 1, 1000, 100);
+
 	}
+	//endregion
 
+	//region convert millisecond to hour and minute
 	private void convertCurrentMillisecondToHourAndMinute(double currentMillisecond)
 	{
+		String returnStringHour = "";
+
 		int hour = (int) Math.floor(currentMillisecond / 10000);
 
 		if (hour < 10)
@@ -754,6 +591,8 @@ public class GRESBIMB
 		int minute = (int) Math.floor(currentMillisecond / (10000/60));
 		minute = minute % 60;
 
+		String returnStringMinute = "";
+
 		if (minute < 10)
 		{
 			returnStringMinute = "0" + minute;
@@ -764,13 +603,6 @@ public class GRESBIMB
 		}
 	}
 	//endregion
-
-/*	private void restart()
-	{
-		windmillFarmSimulator.interruptTimer();
-		citySimulator.interruptTimer();
-		switchToPanel(panelWelcome);
-	}*/
 
 	public static void main(String[] args)
 	{

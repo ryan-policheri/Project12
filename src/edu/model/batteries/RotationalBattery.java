@@ -88,33 +88,33 @@ public class RotationalBattery extends VolatileBattery
 	//Takes energy from an individual battery. If the energy needed is less than the energy stored, the battery handles
 	//the entire demand and an empty demand is sent back to the grid. If the energy needed is more than the energy stored, 
 	//the battery gives all it has to the demand and the remaining demand is sent back to the grid to be reallocated.
-	public double releaseEnergy(double energyDemandInWatts)
+	public double releaseEnergy(double energyDemandInJoules)
 	{
-		double wattsThatCanBeProvided = this.getCurrentEnergyInJoules();
+		double joulesThatCanBeProvided = this.getCurrentEnergyInJoules();
 		
-		double remainingWattageNeeded;
+		double remainingJoulesNeeded;
 		
 		//the battery could handle the entire demand, there is no remaining demand
-		if (wattsThatCanBeProvided - energyDemandInWatts >= 0)
+		if (joulesThatCanBeProvided - energyDemandInJoules >= 0)
 		{
-			double newCurrentEnergyInJoules = this.getCurrentEnergyInJoules() - energyDemandInWatts;
+			double newCurrentEnergyInJoules = this.getCurrentEnergyInJoules() - energyDemandInJoules;
 			
 			//find the new angular velocity based on the new energy
 			this.currentAngularVelocity = this.calculateCurrentAngularVelocity(newCurrentEnergyInJoules);
 			//this is simply for recalibration
 			this.adjustCurrentEnergyInJoulesForRotationalBattery(this.momentOfInertia, this.currentAngularVelocity);
 			
-			remainingWattageNeeded = 0;
+			remainingJoulesNeeded = 0;
 		}
 		//the battery could not handle the entire demand, battery is empty and remaining demand is returned
 		else
 		{
 			this.setCurrentEnergyInJoulesToZero();
 			this.currentAngularVelocity = 0;
-			remainingWattageNeeded = energyDemandInWatts - wattsThatCanBeProvided;
+			remainingJoulesNeeded = energyDemandInJoules - joulesThatCanBeProvided;
 		}
 		
-		return remainingWattageNeeded;
+		return remainingJoulesNeeded;
 	}
 	
 	private void startFrictionalLossUpdate()

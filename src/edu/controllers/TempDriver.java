@@ -8,9 +8,13 @@ import edu.model.energySources.solarFarm.PhotovoltaicSolarFarm;
 import edu.model.energySources.windmillFarm.WindmillFarm;
 
 import java.util.ArrayList;
+import java.util.Timer;
+import java.util.TimerTask;
 
 public class TempDriver
 {
+    static long terminateCounter = 0;
+
     public static void main(String[] args)
     {
         //default wind tiers - actually initialized in city. put here just for reference
@@ -37,14 +41,51 @@ public class TempDriver
         EnergyCommander energyCommander = new EnergyCommander(batteryGrid);
 
         long intervalInMilliseconds = 1000;
-        long terminateCounter = 0;
+
         long amountOfTimesRan = 239;
 
         boolean done = false;
 
-        while (done == false)
+        Timer timer = new Timer();
+        timer.scheduleAtFixedRate(new TimerTask()
+                                                  {
+                                                      @Override
+                                                      public void run()
+                                                      {
+                                                          terminateCounter += 1;
+
+                                                          double cityDemand = desMoines.nextDemand();
+
+                                                          double energyProduced = 0;
+
+                                                          for (WindmillFarm windFarm: windFarms)
+                                                          {
+                                                              double windFarmSurplus = windFarm.nextSurplus();
+                                                              energyProduced += windFarmSurplus;
+                                                          }
+                                                          for (PhotovoltaicSolarFarm PVSolarFarm : PVSolarFarms)
+                                                          {
+                                                              double solarFarmSurplus = PVSolarFarm.nextSurplus();
+                                                              energyProduced += solarFarmSurplus;
+                                                          }
+
+                                                          EnergyCommander.commandEnergy(energyProduced, cityDemand);
+
+                                                          //System.out.println("City Demand: " + cityDemand + " Farm Surplus: " + farmSurplus);
+                                                          System.out.println(cityDemand + "," + energyProduced);
+
+                                                          if (terminateCounter == amountOfTimesRan)
+                                                          {
+                                                              timer.cancel();
+                                                          }
+
+                                                      }
+                                                  }
+                , 0, intervalInMilliseconds);
+
+        /*while (done == false)
         {
-            terminateCounter += 1;
+            //terminateCounter += 1;
 
             try
             {
@@ -79,7 +120,7 @@ public class TempDriver
             {
                 done = true;
             }
-        }
+        }*/
 
         System.out.println("Energy Shortage: " + batteryGrid.getEnergyShortageInWatts());
         System.out.println("Amount Of Energy Shortages: " + batteryGrid.getAmountOfEnergyShortages());

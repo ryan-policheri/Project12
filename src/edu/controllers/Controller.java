@@ -9,16 +9,22 @@ import edu.model.energySources.windmillFarm.WindmillFarm;
 import edu.view.GRESBIMB;
 
 import java.util.ArrayList;
+import java.util.Timer;
+import java.util.TimerTask;
 
 public class Controller
 {
 	private static final int NUM_OF_TIERS = 5;
 	private static final int MAJOR_TICK_SPACING = 1;
 
+	private static long terminateCounter = 0;
+
 	private static final double defaultTimeFrameAsPercentageOfHour = 0.1;
 
+	//region Battery Grid
 	private static BatteryGrid batteryGrid = new BatteryGrid();
 	private static EnergyCommander energyCommander = new EnergyCommander(batteryGrid);
+	//endregion
 
 	//region Available Cities
 	private static City desMoines = new City("Des Moines", defaultTimeFrameAsPercentageOfHour);
@@ -34,10 +40,7 @@ public class Controller
 	private static ArrayList<PhotovoltaicSolarFarm> PVSolarFarms = new ArrayList<PhotovoltaicSolarFarm>();
 	//endregion
 
-	// Times
-	private static long currentMillisecond = 0;
-
-	// Connect it to the correct form
+	// Connect it to the main form form
 	private static GRESBIMB gresbimb;
 
 	public Controller(GRESBIMB gresbimb)
@@ -136,61 +139,68 @@ public class Controller
 	}
 	//endregion
 
-
-	public static void simulate()
+	//region simuation
+	public static void preFlightSetup()
 	{
+		double maxGridEnergy = batteryGrid.calculateMaxVolatileEnergyInJoules();
+		energyCommander.commandEnergy(maxGridEnergy / 2, 0); //fill the batter grid half way
 
+		updateGresbimbSimulationScreen(0,0,0,0, 0);
 	}
 
-/*	public static void updateMagnitudeByMillisecondArrays()
+	public static void updateGresbimbSimulationScreen(double energyProduced, double windEnergyProduced, double PVSolarEnergyProduced, double energyDemanded, long graphIndex)
 	{
-		magnitudeOfDemandsByMillisecond = citySimulator.constructMagnitudeByMillisecondArray();
-		magnitudeOfSurplusesByMillisecond = windmillFarmSimulator.constructMagnitudeByMillisecondArray();
-	}*/
+		double currenEnergyInJoules = batteryGrid.calculateCurrentVolatileEnergyInJoules();
+		double maxEnergyInJoules = batteryGrid.calculateMaxVolatileEnergyInJoules();
 
-	public static void updateTimeInformation()
-	{
-		//currentMillisecond = windmillFarmSimulator.getCurrentMillisecond();
-		gresbimb.updateSimulationDemandChartWithCurrentMillisecond(currentMillisecond);
-		gresbimb.updateSimulationSurplusChartWithCurrentMillisecond(currentMillisecond);
-		gresbimb.calculateCurrentGridEnergyInJoules();
+		gresbimb.updateSimulationScreen(currenEnergyInJoules, maxEnergyInJoules, energyProduced, windEnergyProduced, PVSolarEnergyProduced, energyDemanded, graphIndex);
 	}
 
-	public static double calculateCurrentGridEnergyInJoules()
+	public static void launchSimulation()
 	{
-		return batteryGrid.calculateCurrentVolatileEnergyInJoules();
+		long intervalInMilliseconds = 1000;
+		long amountOfTimesRan = 239;
+
+		Timer timer = new Timer();
+		timer.scheduleAtFixedRate(new TimerTask()
+								  {
+									  @Override
+									  public void run()
+									  {
+										  terminateCounter += 1;
+
+										  double cityDemand = desMoines.nextDemand();
+
+										  double windEnergy = 0;
+
+										  for (WindmillFarm windFarm : windFarms)
+										  {
+											  double windFarmSurplus = windFarm.nextSurplus();
+											  windEnergy += windFarmSurplus;
+										  }
+
+										  double pvSolarEnergy = 0;
+
+										  for (PhotovoltaicSolarFarm PVSolarFarm : PVSolarFarms)
+										  {
+											  double solarFarmSurplus = PVSolarFarm.nextSurplus();
+											  pvSolarEnergy += solarFarmSurplus;
+										  }
+
+										  double energyProduced = windEnergy + pvSolarEnergy;
+
+										  EnergyCommander.commandEnergy(energyProduced, cityDemand);
+										  updateGresbimbSimulationScreen(energyProduced, windEnergy, pvSolarEnergy, cityDemand, terminateCounter);
+
+										  if (terminateCounter == amountOfTimesRan)
+										  {
+											  timer.cancel();
+										  }
+									  }
+								  }
+				, 0, intervalInMilliseconds);
 	}
-
-	public static double calculateMaxTotalEnergyInJoules()
-	{
-		return batteryGrid.calculateMaxVolatileEnergyInJoules();
-	}
-
-	private static void addEnergySurplus()
-	{
-		/*System.out.println("Enter the amount of energy to add in watts: ");
-		double incomingEnergyInWatts = scanner.nextDouble();
-
-		System.out.println("Enter the amount of time the incoming energy lasts in seconds: ");
-		double timeIncomingEnergyLastsInSeconds = scanner.nextDouble();
-
-		Surplus surplus = new Surplus(incomingEnergyInWatts, timeIncomingEnergyLastsInSeconds);
-
-		batteryGrid.allocateEnergySurplus(surplus);*/
-	}
-
-	private static void demandEnergy()
-	{
-		/*System.out.println("Enter the amount of energy to demand in watts: ");
-		double energyDemandInWatts = scanner.nextDouble();
-
-		System.out.println("Enter how long the demand is needed in seconds: ");
-		double timeDemandIsNeededInSeconds = scanner.nextDouble();
-
-		Demand demand = new Demand(energyDemandInWatts, timeDemandIsNeededInSeconds);
-
-		batteryGrid.allocateEnergyDemand(demand);*/
-	}
+	//endregion
 
 	//region Getters/Setters
 	public static ArrayList<City> getAvailableCities()
