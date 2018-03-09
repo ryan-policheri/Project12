@@ -1,22 +1,22 @@
 package edu.view.misc;
 
-import edu.view.EnergyForm;
+import edu.view.WindTierForm;
 
 import javax.swing.event.ChangeEvent;
 import javax.swing.event.ChangeListener;
 
 public class SliderListener implements ChangeListener
 {
-	private EnergyForm energyForm;
+	private WindTierForm windTierForm;
 
-	public SliderListener(EnergyForm energyForm)
+	public SliderListener(WindTierForm windTierForm)
 	{
-		this.energyForm = energyForm;
+		this.windTierForm = windTierForm;
 	}
 
 	@Override
 	public void stateChanged(ChangeEvent e)
 	{
-		this.energyForm.updateGraphs();
+		this.windTierForm.updateGraphs();
 	}
 }
