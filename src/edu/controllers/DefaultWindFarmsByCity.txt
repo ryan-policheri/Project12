@@ -13,18 +13,18 @@ Farm Name:Warren County Wind Farm
 $
 Wind Turbine Name:Tower of Power
 Wind Turbine Capacity:5000000
-Wind Turbine Count:100
+Wind Turbine Count:1000
 $
 Wind Turbine Name:Wind-City 3MW Turbine
 Wind Turbine Capacity:3000000
-Wind Turbine Count:200
+Wind Turbine Count:2000
 
 #
 Farm Name:Wind Farm of Madison County
 $
 Wind Turbine Name:Wind-City 3MW Turbine
 Wind Turbine Capacity:3000000
-Wind Turbine Count:200
+Wind Turbine Count:2000
 
 
 *
