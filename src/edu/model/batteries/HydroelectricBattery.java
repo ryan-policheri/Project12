@@ -53,7 +53,8 @@ public class HydroelectricBattery extends ConstantFlowBattery{
             this.currentLiftHeightInMeters = calculateCurrentLiftHeight(currentEnergyInJoules + incomingEnergyInJoules);
         } else {
             this.currentLiftHeightInMeters = maxLiftHeightInMeters;
-            remainingJoules = currentEnergyInJoules +incomingEnergyInJoules - maxEnergyInJoules;
+            remainingJoules = currentEnergyInJoules + incomingEnergyInJoules - maxEnergyInJoules;
+            this.batteryCharging = false;
         }
 
         this.adjustCurrentEnergyInJoulesForHydroelectricBattery(this.currentLiftHeightInMeters, this.densityOfMassInKilogramMetersCubed, this.radiusInMeters);
@@ -68,38 +69,33 @@ public class HydroelectricBattery extends ConstantFlowBattery{
         {
             currentHourlyMaxIndex++;
             currentSample=0;
+
         }
 
         double joulesThatCanBeProvided = this.getCurrentEnergyInJoules();
 
-        double remainingJoulesNeeded = energyDemandInJoules;
+        double remainingJoulesNeeded;
 
-        double[] energyMaximumReleaseByHour = CalculateMaximumEnergyReleaseByHour();
-        currentHourlyMax = energyMaximumReleaseByHour[currentHourlyMaxIndex];
-        double currentTierMax = currentHourlyMax * timeFrameAsPercentageOfHour;
-
-        if (energyDemandInJoules <= currentTierMax)
+        if (energyDemandInJoules <= joulesThatCanBeProvided)
         {
-            if (joulesThatCanBeProvided - energyDemandInJoules > 0)
-            {
-                double newCurrentEnergyInJoules = joulesThatCanBeProvided - energyDemandInJoules;
-                this.currentLiftHeightInMeters = calculateCurrentLiftHeight(newCurrentEnergyInJoules);
-                this.adjustCurrentEnergyInJoulesForHydroelectricBattery(this.currentLiftHeightInMeters, this.densityOfMassInKilogramMetersCubed, this.radiusInMeters);
-            }
-            else 
-            {
-                this.setCurrentEnergyInJoulesToZero();
-                this.currentLiftHeightInMeters = 0;
-                remainingJoulesNeeded = energyDemandInJoules - joulesThatCanBeProvided;
-            }
-
+            double newCurrentEnergyInJoules = joulesThatCanBeProvided - energyDemandInJoules;
+            this.currentLiftHeightInMeters = calculateCurrentLiftHeight(newCurrentEnergyInJoules);
+            this.adjustCurrentEnergyInJoulesForHydroelectricBattery(this.currentLiftHeightInMeters, this.densityOfMassInKilogramMetersCubed, this.radiusInMeters);
+            remainingJoulesNeeded = 0;
         }
         else
+        {
+            this.setCurrentEnergyInJoulesToZero();
+            this.currentLiftHeightInMeters = 0;
+            remainingJoulesNeeded = energyDemandInJoules - joulesThatCanBeProvided;
+            this.batteryCharging = true;
+        }
+ /*     else
         {
             double newCurrentEnergyInJoules = joulesThatCanBeProvided - currentTierMax;
             this.currentLiftHeightInMeters = calculateCurrentLiftHeight(newCurrentEnergyInJoules);
             remainingJoulesNeeded = energyDemandInJoules - currentTierMax;
-        }
+        }*/
 
 
         return remainingJoulesNeeded;
@@ -119,4 +115,15 @@ public class HydroelectricBattery extends ConstantFlowBattery{
     public String toString() {
         return "Hydroelectric Battery: " + this.getBatteryName();
     };
+
+    public void setBatteryToCharging()
+    {
+            this.batteryCharging = true;
+    }
+
+    public void setBatteryToSupplying()
+    {
+        this.batteryCharging = false;
+    }
+
 }

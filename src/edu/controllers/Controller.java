@@ -242,6 +242,9 @@ public class Controller
 	{
 		return MAJOR_TICK_SPACING;
 	}
+
+	public static double[] getEnergyMinimumsByHour() { return selectedCity.getEnergyMinimumsByHour(); }
+
 	//endregion
 
 }

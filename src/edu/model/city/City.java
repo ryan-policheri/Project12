@@ -125,6 +125,19 @@ public class City
  		return energyMinimumsByHour;
 	}
 
+	public double[] getEnergyMinimumsByHour()
+	{
+		double[] energyMinimumsByHour = new double[City.hoursInDay];
+
+		for(int i = 0; i < City.hoursInDay; i++)
+		{
+			double energyMinimumInWatts = hourlyConsumptions[i].getMinimumHourlyConsumptionInWatts();
+			energyMinimumsByHour[i] = energyMinimumInWatts;
+		}
+
+		return energyMinimumsByHour;
+	}
+
 	public double[] getEnergyMaximumsByHourInMegawatts()
 	{
 		double[] energyMaximumsByHour = new double[City.hoursInDay];

@@ -1,8 +1,11 @@
 package edu.controllers;
 
+import com.sun.org.apache.bcel.internal.generic.NEW;
 import edu.model.EnergyCommander;
 import edu.model.batteries.BatteryGrid;
+import edu.model.batteries.HydroelectricBattery;
 import edu.model.batteries.VolatileBattery;
+import edu.model.batteries.ConstantFlowBattery;
 import edu.model.city.City;
 import edu.model.energySources.solarFarm.PhotovoltaicSolarFarm;
 import edu.model.energySources.windmillFarm.WindmillFarm;
@@ -13,10 +16,13 @@ import java.util.TimerTask;
 
 public class TempDriver
 {
+
     static long terminateCounter = 0;
 
     public static void main(String[] args)
     {
+
+
         //default wind tiers - actually initialized in city. put here just for reference
         //int[] defaultWindTiers = {1,1,1,1,1,2,2,5,5,5,2,1,2,1,4,3,4,5,5,4,3,2,1,1};
 
@@ -45,6 +51,10 @@ public class TempDriver
         long amountOfTimesRan = 239;
 
         boolean done = false;
+
+        HydroelectricBattery testHydro = new HydroelectricBattery("TestHydro", 60, .1, 2600, 125);
+
+        System.out.println(testHydro.getMaxEnergyInJoules());
 
         Timer timer = new Timer();
         timer.scheduleAtFixedRate(new TimerTask()
@@ -82,6 +92,7 @@ public class TempDriver
                                                       }
                                                   }
                 , 0, intervalInMilliseconds);
+
 
         /*while (done == false)
         {
@@ -125,5 +136,6 @@ public class TempDriver
         System.out.println("Energy Shortage: " + batteryGrid.getEnergyShortageInWatts());
         System.out.println("Amount Of Energy Shortages: " + batteryGrid.getAmountOfEnergyShortages());
         System.out.println("Energy Wasted: " + batteryGrid.getEnergyWasted());
+
     }
 }
