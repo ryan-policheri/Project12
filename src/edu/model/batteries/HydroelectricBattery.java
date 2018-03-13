@@ -12,18 +12,18 @@ public class HydroelectricBattery extends ConstantFlowBattery{
     private final double maxLiftHeightInMeters;
     private double currentLiftHeightInMeters;
 
-    private int currentSample;
-    private int samplesPerTier;
-    private int currentHourlyMaxIndex;
-    private double currentHourlyMax;
-    private double timeFrameAsPercentageOfHour;
+    //private int currentSample;
+    //private int samplesPerTier;
+    //private int currentHourlyMaxIndex;
+    //private double currentHourlyMax;
+    //private double timeFrameAsPercentageOfHour;
 
 
     //private double maxEnergyOutputInJoules;
     //private double maxEnergyInputInJoules;
 
     //CONSTRUCTORS
-    public HydroelectricBattery(String batteryName, double massInKilograms, double timeFrameAsPercentageOfHour, double densityOfMassInKilogramMetersCubed, double radiusInMeters){
+    public HydroelectricBattery(String batteryName, double massInKilograms, double densityOfMassInKilogramMetersCubed, double radiusInMeters){
         super(batteryName, massInKilograms);
 
         this.radiusInMeters = radiusInMeters;
@@ -32,11 +32,11 @@ public class HydroelectricBattery extends ConstantFlowBattery{
         this.currentLiftHeightInMeters = 0;
         this.initializedMaxEnergyInJoulesForHydroelectricBattery(this.maxLiftHeightInMeters, this.densityOfMassInKilogramMetersCubed, this.radiusInMeters);
 
-        this.samplesPerTier = (int) (1 / timeFrameAsPercentageOfHour);
-        this.currentSample = 0;
-        this.currentHourlyMaxIndex = 0;
-        this.currentHourlyMax = 0;
-        this.timeFrameAsPercentageOfHour = timeFrameAsPercentageOfHour;
+
+        //this.samplesPerTier = (int) (1 / timeFrameAsPercentageOfHour);
+        //this.currentSample = 0;
+        //this.currentHourlyMaxIndex = 0;
+        //this.currentHourlyMax = 0;
 
         //this.maxEnergyOutputInJoules
         //this.maxEnergyInputInJoules
@@ -62,15 +62,6 @@ public class HydroelectricBattery extends ConstantFlowBattery{
     }
 
     public double releaseEnergy(double energyDemandInJoules){
-
-        currentSample++;
-
-        if (currentSample == samplesPerTier)
-        {
-            currentHourlyMaxIndex++;
-            currentSample=0;
-
-        }
 
         double joulesThatCanBeProvided = this.getCurrentEnergyInJoules();
 
@@ -115,15 +106,5 @@ public class HydroelectricBattery extends ConstantFlowBattery{
     public String toString() {
         return "Hydroelectric Battery: " + this.getBatteryName();
     };
-
-    public void setBatteryToCharging()
-    {
-            this.batteryCharging = true;
-    }
-
-    public void setBatteryToSupplying()
-    {
-        this.batteryCharging = false;
-    }
 
 }

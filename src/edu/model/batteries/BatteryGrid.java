@@ -3,6 +3,8 @@ package edu.model.batteries;
 import java.lang.reflect.Array;
 import java.util.ArrayList;
 import edu.controllers.Controller;
+import edu.controllers.TempDriver;
+import edu.model.city.City;
 
 public class BatteryGrid
 {
@@ -75,15 +77,19 @@ public class BatteryGrid
 
 		//pull what is able to be pulled from the constant flow batteries
 
-		double[] maximumReleaseForConstantFlowByHours = CalculateMaximumEnergyReleaseByHourForConstantFlowBatteries();
-		double currentMaximumReleaseForConstantFlowTier = maximumReleaseForConstantFlowByHours[currentHourlyMaxIndex];
+		City desMoines = new City("Des Moines", 0.1); //temp so that TempDriver works
 
+		double[] maximumReleaseForConstantFlowByHours = CalculateMaximumEnergyReleaseByHourForConstantFlowBatteries(desMoines); //temp to work with TempDriver
+		double currentMaximumReleaseForConstantFlowTier = maximumReleaseForConstantFlowByHours[currentHourlyMaxIndex];
+		System.out.println("Got to constant flow");
 		double constantFlowEnergy = this.takeEnergyFromConstantFlowBatteries(this.heindlBatteries, energyStillNeededToFulfillDemand, currentMaximumReleaseForConstantFlowTier);
 
 		energyStillNeededToFulfillDemand = energyDemandInWatts - constantFlowEnergy;
 
 		if (energyStillNeededToFulfillDemand > 0)
 		{
+			System.out.println("Got to volatile flow");
+
 			energyStillNeededToFulfillDemand = this.takeEnergyFromVolatileBatteries(this.rotationalBatteries, energyStillNeededToFulfillDemand);
 			if (energyStillNeededToFulfillDemand > 0)
 			{
@@ -281,6 +287,11 @@ public class BatteryGrid
 		this.rotationalBatteries.addAll(volatileBatteries);
 	}
 
+	public void addListOfHeindlBatteries(ArrayList<ConstantFlowBattery> constantFlowBatteries)
+	{
+		this.heindlBatteries.addAll(constantFlowBatteries);
+	}
+
 	public void removeRotationalBattery(int index)
 	{
 		this.rotationalBatteries.remove(index);
@@ -366,9 +377,9 @@ public class BatteryGrid
 		}
 	}
 
-	public double[] CalculateMaximumEnergyReleaseByHourForConstantFlowBatteries()
+	public double[] CalculateMaximumEnergyReleaseByHourForConstantFlowBatteries(City city)
 	{
-		double[] minimumEnergyDemandByHour = Controller.getEnergyMinimumsByHour();
+		double[] minimumEnergyDemandByHour = city.getEnergyMinimumsByHour();
 		double[] energyCreatedByHour = new double[]{
 				0,
 				0,

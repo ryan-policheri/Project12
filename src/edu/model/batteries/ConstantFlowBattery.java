@@ -14,13 +14,12 @@ public abstract class ConstantFlowBattery extends Battery
     public ConstantFlowBattery(String batteryName, double massInKilograms)
     {
         super(batteryName, massInKilograms);
-        //this.batteryCharging = false;
+        this.batteryCharging = false;
     }
 
     public double storeEnergy(double incomingEnergyInJoules){return -1;}
 
     public double releaseEnergy(double energyDemandInJoules){return -1;}
-
 
     public boolean checkIfCharging()
     {
@@ -30,6 +29,16 @@ public abstract class ConstantFlowBattery extends Battery
     public boolean checkIfGaveEnergyThisHour()
     {
         return  this.gaveEnergyThisHour;
+    }
+
+    public void setBatteryToCharging()
+    {
+        this.batteryCharging = true;
+    }
+
+    public void setBatteryToSupplying()
+    {
+        this.batteryCharging = false;
     }
 
 }

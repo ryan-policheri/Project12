@@ -216,4 +216,19 @@ public abstract class BuildDefaults
 
         return volatileBatteries;
     }
+
+    protected static ArrayList<ConstantFlowBattery> createListOfDefaultConstantFlowBatteries() {
+        ArrayList<ConstantFlowBattery> constantFlowBatteries = new ArrayList<ConstantFlowBattery>();
+        int batteriesOfThisType = 4;
+        for(int i=0; i < batteriesOfThisType; i++)
+        {
+            HydroelectricBattery tempBattery = new HydroelectricBattery("Heindl_Battery_" + i, -1, 2600,200);
+            Double max = tempBattery.getMaxEnergyInJoules();
+            tempBattery.storeEnergy(max/2);
+            constantFlowBatteries.add(tempBattery);
+        }
+
+        return constantFlowBatteries;
+    }
+
 }

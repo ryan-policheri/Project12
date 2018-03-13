@@ -11,6 +11,7 @@ import edu.model.energySources.solarFarm.PhotovoltaicSolarFarm;
 import edu.model.energySources.windmillFarm.WindmillFarm;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Timer;
 import java.util.TimerTask;
 
@@ -38,10 +39,16 @@ public class TempDriver
         BatteryGrid batteryGrid = new BatteryGrid();
 
         ArrayList<VolatileBattery> volatileBatteries = BuildDefaults.createListOfDefaultVolatileBatteries();
-        //ArrayList<ConstantFlowBattery> constantFlowBatteries = BuildDefaults.createListOfDefaultConstantFlowBatteries();
+        ArrayList<ConstantFlowBattery> constantFlowBatteries = BuildDefaults.createListOfDefaultConstantFlowBatteries();
 
+        System.out.println(constantFlowBatteries.toString());
+
+        for(int i = 0; i < constantFlowBatteries.size(); i++)
+        {
+            System.out.println("Constant flow " + i + ":" + constantFlowBatteries.get(i).getCurrentEnergyInJoules());
+        }
         batteryGrid.addListOfRotationalBatteries(volatileBatteries);
-        //batteryGrid.addListOfHeindlBatteries(constantFlowBatteries);
+        batteryGrid.addListOfHeindlBatteries(constantFlowBatteries);
 
         //BUILD ENERGY COMMANDER
         EnergyCommander energyCommander = new EnergyCommander(batteryGrid);
@@ -52,9 +59,7 @@ public class TempDriver
 
         boolean done = false;
 
-        HydroelectricBattery testHydro = new HydroelectricBattery("TestHydro", 60, .1, 2600, 125);
-
-        System.out.println(testHydro.getMaxEnergyInJoules());
+        desMoines.getEnergyMinimumsByHour();
 
         Timer timer = new Timer();
         timer.scheduleAtFixedRate(new TimerTask()
@@ -73,13 +78,14 @@ public class TempDriver
                                                               double windFarmSurplus = windFarm.nextSurplus();
                                                               energyProduced += windFarmSurplus;
                                                           }
+
                                                           for (PhotovoltaicSolarFarm PVSolarFarm : PVSolarFarms)
                                                           {
                                                               double solarFarmSurplus = PVSolarFarm.nextSurplus();
                                                               energyProduced += solarFarmSurplus;
                                                           }
 
-                                                          EnergyCommander.commandEnergy(energyProduced, cityDemand);
+                                                          energyCommander.commandEnergy(energyProduced, cityDemand);
 
                                                           //System.out.println("City Demand: " + cityDemand + " Farm Surplus: " + farmSurplus);
                                                           System.out.println(cityDemand + "," + energyProduced);
