@@ -64,7 +64,7 @@ public abstract class Battery
 
 	//Equation: PE =  (2 Dr - 2/3 Dw ) pi G H R ^ 3
 	protected void adjustCurrentEnergyInJoulesForHydroelectricBattery(double currentLiftHeightInMeters, double densityOfMassInKilogramMetersCubed, double radiusInMeters){
-		this.maxEnergyInJoules = (2*densityOfMassInKilogramMetersCubed-3/2*densityOfWater)*Math.PI*Battery.forceOfGravity*Math.pow(radiusInMeters,3.0)*currentLiftHeightInMeters;
+		this.currentEnergyInJoules = (2*densityOfMassInKilogramMetersCubed-3/2*densityOfWater)*Math.PI*Battery.forceOfGravity*Math.pow(radiusInMeters,3.0)*currentLiftHeightInMeters;
 	}
 
 	protected void setCurrentEnergyInJoulesToZero()

@@ -93,6 +93,14 @@ public class TempDriver
                                                           if (terminateCounter == amountOfTimesRan)
                                                           {
                                                               timer.cancel();
+                                                              for(int i = 0; i < constantFlowBatteries.size(); i++)
+                                                              {
+                                                                  System.out.println("Constant flow " + i + ":" + constantFlowBatteries.get(i).getCurrentEnergyInJoules());
+                                                              }
+                                                              for(int i = 0; i < volatileBatteries.size(); i++)
+                                                              {
+                                                                  System.out.println("Volitile " + i + ":" + volatileBatteries.get(i).getCurrentEnergyInJoules());
+                                                              }
                                                           }
 
                                                       }

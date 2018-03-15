@@ -81,15 +81,12 @@ public class BatteryGrid
 
 		double[] maximumReleaseForConstantFlowByHours = CalculateMaximumEnergyReleaseByHourForConstantFlowBatteries(desMoines); //temp to work with TempDriver
 		double currentMaximumReleaseForConstantFlowTier = maximumReleaseForConstantFlowByHours[currentHourlyMaxIndex];
-		System.out.println("Got to constant flow");
 		double constantFlowEnergy = this.takeEnergyFromConstantFlowBatteries(this.heindlBatteries, energyStillNeededToFulfillDemand, currentMaximumReleaseForConstantFlowTier);
 
 		energyStillNeededToFulfillDemand = energyDemandInWatts - constantFlowEnergy;
 
 		if (energyStillNeededToFulfillDemand > 0)
 		{
-			System.out.println("Got to volatile flow");
-
 			energyStillNeededToFulfillDemand = this.takeEnergyFromVolatileBatteries(this.rotationalBatteries, energyStillNeededToFulfillDemand);
 			if (energyStillNeededToFulfillDemand > 0)
 			{

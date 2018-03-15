@@ -58,6 +58,7 @@ public class HydroelectricBattery extends ConstantFlowBattery{
         }
 
         this.adjustCurrentEnergyInJoulesForHydroelectricBattery(this.currentLiftHeightInMeters, this.densityOfMassInKilogramMetersCubed, this.radiusInMeters);
+        System.out.println(this.currentLiftHeightInMeters);
         return remainingJoules;
     }
 
