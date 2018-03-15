@@ -2,8 +2,10 @@ package edu.model.energySources.windmillFarm;
 
 //website about converting windmill capacity to actual output: https://www.wind-watch.org/faq-output.php
 //website about conversion wind speed to energy: https://www.windpowerengineering.com/construction/calculate-wind-power-output/
+//Capacity factors: https://www.eia.gov/electricity/monthly/epm_table_grapher.php?t=epmt_6_07_b
+//Capacity factors: http://www.windaction.org/posts/37255-u-s-average-annual-capacity-factors-by-project-and-state#.Wqb0wujwbIU
 
-import java.util.Random;
+
 
 public class Windmill
 {
