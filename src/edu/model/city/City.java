@@ -22,7 +22,7 @@ public class City
 	private int currentHourlyConsumptionIndex;
 	private int samplesPerTier;
 
-	private int[] defaultWindTiersByHour = {1,1,1,1,1,2,2,5,5,5,2,1,2,1,4,3,4,5,5,4,3,2,1,1}; //this is the default wind tiers for the area surrounding the city. Only to be used when building defualts
+	private int[] defaultWindTiersByHour = {1,1,1,1,1,1,2,2,2,3,4,4,5,5,5,5,5,4,3,2,2,1,1,1}; //this is the default wind tiers for the area surrounding the city. Only to be used when building defualts
 
 	//CONSTRUCTORS
 	public City(String cityName, double timeFrameAsPercentageOfHour)

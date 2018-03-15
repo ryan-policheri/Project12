@@ -553,9 +553,9 @@ public class GRESBIMB
 		panelSimulationDemandChart.removeAll();
 		panelSimulationSurplusChart.removeAll();
 
-		graphData[0][(int) graphIndex] = energyProduced / 1000000;
-		graphData[1][(int) graphIndex] = windEnergyProduced / 1000000;
-		graphData[2][(int) graphIndex] = PVSolarEnergyProduced / 1000000;
+		graphData[0][(int) graphIndex] = energyProduced / 1000000000;
+		graphData[1][(int) graphIndex] = windEnergyProduced / 1000000000;
+		graphData[2][(int) graphIndex] = PVSolarEnergyProduced / 1000000000;
 		graphData[3][(int) graphIndex] = energyDemanded / 1000000000;
 
 		double xAxisTickUnit = 1;

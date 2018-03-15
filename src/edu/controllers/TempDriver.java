@@ -53,6 +53,13 @@ public class TempDriver
         //BUILD ENERGY COMMANDER
         EnergyCommander energyCommander = new EnergyCommander(batteryGrid);
 
+        double halfConstantFlow = batteryGrid.calculateMaxConstantFlowEnergyInJoules() / 2;
+        double halfVolatile = batteryGrid.calculateMaxVolatileEnergyInJoules() / 2;
+
+        energyCommander.commandEnergy(halfConstantFlow+halfVolatile, 0);
+
+        System.out.println(batteryGrid.calculateCurrentConstantFlowEnergyInJoules() + "," + batteryGrid.calculateCurrentVolatileEnergyInJoules());
+
         long intervalInMilliseconds = 1000;
 
         long amountOfTimesRan = 239;
@@ -87,8 +94,7 @@ public class TempDriver
 
                                                           energyCommander.commandEnergy(energyProduced, cityDemand);
 
-                                                          //System.out.println("City Demand: " + cityDemand + " Farm Surplus: " + farmSurplus);
-                                                          System.out.println(cityDemand + "," + energyProduced);
+                                                          System.out.println(cityDemand + "," + energyProduced  + "," + batteryGrid.calculateCurrentConstantFlowEnergyInJoules() + "," + batteryGrid.calculateCurrentVolatileEnergyInJoules());
 
                                                           if (terminateCounter == amountOfTimesRan)
                                                           {
@@ -101,6 +107,10 @@ public class TempDriver
                                                               {
                                                                   System.out.println("Volitile " + i + ":" + volatileBatteries.get(i).getCurrentEnergyInJoules());
                                                               }
+
+                                                              System.out.println("Energy Shortage: " + batteryGrid.getEnergyShortageInWatts());
+                                                              System.out.println("Amount Of Energy Shortages: " + batteryGrid.getAmountOfEnergyShortages());
+                                                              System.out.println("Energy Wasted: " + batteryGrid.getEnergyWasted());
                                                           }
 
                                                       }
@@ -146,10 +156,6 @@ public class TempDriver
                 done = true;
             }
         }*/
-
-        System.out.println("Energy Shortage: " + batteryGrid.getEnergyShortageInWatts());
-        System.out.println("Amount Of Energy Shortages: " + batteryGrid.getAmountOfEnergyShortages());
-        System.out.println("Energy Wasted: " + batteryGrid.getEnergyWasted());
 
     }
 }

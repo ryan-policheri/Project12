@@ -223,7 +223,7 @@ public abstract class BuildDefaults
         for(int i=0; i < batteriesOfThisType; i++)
         {
             HydroelectricBattery tempBattery = new HydroelectricBattery("Heindl_Battery_" + i, -1, 2600,100);
-            tempBattery.storeEnergy(tempBattery.getMaxEnergyInJoules()/2);
+            //tempBattery.storeEnergy(tempBattery.getMaxEnergyInJoules()/2);
             if(i >= 2) tempBattery.setBatteryToCharging();
             constantFlowBatteries.add(tempBattery);
         }

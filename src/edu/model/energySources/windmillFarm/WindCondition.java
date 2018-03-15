@@ -7,7 +7,7 @@ public class WindCondition
     private int windTier;
     private double windVariabilityAsPercentDeviation;
 
-    private double[] windTierPercentOfMaxCapacityValues = {0.0,0.05,0.25,0.50,0.75};
+    private double[] windTierPercentOfMaxCapacityValues = {0.1,0.15,0.35,0.6,0.85};
 
     public WindCondition(int windTier, double windVariabilityAsPercentDeviation)
     {

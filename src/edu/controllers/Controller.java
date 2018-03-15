@@ -150,10 +150,10 @@ public class Controller
 
 	public static void updateGresbimbSimulationScreen(double energyProduced, double windEnergyProduced, double PVSolarEnergyProduced, double energyDemanded, long graphIndex)
 	{
-		double currenEnergyInJoules = batteryGrid.calculateCurrentVolatileEnergyInJoules();
-		double maxEnergyInJoules = batteryGrid.calculateMaxVolatileEnergyInJoules();
+		double currentEnergyInJoules = batteryGrid.calculateCurrentVolatileEnergyInJoules() + batteryGrid.calculateCurrentConstantFlowEnergyInJoules();
+		double maxEnergyInJoules = batteryGrid.calculateMaxVolatileEnergyInJoules() + batteryGrid.calculateMaxConstantFlowEnergyInJoules();
 
-		gresbimb.updateSimulationScreen(currenEnergyInJoules, maxEnergyInJoules, energyProduced, windEnergyProduced, PVSolarEnergyProduced, energyDemanded, graphIndex);
+		gresbimb.updateSimulationScreen(currentEnergyInJoules, maxEnergyInJoules, energyProduced, windEnergyProduced, PVSolarEnergyProduced, energyDemanded, graphIndex);
 	}
 
 	public static void launchSimulation()
