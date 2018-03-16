@@ -53,10 +53,7 @@ public class TempDriver
         //BUILD ENERGY COMMANDER
         EnergyCommander energyCommander = new EnergyCommander(batteryGrid);
 
-        double halfConstantFlow = batteryGrid.calculateMaxConstantFlowEnergyInJoules() / 2;
-        double halfVolatile = batteryGrid.calculateMaxVolatileEnergyInJoules() / 2;
-
-        energyCommander.commandEnergy(halfConstantFlow+halfVolatile, 0);
+        energyCommander.commandEnergy(500000000000.0, 0);
 
         System.out.println(batteryGrid.calculateCurrentConstantFlowEnergyInJoules() + "," + batteryGrid.calculateCurrentVolatileEnergyInJoules());
 

@@ -2,6 +2,8 @@ package edu.model.batteries;
 
 import java.lang.reflect.Array;
 import java.util.ArrayList;
+import java.util.Arrays;
+
 import edu.controllers.Controller;
 import edu.controllers.TempDriver;
 import edu.model.city.City;
@@ -31,7 +33,7 @@ public class BatteryGrid
 		this.rotationalBatteries = new ArrayList<VolatileBattery>();
 		this.heindlBatteries = new ArrayList<ConstantFlowBattery>();
 
-		this.minimumVolatileEnergyInWatts = 5000000000.0;
+		this.minimumVolatileEnergyInWatts = 500000000000.0;
 
 		this.energyWasted = 0;
 		this.energyShortageInWatts = 0;
@@ -81,6 +83,7 @@ public class BatteryGrid
 
 		double[] maximumReleaseForConstantFlowByHours = CalculateMaximumEnergyReleaseByHourForConstantFlowBatteries(desMoines); //temp to work with TempDriver
 		double currentMaximumReleaseForConstantFlowTier = maximumReleaseForConstantFlowByHours[currentHourlyMaxIndex];
+		System.out.println(currentMaximumReleaseForConstantFlowTier);
 		double constantFlowEnergy = this.takeEnergyFromConstantFlowBatteries(this.heindlBatteries, energyStillNeededToFulfillDemand, currentMaximumReleaseForConstantFlowTier);
 
 		energyStillNeededToFulfillDemand = energyDemandInWatts - constantFlowEnergy;
