@@ -75,7 +75,7 @@ public abstract class Battery
 	//functions about the state of the object
 	public boolean isBatteryFull()
 	{
-		return this.maxEnergyInJoules == this.currentEnergyInJoules;
+		return this.maxEnergyInJoules <= this.currentEnergyInJoules;
 	}
 	
 	//region Getters/Setters

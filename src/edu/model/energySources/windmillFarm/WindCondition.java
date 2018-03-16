@@ -6,6 +6,7 @@ public class WindCondition
 {
     private int windTier;
     private double windVariabilityAsPercentDeviation;
+    private final int secondsInHour = 3600;
 
     private double[] windTierPercentOfMaxCapacityValues = {0.1,0.15,0.35,0.6,0.85};
 
@@ -20,7 +21,7 @@ public class WindCondition
         double percentageOfMaxCapacity = this.windTierPercentOfMaxCapacityValues[this.windTier - 1]; //subtract 1 from wind tier so it matches array index
         double percentageOfMaxCapacityAfterFlucutation = fluctuatePercentage(percentageOfMaxCapacity);
 
-        double wattsGeneratedHourly = maxCapacityInWatts * percentageOfMaxCapacityAfterFlucutation;
+        double wattsGeneratedHourly = maxCapacityInWatts * percentageOfMaxCapacityAfterFlucutation * this.secondsInHour;
         double wattsGeneratedForTimeFrame = timeFrameAsPercentageOfHour * wattsGeneratedHourly;
 
         return wattsGeneratedForTimeFrame;

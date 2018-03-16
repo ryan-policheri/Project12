@@ -55,9 +55,9 @@ public class TempDriver
 
         energyCommander.commandEnergy(500000000000.0, 0);
 
-        System.out.println(batteryGrid.calculateCurrentConstantFlowEnergyInJoules() + "," + batteryGrid.calculateCurrentVolatileEnergyInJoules());
+        System.out.println("Stored Energy: " + (batteryGrid.calculateCurrentConstantFlowEnergyInJoules() + batteryGrid.calculateCurrentVolatileEnergyInJoules()));
 
-        long intervalInMilliseconds = 1000;
+        long intervalInMilliseconds = 10;
 
         long amountOfTimesRan = 239;
 
@@ -96,7 +96,7 @@ public class TempDriver
                                                           if (terminateCounter == amountOfTimesRan)
                                                           {
                                                               timer.cancel();
-                                                              for(int i = 0; i < constantFlowBatteries.size(); i++)
+    /*                                                          for(int i = 0; i < constantFlowBatteries.size(); i++)
                                                               {
                                                                   System.out.println("Constant flow " + i + ":" + constantFlowBatteries.get(i).getCurrentEnergyInJoules());
                                                               }
@@ -104,10 +104,11 @@ public class TempDriver
                                                               {
                                                                   System.out.println("Volitile " + i + ":" + volatileBatteries.get(i).getCurrentEnergyInJoules());
                                                               }
-
+*/
                                                               System.out.println("Energy Shortage: " + batteryGrid.getEnergyShortageInWatts());
                                                               System.out.println("Amount Of Energy Shortages: " + batteryGrid.getAmountOfEnergyShortages());
                                                               System.out.println("Energy Wasted: " + batteryGrid.getEnergyWasted());
+                                                              System.out.println("Stored Energy: " + (batteryGrid.calculateCurrentConstantFlowEnergyInJoules() + batteryGrid.calculateCurrentVolatileEnergyInJoules()));
                                                           }
 
                                                       }

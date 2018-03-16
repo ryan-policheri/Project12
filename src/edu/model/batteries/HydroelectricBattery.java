@@ -54,11 +54,12 @@ public class HydroelectricBattery extends ConstantFlowBattery{
         } else {
             this.currentLiftHeightInMeters = maxLiftHeightInMeters;
             remainingJoules = currentEnergyInJoules + incomingEnergyInJoules - maxEnergyInJoules;
+
             this.setBatteryToSupplying();
+            setBatteryToSupplying();
         }
 
         this.adjustCurrentEnergyInJoulesForHydroelectricBattery(this.currentLiftHeightInMeters, this.densityOfMassInKilogramMetersCubed, this.radiusInMeters);
-        System.out.println(this.currentLiftHeightInMeters);
         return remainingJoules;
     }
 
@@ -73,6 +74,7 @@ public class HydroelectricBattery extends ConstantFlowBattery{
             this.setCurrentEnergyInJoulesToZero();
             this.currentLiftHeightInMeters = 0;
             remainingJoulesNeeded = energyDemandInJoules - joulesThatCanBeProvided;
+            setBatteryToCharging();
         }
         else if (energyDemandInJoules < joulesThatCanBeProvided && energyDemandInJoules < maximumOutput)
         {
@@ -84,7 +86,7 @@ public class HydroelectricBattery extends ConstantFlowBattery{
         else
         {
             double tempEnergyInJoules = joulesThatCanBeProvided - maximumOutput;
-            this.calculateCurrentLiftHeight(tempEnergyInJoules);
+            this.currentLiftHeightInMeters = this.calculateCurrentLiftHeight(tempEnergyInJoules);
             this.adjustCurrentEnergyInJoulesForHydroelectricBattery(this.currentLiftHeightInMeters, this.densityOfMassInKilogramMetersCubed, this.radiusInMeters);
             remainingJoulesNeeded = energyDemandInJoules - maximumOutput;
         }
@@ -95,6 +97,7 @@ public class HydroelectricBattery extends ConstantFlowBattery{
         double densityStuff = (2*densityOfMassInKilogramMetersCubed-3/2*densityOfWater);
         double radiusStuff = Math.PI*forceOfGravity*Math.pow(radiusInMeters,3.0);
         double currentHeight = currentEnergyInJoules/(densityStuff*radiusStuff);
+        if (currentHeight > radiusInMeters) currentHeight = radiusInMeters;
         return currentHeight;
     }
 

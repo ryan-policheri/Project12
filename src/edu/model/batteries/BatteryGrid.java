@@ -16,7 +16,7 @@ public class BatteryGrid
 
 	private ArrayList<ConstantFlowBattery> heindlBatteries;
 	
-	private double minimumVolatileEnergyInWatts; //5 Gigawatts
+	private double minimumVolatileEnergyInWatts;
 
 	private double energyWasted;
 	private double energyShortageInWatts;
@@ -33,7 +33,7 @@ public class BatteryGrid
 		this.rotationalBatteries = new ArrayList<VolatileBattery>();
 		this.heindlBatteries = new ArrayList<ConstantFlowBattery>();
 
-		this.minimumVolatileEnergyInWatts = 500000000000.0;
+		this.minimumVolatileEnergyInWatts = 5000000000000.0;
 
 		this.energyWasted = 0;
 		this.energyShortageInWatts = 0;
@@ -88,10 +88,7 @@ public class BatteryGrid
 
 		double[] maximumReleaseForConstantFlowByHours = CalculateMaximumEnergyReleaseByHourForConstantFlowBatteries(desMoines); //temp to work with TempDriver
 		double currentMaximumReleaseForConstantFlowTier = maximumReleaseForConstantFlowByHours[currentHourlyMaxIndex];
-		System.out.println(currentMaximumReleaseForConstantFlowTier);
-		double constantFlowEnergy = this.takeEnergyFromConstantFlowBatteries(this.heindlBatteries, energyStillNeededToFulfillDemand, currentMaximumReleaseForConstantFlowTier);
-
-		energyStillNeededToFulfillDemand = energyDemandInWatts - constantFlowEnergy;
+		energyStillNeededToFulfillDemand = this.takeEnergyFromConstantFlowBatteries(this.heindlBatteries, energyStillNeededToFulfillDemand, currentMaximumReleaseForConstantFlowTier);
 
 		if (energyStillNeededToFulfillDemand > 0)
 		{
@@ -262,15 +259,15 @@ public class BatteryGrid
 			constantFlowEnergyUsed = energyDemandInWatts - remainingDemand;
 
 			//if there is a remaining demand, see if there is another battery that can take it
-			if (remainingDemand > 0)
+			if (constantFlowEnergyUsed < maxEnergyForTier)
 			{
-				maxEnergyForTier -= remainingDemand;
+				maxEnergyForTier -= constantFlowEnergyUsed;
 				return this.takeEnergyFromConstantFlowBatteries(batteries, remainingDemand, maxEnergyForTier);
 			}
 			//all of the demand has been allocated, return the empty demand so the grid knows that
 			else
 			{
-				return constantFlowEnergyUsed;
+				return remainingDemand;
 			}
 		}
 	}
@@ -389,36 +386,40 @@ public class BatteryGrid
 	public double[] CalculateMaximumEnergyReleaseByHourForConstantFlowBatteries(City city)
 	{
 		double[] minimumEnergyDemandByHour = city.getEnergyMinimumsByHour();
-		double[] energyCreatedByHour = new double[]{
-				1700000000,
-				1700000000,
-				1700000000,
-				1700000000,
-				1700000000,
-				1700000000,
-				2607200000.0,
-				2607200000.0,
-				3007600000.0,
-				6636400000.0,
-				11115200000.0,
-				11115200000.0,
-				15365200000.0,
-				15136400000.0,
-				14907600000.0,
-				14907600000.0,
-				14507200000.0,
-				10257200000.0,
-				5950000000.0,
-				2550000000.0,
-				2550000000.0,
-				1700000000,
-				1700000000,
-				1700000000,
+		/*double[] energyCreatedByHour = new double[]{
 
-		};
+				275000000,
+				275000000,
+				275000000,
+				275000000,
+				275000000,
+				275000000,
+				469700000,
+				469700000,
+				870100000,
+				1648900000,
+				2565200000.0,
+				2565200000.0,
+				3252700000.0,
+				3023900000.0,
+				2795100000.0,
+				2795100000.0,
+				2394700000.0,
+				1707200000,
+				962500000,
+				412500000,
+				412500000,
+				275000000,
+				275000000,
+				275000000
+
+
+		};*/
 		double[] energyDifferentialByHour = new double[minimumEnergyDemandByHour.length];
 		for (int i = 0; i < minimumEnergyDemandByHour.length; i++){
-			energyDifferentialByHour[i] = (minimumEnergyDemandByHour[i] - energyCreatedByHour[i])*.1;
+			double temp = .7*minimumEnergyDemandByHour[i] *.1; //- (energyCreatedByHour[i] * 3600))*.1;
+			if (temp < 0) temp = 0;
+			energyDifferentialByHour[i] = temp;
 		}
 
 		return energyDifferentialByHour;

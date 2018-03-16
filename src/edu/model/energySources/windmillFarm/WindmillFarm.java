@@ -48,7 +48,6 @@ public class WindmillFarm
 
 		double wattageOutputForTotalTime = this.aggregateWindmillEnergyOutput(windCondition, this.timeFrameAsPercentageOfHour);
 
-		//Surplus surplus = new Surplus(1,1);
 		return wattageOutputForTotalTime;
 	}
 
