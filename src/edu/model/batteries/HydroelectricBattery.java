@@ -54,7 +54,7 @@ public class HydroelectricBattery extends ConstantFlowBattery{
         } else {
             this.currentLiftHeightInMeters = maxLiftHeightInMeters;
             remainingJoules = currentEnergyInJoules + incomingEnergyInJoules - maxEnergyInJoules;
-            this.batteryCharging = false;
+            this.setBatteryToSupplying();
         }
 
         this.adjustCurrentEnergyInJoulesForHydroelectricBattery(this.currentLiftHeightInMeters, this.densityOfMassInKilogramMetersCubed, this.radiusInMeters);
@@ -62,7 +62,7 @@ public class HydroelectricBattery extends ConstantFlowBattery{
         return remainingJoules;
     }
 
-    public double releaseEnergy(double energyDemandInJoules){
+    public double releaseEnergy(double energyDemandInJoules, double maximumOutput){
 
         double joulesThatCanBeProvided = this.getCurrentEnergyInJoules();
 
@@ -80,7 +80,7 @@ public class HydroelectricBattery extends ConstantFlowBattery{
             this.setCurrentEnergyInJoulesToZero();
             this.currentLiftHeightInMeters = 0;
             remainingJoulesNeeded = energyDemandInJoules - joulesThatCanBeProvided;
-            this.batteryCharging = true;
+            this.setBatteryToCharging();
         }
  /*     else
         {

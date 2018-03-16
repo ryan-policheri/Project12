@@ -7,8 +7,9 @@ import edu.controllers.Controller;
  */
 public abstract class ConstantFlowBattery extends Battery
 {
-    boolean batteryCharging;
-    boolean gaveEnergyThisHour;
+    private boolean batteryCharging;
+    private boolean gaveEnergyThisSample;
+
 
     //CONSTRUCTORS
     public ConstantFlowBattery(String batteryName, double massInKilograms)
@@ -28,7 +29,17 @@ public abstract class ConstantFlowBattery extends Battery
 
     public boolean checkIfGaveEnergyThisHour()
     {
-        return  this.gaveEnergyThisHour;
+        return  this.gaveEnergyThisSample;
+    }
+
+    public void setGaveEnergyThisSampleToTrue()
+    {
+        this.gaveEnergyThisSample = true;
+    }
+
+    public void setGaveEnergyThisSampleToFalse()
+    {
+        this.gaveEnergyThisSample = false;
     }
 
     public void setBatteryToCharging()

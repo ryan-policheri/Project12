@@ -73,6 +73,11 @@ public class BatteryGrid
 			currentSample = 0;
 		}
 
+		for (int i = 0; i < this.heindlBatteries.size() ; i++)
+		{
+			this.heindlBatteries.get(i).setGaveEnergyThisSampleToFalse();
+		}
+
 		double energyStillNeededToFulfillDemand = energyDemandInWatts;
 
 		//pull what is able to be pulled from the constant flow batteries
@@ -227,6 +232,7 @@ public class BatteryGrid
 	{
 		double highestJoules = -1;
 		int highestJoulesPosition = -1;
+		double constantFlowEnergyUsed = 0;
 
 		for (int x = 0; x < batteries.size(); x++)
 		{
@@ -243,14 +249,15 @@ public class BatteryGrid
 		//If they were all empty or charging, return the demand as is
 		if(highestJoulesPosition == -1)
 		{
-			return energyDemandInWatts;
+			return constantFlowEnergyUsed;
 		}
 		else
 		{
 			double remainingDemand = batteries.get(highestJoulesPosition).releaseEnergy(energyDemandInWatts);
+			constantFlowEnergyUsed = energyDemandInWatts - remainingDemand;
 
 			//if there is a remaining demand, see if there is another battery that can take it
-			if (remainingDemand > 0 && remainingDemand < maxEnergyForTier)
+			if (remainingDemand > 0)
 			{
 				maxEnergyForTier -= remainingDemand;
 				return this.takeEnergyFromConstantFlowBatteries(batteries, remainingDemand, maxEnergyForTier);
@@ -258,7 +265,7 @@ public class BatteryGrid
 			//all of the demand has been allocated, return the empty demand so the grid knows that
 			else
 			{
-				return remainingDemand;
+				return constantFlowEnergyUsed;
 			}
 		}
 	}
