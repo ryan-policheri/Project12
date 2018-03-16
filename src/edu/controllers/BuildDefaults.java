@@ -219,12 +219,12 @@ public abstract class BuildDefaults
 
     protected static ArrayList<ConstantFlowBattery> createListOfDefaultConstantFlowBatteries() {
         ArrayList<ConstantFlowBattery> constantFlowBatteries = new ArrayList<ConstantFlowBattery>();
-        int batteriesOfThisType = 4;
+        int batteriesOfThisType = 2;
         for(int i=0; i < batteriesOfThisType; i++)
         {
-            HydroelectricBattery tempBattery = new HydroelectricBattery("Heindl_Battery_" + i, -1, 2600,100);
-            //tempBattery.storeEnergy(tempBattery.getMaxEnergyInJoules()/2);
-            if(i >= 2) tempBattery.setBatteryToCharging();
+            HydroelectricBattery tempBattery = new HydroelectricBattery("Heindl_Battery_" + i, -1, 2600,125);
+            tempBattery.storeEnergy(tempBattery.getMaxEnergyInJoules()/2);
+            if(i == 0) tempBattery.setBatteryToCharging();
             constantFlowBatteries.add(tempBattery);
         }
 
