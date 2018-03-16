@@ -68,28 +68,26 @@ public class HydroelectricBattery extends ConstantFlowBattery{
 
         double remainingJoulesNeeded;
 
-        if (energyDemandInJoules <= joulesThatCanBeProvided)
+        if (joulesThatCanBeProvided <= energyDemandInJoules && joulesThatCanBeProvided <= maximumOutput)
         {
-            double newCurrentEnergyInJoules = joulesThatCanBeProvided - energyDemandInJoules;
-            this.currentLiftHeightInMeters = calculateCurrentLiftHeight(newCurrentEnergyInJoules);
+            this.setCurrentEnergyInJoulesToZero();
+            this.currentLiftHeightInMeters = 0;
+            remainingJoulesNeeded = energyDemandInJoules - joulesThatCanBeProvided;
+        }
+        else if (energyDemandInJoules < joulesThatCanBeProvided && energyDemandInJoules < maximumOutput)
+        {
+            double tempEnergyInJoules = joulesThatCanBeProvided - energyDemandInJoules;
+            this.calculateCurrentLiftHeight(tempEnergyInJoules);
             this.adjustCurrentEnergyInJoulesForHydroelectricBattery(this.currentLiftHeightInMeters, this.densityOfMassInKilogramMetersCubed, this.radiusInMeters);
             remainingJoulesNeeded = 0;
         }
         else
         {
-            this.setCurrentEnergyInJoulesToZero();
-            this.currentLiftHeightInMeters = 0;
-            remainingJoulesNeeded = energyDemandInJoules - joulesThatCanBeProvided;
-            this.setBatteryToCharging();
+            double tempEnergyInJoules = joulesThatCanBeProvided - maximumOutput;
+            this.calculateCurrentLiftHeight(tempEnergyInJoules);
+            this.adjustCurrentEnergyInJoulesForHydroelectricBattery(this.currentLiftHeightInMeters, this.densityOfMassInKilogramMetersCubed, this.radiusInMeters);
+            remainingJoulesNeeded = energyDemandInJoules - maximumOutput;
         }
- /*     else
-        {
-            double newCurrentEnergyInJoules = joulesThatCanBeProvided - currentTierMax;
-            this.currentLiftHeightInMeters = calculateCurrentLiftHeight(newCurrentEnergyInJoules);
-            remainingJoulesNeeded = energyDemandInJoules - currentTierMax;
-        }*/
-
-
         return remainingJoulesNeeded;
     }
 

@@ -20,7 +20,7 @@ public abstract class ConstantFlowBattery extends Battery
 
     public double storeEnergy(double incomingEnergyInJoules){return -1;}
 
-    public double releaseEnergy(double energyDemandInJoules){return -1;}
+    public double releaseEnergy(double energyDemandInJoules, double maximumOutput){return -1;}
 
     public boolean checkIfCharging()
     {

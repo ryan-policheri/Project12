@@ -238,8 +238,9 @@ public class BatteryGrid
 		{
 			double tempJoulesInBattery = batteries.get(x).getCurrentEnergyInJoules();
 			boolean tempIsBatteryCharging = batteries.get(x).checkIfCharging();
+			boolean tempBatteryUsedThisSample = batteries.get(x).checkIfGaveEnergyThisHour();
 
-			if(highestJoules < tempJoulesInBattery && tempJoulesInBattery > 0 && tempIsBatteryCharging == false)
+			if(highestJoules < tempJoulesInBattery && tempJoulesInBattery > 0 && !tempIsBatteryCharging && !tempBatteryUsedThisSample)
 			{
 				highestJoules = batteries.get(x).getCurrentEnergyInJoules();
 				highestJoulesPosition = x;
@@ -253,7 +254,8 @@ public class BatteryGrid
 		}
 		else
 		{
-			double remainingDemand = batteries.get(highestJoulesPosition).releaseEnergy(energyDemandInWatts);
+			batteries.get(highestJoulesPosition).setGaveEnergyThisSampleToTrue();
+			double remainingDemand = batteries.get(highestJoulesPosition).releaseEnergy(energyDemandInWatts, maxEnergyForTier);
 			constantFlowEnergyUsed = energyDemandInWatts - remainingDemand;
 
 			//if there is a remaining demand, see if there is another battery that can take it
