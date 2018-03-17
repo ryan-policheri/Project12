@@ -53,7 +53,16 @@ public class TempDriver
         //BUILD ENERGY COMMANDER
         EnergyCommander energyCommander = new EnergyCommander(batteryGrid);
 
-        energyCommander.commandEnergy(500000000000.0, 0);
+        energyCommander.commandEnergy(7.5 * Math.pow(10,11) / 10, 0);
+        energyCommander.commandEnergy(7.5 * Math.pow(10,11) / 10, 0);
+        energyCommander.commandEnergy(7.5 * Math.pow(10,11) / 10, 0);
+        energyCommander.commandEnergy(7.5 * Math.pow(10,11) / 10, 0);
+        energyCommander.commandEnergy(7.5 * Math.pow(10,11) / 10, 0);
+        energyCommander.commandEnergy(7.5 * Math.pow(10,11) / 10, 0);
+        energyCommander.commandEnergy(7.5 * Math.pow(10,11) / 10, 0);
+        energyCommander.commandEnergy(7.5 * Math.pow(10,11) / 10, 0);
+        energyCommander.commandEnergy(7.5 * Math.pow(10,11) / 10, 0);
+        energyCommander.commandEnergy(7.5 * Math.pow(10,11) / 10, 0);
 
         System.out.println("Stored Energy: " + (batteryGrid.calculateCurrentConstantFlowEnergyInJoules() + batteryGrid.calculateCurrentVolatileEnergyInJoules()));
 

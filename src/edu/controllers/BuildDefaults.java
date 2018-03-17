@@ -222,7 +222,7 @@ public abstract class BuildDefaults
         int batteriesOfThisType = 2;
         for(int i=0; i < batteriesOfThisType; i++)
         {
-            HydroelectricBattery tempBattery = new HydroelectricBattery("Heindl_Battery_" + i, -1, 2600,125);
+            HydroelectricBattery tempBattery = new HydroelectricBattery("Heindl_Battery_" + i, -1, 2600,150);
 
             if(i == 0)
             {

@@ -79,7 +79,7 @@ public class HydroelectricBattery extends ConstantFlowBattery{
         else if (energyDemandInJoules < joulesThatCanBeProvided && energyDemandInJoules < maximumOutput)
         {
             double tempEnergyInJoules = joulesThatCanBeProvided - energyDemandInJoules;
-            this.calculateCurrentLiftHeight(tempEnergyInJoules);
+            this.currentLiftHeightInMeters = this.calculateCurrentLiftHeight(tempEnergyInJoules);
             this.adjustCurrentEnergyInJoulesForHydroelectricBattery(this.currentLiftHeightInMeters, this.densityOfMassInKilogramMetersCubed, this.radiusInMeters);
             remainingJoulesNeeded = 0;
         }

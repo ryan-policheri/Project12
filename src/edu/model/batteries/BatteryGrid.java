@@ -33,7 +33,7 @@ public class BatteryGrid
 		this.rotationalBatteries = new ArrayList<VolatileBattery>();
 		this.heindlBatteries = new ArrayList<ConstantFlowBattery>();
 
-		this.minimumVolatileEnergyInWatts = 5000000000000.0;
+		this.minimumVolatileEnergyInWatts = 7.5 * Math.pow(10,11);
 
 		this.energyWasted = 0;
 		this.energyShortageInWatts = 0;
@@ -250,7 +250,8 @@ public class BatteryGrid
 		//If they were all empty or charging, return the demand as is
 		if(highestJoulesPosition == -1)
 		{
-			return constantFlowEnergyUsed;
+			return energyDemandInWatts;
+
 		}
 		else
 		{

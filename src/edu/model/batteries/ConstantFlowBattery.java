@@ -16,6 +16,7 @@ public abstract class ConstantFlowBattery extends Battery
     {
         super(batteryName, massInKilograms);
         this.batteryCharging = false;
+        this.gaveEnergyThisSample = false;
     }
 
     public double storeEnergy(double incomingEnergyInJoules){return -1;}
