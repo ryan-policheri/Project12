@@ -12,17 +12,17 @@ Des Moines
 
 #
 Farm Name:Warren County Solar Farm
-Solar Surface in Square Meters:2000000
-Conversion Efficiency As Percent:0.2
+Solar Surface in Square Meters:3000000
+Conversion Efficiency As Percent:0.20
 
 #
 Farm Name:PV Solar Farm of Madison County
-Solar Surface in Square Meters:3500000
+Solar Surface in Square Meters:3000000
 Conversion Efficiency As Percent:0.20
 
 #
 Farm Name:Des Moines Solar Rooftops
-Solar Surface in Square Meters:1000000
+Solar Surface in Square Meters:500000
 Conversion Efficiency As Percent:0.20
 
 

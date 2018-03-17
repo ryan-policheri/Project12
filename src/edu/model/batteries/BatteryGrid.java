@@ -46,11 +46,21 @@ public class BatteryGrid
 	//FUNCTIONS
 	public void allocateEnergySurplus(double energySurplusInWatts)
 	{
+		if (currentSample == samplesPerTier)
+		{
+			currentHourlyMaxIndex++;
+			currentSample = 0;
+		}
+
 		double leftOverEnergyInWatts = 0;
 
 		if (this.calculateCurrentVolatileEnergyInJoules() < this.minimumVolatileEnergyInWatts)
 		{
 			leftOverEnergyInWatts = this.giveEnergyToVolatileBatteries(this.rotationalBatteries, energySurplusInWatts,true); //true indicates that we are filling only to the minimum threshold
+		}
+		else
+		{
+			leftOverEnergyInWatts = energySurplusInWatts;
 		}
 
 		//fill as much constant flow batteries as you can
