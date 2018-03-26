@@ -142,18 +142,33 @@ public class Controller
 	//region simuation
 	public static void preFlightSetup()
 	{
-		double maxGridEnergy = batteryGrid.calculateMaxVolatileEnergyInJoules();
-		energyCommander.commandEnergy(maxGridEnergy / 2, 0); //fill the batter grid half way
+		ArrayList<ConstantFlowBattery> constantFlowBatteries = BuildDefaults.createListOfDefaultConstantFlowBatteries();
+		batteryGrid.addListOfHeindlBatteries(constantFlowBatteries);
+
+		gresbimb.setMaxVolatileEnergyInJoules(batteryGrid.calculateMaxVolatileEnergyInJoules());
+		gresbimb.setMaxCFEnergyInJoules(batteryGrid.calculateMaxConstantFlowEnergyInJoules());
+
+		energyCommander.commandEnergy(7.5 * Math.pow(10,11) / 10, 0);
+		energyCommander.commandEnergy(7.5 * Math.pow(10,11) / 10, 0);
+		energyCommander.commandEnergy(7.5 * Math.pow(10,11) / 10, 0);
+		energyCommander.commandEnergy(7.5 * Math.pow(10,11) / 10, 0);
+		energyCommander.commandEnergy(7.5 * Math.pow(10,11) / 10, 0);
+		energyCommander.commandEnergy(7.5 * Math.pow(10,11) / 10, 0);
+		energyCommander.commandEnergy(7.5 * Math.pow(10,11) / 10, 0);
+		energyCommander.commandEnergy(7.5 * Math.pow(10,11) / 10, 0);
+		energyCommander.commandEnergy(7.5 * Math.pow(10,11) / 10, 0);
+		energyCommander.commandEnergy(7.5 * Math.pow(10,11) / 10, 0);
+
 
 		updateGresbimbSimulationScreen(0,0,0,0, 0);
 	}
 
 	public static void updateGresbimbSimulationScreen(double energyProduced, double windEnergyProduced, double PVSolarEnergyProduced, double energyDemanded, long graphIndex)
 	{
-		double currentEnergyInJoules = batteryGrid.calculateCurrentVolatileEnergyInJoules() + batteryGrid.calculateCurrentConstantFlowEnergyInJoules();
-		double maxEnergyInJoules = batteryGrid.calculateMaxVolatileEnergyInJoules() + batteryGrid.calculateMaxConstantFlowEnergyInJoules();
+		double currentVolatileEnergyInJoules = batteryGrid.calculateCurrentVolatileEnergyInJoules();
+		double currentCFEnergyInJoules = batteryGrid.calculateCurrentConstantFlowEnergyInJoules();
 
-		gresbimb.updateSimulationScreen(currentEnergyInJoules, maxEnergyInJoules, energyProduced, windEnergyProduced, PVSolarEnergyProduced, energyDemanded, graphIndex);
+		gresbimb.updateSimulationScreen(currentVolatileEnergyInJoules, currentCFEnergyInJoules, energyProduced, windEnergyProduced, PVSolarEnergyProduced, energyDemanded, graphIndex);
 	}
 
 	public static void launchSimulation()

@@ -5,10 +5,8 @@ package edu.view;
 import edu.controllers.Controller;
 import edu.model.batteries.*;
 import edu.model.city.City;
-import edu.model.city.CitySimulator;
 import edu.model.energySources.solarFarm.PhotovoltaicSolarFarm;
 import edu.model.energySources.windmillFarm.WindmillFarm;
-import edu.model.energySources.windmillFarm.WindmillFarmSimulator;
 import org.jfree.chart.ChartFactory;
 import org.jfree.chart.ChartPanel;
 import org.jfree.chart.JFreeChart;
@@ -26,7 +24,8 @@ import javax.swing.event.ListSelectionListener;
 import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
-import java.util.ArrayList;
+import java.text.DecimalFormat;
+import java.util.Arrays;
 //endregion
 
 public class GRESBIMB
@@ -81,17 +80,17 @@ public class GRESBIMB
 
 	//region Simulation panel
 	private JPanel panelSimulation;
-	private JPanel panelSimulationDemandChart;
-	private JPanel panelSimulationSurplusChart;
+	private JPanel panelOverviewChart;
+	private JPanel panelHourlyChart;
 	private JPanel panelSimulationTierCharts;
 	private JPanel panelSimulationDemandTiers;
 	private JPanel panelSimulationSurplusTiers;
 	private JPanel panelSimulationEnergy;
 	private JProgressBar pBSimulation;
-	private JLabel lblEnergyLevel;
+	private JLabel lblCurrentVolatileEnergy;
 	private JPanel panelSimulationBatteryLevel;
-	private JProgressBar pbSimulationGridEnergyLevel;
-	private JLabel lblMaxEnergy;
+	private JProgressBar pbSimulationConstantFlowEnergyLevel;
+	private JLabel lblMaxVolatileEnergy;
 	private JLabel lblCountReachedMaxCapacity;
 	private JLabel lblCountPowerOutage;
 	private JButton btnSimulationExit;
@@ -108,6 +107,9 @@ public class GRESBIMB
 	private JButton btnAddPVSolarFarm;
 	private JButton btnBuildDefaultPVSolarFarms;
 	private JButton btnLaunchSimulation;
+	private JProgressBar pbSimulationVolatileEnergyLevel;
+	private JLabel lblCurrentCFEnergy;
+	private JLabel lblMaxCFEnergy;
 	//endregion
 	//endregion
 
@@ -134,7 +136,14 @@ public class GRESBIMB
 	private static int countPowerOutage = 0;
 	//endregion
 
-	private static double[][] graphData = new double[4][240];
+	private static double[][] overviewGraphData = new double[4][240];
+	private static double[][] hourlyGraphData = new double[4][10];
+
+	private static double maxVolatileEnergyInJoules;
+	private static double maxCFEnergyInJoules;
+
+	private static DecimalFormat decimalFormat = new DecimalFormat("###,###.00");
+
 
 	public GRESBIMB()
 	{
@@ -542,32 +551,51 @@ public class GRESBIMB
 	//endregion
 
 	//region Update simulation
-	public void updateSimulationScreen(double currentGridEnergyInJoules, double maxTotalEnergyInJoules, double energyProduced, double windEnergyProduced, double PVSolarEnergyProduced, double energyDemanded, long graphIndex)
+	public void updateSimulationScreen(double currentVolatileEnergyInJoules, double currentCFEnergyInJoules, double energyProduced, double windEnergyProduced, double PVSolarEnergyProduced, double energyDemanded, long graphIndex)
 	{
-		pbSimulationGridEnergyLevel.setValue((int) ((currentGridEnergyInJoules / maxTotalEnergyInJoules) * 100));
-		lblEnergyLevel.setText(Double.toString(currentGridEnergyInJoules));
-		lblMaxEnergy.setText(Double.toString(maxTotalEnergyInJoules));
+		pbSimulationVolatileEnergyLevel.setValue((int) ((currentVolatileEnergyInJoules / this.maxVolatileEnergyInJoules) * 100));
+		String existingLabelText = lblCurrentVolatileEnergy.getText().split(":")[0];
+		lblCurrentVolatileEnergy.setText(existingLabelText + ": " + decimalFormat.format(currentVolatileEnergyInJoules / 1000000000));
 
-		pBSimulation.setValue((int) ((graphIndex / 239) * 100));
+		pbSimulationConstantFlowEnergyLevel.setValue((int) ((currentCFEnergyInJoules / this.maxCFEnergyInJoules) * 100));
+		existingLabelText = lblCurrentCFEnergy.getText().split(":")[0];
+		lblCurrentCFEnergy.setText(existingLabelText + ": " + decimalFormat.format(currentCFEnergyInJoules / 1000000000));
 
-		panelSimulationDemandChart.removeAll();
-		panelSimulationSurplusChart.removeAll();
+		pBSimulation.setValue((int) (((int) graphIndex / 239) * 100));
 
-		graphData[0][(int) graphIndex] = energyProduced / 1000000000;
-		graphData[1][(int) graphIndex] = windEnergyProduced / 1000000000;
-		graphData[2][(int) graphIndex] = PVSolarEnergyProduced / 1000000000;
-		graphData[3][(int) graphIndex] = energyDemanded / 1000000000;
+		panelOverviewChart.removeAll();
+		panelHourlyChart.removeAll();
+
+		overviewGraphData[0][(int) graphIndex] = energyProduced / 1000000000;
+		overviewGraphData[1][(int) graphIndex] = windEnergyProduced / 1000000000;
+		overviewGraphData[2][(int) graphIndex] = PVSolarEnergyProduced / 1000000000;
+		overviewGraphData[3][(int) graphIndex] = energyDemanded / 1000000000;
+
+		int hourlyGraphIndex = (int) graphIndex % 10;
+
+		if(hourlyGraphData[0][9] != 0)
+		{
+			for(double[] row : hourlyGraphData)
+			{
+				Arrays.fill(row, 0.0);
+			}
+		}
+
+		hourlyGraphData[0][hourlyGraphIndex] = energyProduced / 1000000000;
+		hourlyGraphData[1][hourlyGraphIndex] = windEnergyProduced / 1000000000;
+		hourlyGraphData[2][hourlyGraphIndex] = PVSolarEnergyProduced / 1000000000;
+		hourlyGraphData[3][hourlyGraphIndex] = energyDemanded / 1000000000;
 
 		double xAxisTickUnit = 1;
-		double yAxisRange = 1000;
+		double yAxisRange = 1500;
 		double yAxisTickUnit = 200;
 
-		addJFreeChartToJPanel("Hourly View", panelSimulationDemandChart, graphData, "Time", "Total Magnitude of Demands",
-				false, 0, 240, xAxisTickUnit, yAxisRange, yAxisTickUnit);
+		addJFreeChartToJPanel("Hourly View", panelHourlyChart, hourlyGraphData, "Time", "Gigawatts",
+				false, 0, 10, xAxisTickUnit, yAxisRange, yAxisTickUnit);
 
-		addJFreeChartToJPanel("Overview", panelSimulationSurplusChart,
-				graphData, "Sample", "Gigawatts", false, 0,
-				240, 1, 1000, 100);
+		addJFreeChartToJPanel("Overview", panelOverviewChart,
+				overviewGraphData, "Sample", "Gigawatts", false, 0,
+				240, xAxisTickUnit, yAxisRange, yAxisTickUnit);
 
 	}
 	//endregion
@@ -601,6 +629,20 @@ public class GRESBIMB
 		{
 			returnStringMinute = "" + minute;
 		}
+	}
+	//endregion
+
+	//region getters and setters
+	public void setMaxVolatileEnergyInJoules(double maxVolatileEnergyInJoules)
+	{
+		this.maxVolatileEnergyInJoules = maxVolatileEnergyInJoules;
+		this.lblMaxVolatileEnergy.setText(this.lblMaxVolatileEnergy.getText() + decimalFormat.format(this.maxVolatileEnergyInJoules / 1000000000));
+	}
+
+	public void setMaxCFEnergyInJoules(double maxCFEnergyInJoules)
+	{
+		this.maxCFEnergyInJoules = maxCFEnergyInJoules;
+		this.lblMaxCFEnergy.setText(this.lblMaxCFEnergy.getText() + decimalFormat.format(this.maxCFEnergyInJoules / 1000000000));
 	}
 	//endregion
 
