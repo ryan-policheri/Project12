@@ -88,7 +88,6 @@ public class GRESBIMB
 	private JPanel panelSimulationEnergy;
 	private JProgressBar pBSimulation;
 	private JLabel lblCurrentVolatileEnergy;
-	private JPanel panelSimulationBatteryLevel;
 	private JProgressBar pbSimulationConstantFlowEnergyLevel;
 	private JLabel lblMaxVolatileEnergy;
 	private JLabel lblCountReachedMaxCapacity;
@@ -148,6 +147,9 @@ public class GRESBIMB
 	public GRESBIMB()
 	{
 		controller = new Controller(this);
+
+		pbSimulationVolatileEnergyLevel.setBorderPainted(true); //couldn't figure out how to set in form so doing it here
+		pbSimulationConstantFlowEnergyLevel.setBorderPainted(true); //couldn't figure out how to set in form so doing it here
 
 		//region Set lists
 		listBatteries.setModel(batteryDefaultListModel);
@@ -561,7 +563,7 @@ public class GRESBIMB
 		existingLabelText = lblCurrentCFEnergy.getText().split(":")[0];
 		lblCurrentCFEnergy.setText(existingLabelText + ": " + decimalFormat.format(currentCFEnergyInJoules / 1000000000));
 
-		pBSimulation.setValue((int) (((int) graphIndex / 239) * 100));
+		pBSimulation.setValue((int) ((graphIndex / 239.0) * 100));
 
 		panelOverviewChart.removeAll();
 		panelHourlyChart.removeAll();
