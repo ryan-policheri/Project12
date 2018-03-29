@@ -168,7 +168,10 @@ public class Controller
 		double currentVolatileEnergyInJoules = batteryGrid.calculateCurrentVolatileEnergyInJoules();
 		double currentCFEnergyInJoules = batteryGrid.calculateCurrentConstantFlowEnergyInJoules();
 
-		gresbimb.updateSimulationScreen(currentVolatileEnergyInJoules, currentCFEnergyInJoules, energyProduced, windEnergyProduced, PVSolarEnergyProduced, energyDemanded, graphIndex);
+		int numberOfShortages = batteryGrid.getAmountOfEnergyShortages();
+		double amountShortInJoules = batteryGrid.getEnergyShortageInWatts();
+
+		gresbimb.updateSimulationScreen(currentVolatileEnergyInJoules, currentCFEnergyInJoules, energyProduced, windEnergyProduced, PVSolarEnergyProduced, energyDemanded, graphIndex, numberOfShortages, amountShortInJoules);
 	}
 
 	public static void launchSimulation()

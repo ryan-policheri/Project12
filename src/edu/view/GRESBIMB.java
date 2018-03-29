@@ -109,6 +109,7 @@ public class GRESBIMB
 	private JProgressBar pbSimulationVolatileEnergyLevel;
 	private JLabel lblCurrentCFEnergy;
 	private JLabel lblMaxCFEnergy;
+	private JLabel lblPowerShortageAmount;
 	//endregion
 	//endregion
 
@@ -553,7 +554,7 @@ public class GRESBIMB
 	//endregion
 
 	//region Update simulation
-	public void updateSimulationScreen(double currentVolatileEnergyInJoules, double currentCFEnergyInJoules, double energyProduced, double windEnergyProduced, double PVSolarEnergyProduced, double energyDemanded, long graphIndex)
+	public void updateSimulationScreen(double currentVolatileEnergyInJoules, double currentCFEnergyInJoules, double energyProduced, double windEnergyProduced, double PVSolarEnergyProduced, double energyDemanded, long graphIndex, int numberOfShortages, double amountOfShortageJoules)
 	{
 		pbSimulationVolatileEnergyLevel.setValue((int) ((currentVolatileEnergyInJoules / this.maxVolatileEnergyInJoules) * 100));
 		String existingLabelText = lblCurrentVolatileEnergy.getText().split(":")[0];
@@ -562,6 +563,12 @@ public class GRESBIMB
 		pbSimulationConstantFlowEnergyLevel.setValue((int) ((currentCFEnergyInJoules / this.maxCFEnergyInJoules) * 100));
 		existingLabelText = lblCurrentCFEnergy.getText().split(":")[0];
 		lblCurrentCFEnergy.setText(existingLabelText + ": " + decimalFormat.format(currentCFEnergyInJoules / 1000000000));
+
+		existingLabelText = lblCountPowerOutage.getText().split(":")[0];
+		lblCountPowerOutage.setText(existingLabelText + ": " + numberOfShortages);
+
+		existingLabelText = lblPowerShortageAmount.getText().split(":")[0];
+		lblPowerShortageAmount.setText(existingLabelText + ": " + decimalFormat.format(amountOfShortageJoules / 1000000000));
 
 		pBSimulation.setValue((int) ((graphIndex / 239.0) * 100));
 
