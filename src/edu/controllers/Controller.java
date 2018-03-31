@@ -148,15 +148,15 @@ public class Controller
 		gresbimb.setMaxVolatileEnergyInJoules(batteryGrid.calculateMaxVolatileEnergyInJoules());
 		gresbimb.setMaxCFEnergyInJoules(batteryGrid.calculateMaxConstantFlowEnergyInJoules());
 
-		energyCommander.commandEnergy(7.5 * Math.pow(10,11) / 10, 0);
-		energyCommander.commandEnergy(7.5 * Math.pow(10,11) / 10, 0);
-		energyCommander.commandEnergy(7.5 * Math.pow(10,11) / 10, 0);
-		energyCommander.commandEnergy(7.5 * Math.pow(10,11) / 10, 0);
-		energyCommander.commandEnergy(7.5 * Math.pow(10,11) / 10, 0);
-		energyCommander.commandEnergy(7.5 * Math.pow(10,11) / 10, 0);
-		energyCommander.commandEnergy(7.5 * Math.pow(10,11) / 10, 0);
-		energyCommander.commandEnergy(7.5 * Math.pow(10,11) / 10, 0);
-		energyCommander.commandEnergy(7.5 * Math.pow(10,11) / 10, 0);
+		energyCommander.commandEnergy(10 * Math.pow(10,11) / 10, 0);
+		energyCommander.commandEnergy(10 * Math.pow(10,11) / 10, 0);
+		energyCommander.commandEnergy(10 * Math.pow(10,11) / 10, 0);
+		energyCommander.commandEnergy(10 * Math.pow(10,11) / 10, 0);
+		energyCommander.commandEnergy(10 * Math.pow(10,11) / 10, 0);
+		energyCommander.commandEnergy(10 * Math.pow(10,11) / 10, 0);
+		energyCommander.commandEnergy(10 * Math.pow(10,11) / 10, 0);
+		energyCommander.commandEnergy(10 * Math.pow(10,11) / 10, 0);
+		energyCommander.commandEnergy(10 * Math.pow(10,11) / 10, 0);
 		energyCommander.commandEnergy(7.5 * Math.pow(10,11) / 10, 0);
 
 

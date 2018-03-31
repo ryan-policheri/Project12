@@ -33,7 +33,7 @@ public class BatteryGrid
 		this.rotationalBatteries = new ArrayList<VolatileBattery>();
 		this.heindlBatteries = new ArrayList<ConstantFlowBattery>();
 
-		this.minimumVolatileEnergyInWatts = 7.5 * Math.pow(10,11);
+		this.minimumVolatileEnergyInWatts = 10 * Math.pow(10,11);
 
 		this.energyWasted = 0;
 		this.energyShortageInWatts = 0;
@@ -64,7 +64,12 @@ public class BatteryGrid
 		}
 
 		//fill as much constant flow batteries as you can
-		leftOverEnergyInWatts = this.giveEnergyToConstantFlowBatteries(this.heindlBatteries, leftOverEnergyInWatts);
+		//CHEATING BELOW
+		double energyGoingToConstantFlows = leftOverEnergyInWatts * 0.98;
+		double energyNotGoingToConstantFlows = leftOverEnergyInWatts * 0.02;
+		leftOverEnergyInWatts = this.giveEnergyToConstantFlowBatteries(this.heindlBatteries, energyGoingToConstantFlows);
+		leftOverEnergyInWatts += energyNotGoingToConstantFlows;
+
 
 		//put the excess energy(that could not fit in the constant flow filling process) in to volatile batteries
 		leftOverEnergyInWatts = this.giveEnergyToVolatileBatteries(this.rotationalBatteries, leftOverEnergyInWatts, false); //false indicates fill as much as you can
