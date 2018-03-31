@@ -580,26 +580,32 @@ public class GRESBIMB
 		overviewGraphData[2][(int) graphIndex] = PVSolarEnergyProduced / 1000000000;
 		overviewGraphData[3][(int) graphIndex] = energyDemanded / 1000000000;
 
-		int hourlyGraphIndex = (int) graphIndex % 10;
-
-		if(hourlyGraphData[0][9] != 0)
+		if(graphIndex > 9)
 		{
 			for(double[] row : hourlyGraphData)
 			{
-				Arrays.fill(row, 0.0);
+				System.arraycopy(row, 1, row, 0, 9);
 			}
+
+			hourlyGraphData[0][9] = energyProduced / 1000000000;
+			hourlyGraphData[1][9] = windEnergyProduced / 1000000000;
+			hourlyGraphData[2][9] = PVSolarEnergyProduced / 1000000000;
+			hourlyGraphData[3][9] = energyDemanded / 1000000000;
+		}
+		else
+		{
+			hourlyGraphData[0][(int) graphIndex] = energyProduced / 1000000000;
+			hourlyGraphData[1][(int) graphIndex] = windEnergyProduced / 1000000000;
+			hourlyGraphData[2][(int) graphIndex] = PVSolarEnergyProduced / 1000000000;
+			hourlyGraphData[3][(int) graphIndex] = energyDemanded / 1000000000;
 		}
 
-		hourlyGraphData[0][hourlyGraphIndex] = energyProduced / 1000000000;
-		hourlyGraphData[1][hourlyGraphIndex] = windEnergyProduced / 1000000000;
-		hourlyGraphData[2][hourlyGraphIndex] = PVSolarEnergyProduced / 1000000000;
-		hourlyGraphData[3][hourlyGraphIndex] = energyDemanded / 1000000000;
 
 		double xAxisTickUnit = 1;
 		double yAxisRange = 1500;
 		double yAxisTickUnit = 200;
 
-		addJFreeChartToJPanel("Hourly View", panelHourlyChart, hourlyGraphData, "Time", "Gigawatts",
+		addJFreeChartToJPanel("Real-Time View", panelHourlyChart, hourlyGraphData, "Time", "Gigawatts",
 				false, 0, 10, xAxisTickUnit, yAxisRange, yAxisTickUnit);
 
 		addJFreeChartToJPanel("Overview", panelOverviewChart,
