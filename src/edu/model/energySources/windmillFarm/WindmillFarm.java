@@ -25,7 +25,7 @@ public class WindmillFarm
 
 		this.windmills = new ArrayList<Windmill>();
 
-		this.windVariabilityAsPercentDeviation = 0.35;
+		this.windVariabilityAsPercentDeviation = 0.40;
 
 		this.currentWindTier = this.windTiersByHour[0];
 		this.samplesPerTier = (int) (1 / this.timeFrameAsPercentageOfHour);
@@ -57,7 +57,7 @@ public class WindmillFarm
 
 		for (Windmill windmill : this.windmills)
 		{
-			totalOutput += windmill.calculateCurrentMegawattHours(windCondition, timeFrameAsPercentageOfHour);
+			totalOutput += windmill.calculateCurrentWattage(windCondition, timeFrameAsPercentageOfHour);
 		}
 
 		return totalOutput;

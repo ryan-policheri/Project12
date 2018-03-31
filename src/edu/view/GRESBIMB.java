@@ -277,7 +277,7 @@ public class GRESBIMB
 				{
 					lblBatteriesSelectedBatteryName.setText(batteryDefaultListModel.get(selectedIndex).getBatteryName());
 					lblBatteryType.setText(batteryDefaultListModel.get(selectedIndex).getBatteryType());
-					lblBatteryMaxStorage.setText(batteryDefaultListModel.get(selectedIndex).getMaxEnergyInJoules() + "");
+					lblBatteryMaxStorage.setText(decimalFormat.format(batteryDefaultListModel.get(selectedIndex).getMaxEnergyInJoules() / 1000000)); //convert to megajoules
 				}
 			}
 		});

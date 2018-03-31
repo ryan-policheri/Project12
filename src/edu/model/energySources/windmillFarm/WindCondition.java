@@ -10,21 +10,28 @@ public class WindCondition
 
     private double[] windTierPercentOfMaxCapacityValues = {0.1,0.15,0.35,0.6,0.85};
 
+    private double currentCapacityFactor;
+
     public WindCondition(int windTier, double windVariabilityAsPercentDeviation)
     {
         this.windTier = windTier;
         this.windVariabilityAsPercentDeviation = windVariabilityAsPercentDeviation;
+
+        this.setCurrentCapacityFactor();
     }
 
-    protected double randomizeWindTierXSurplus(double maxCapacityInWatts, double timeFrameAsPercentageOfHour)
+    protected double calculateSurplus(double maxCapacityInWatts, double timeFrameAsPercentageOfHour)
     {
-        double percentageOfMaxCapacity = this.windTierPercentOfMaxCapacityValues[this.windTier - 1]; //subtract 1 from wind tier so it matches array index
-        double percentageOfMaxCapacityAfterFlucutation = fluctuatePercentage(percentageOfMaxCapacity);
-
-        double wattsGeneratedHourly = maxCapacityInWatts * percentageOfMaxCapacityAfterFlucutation * this.secondsInHour;
+        double wattsGeneratedHourly = maxCapacityInWatts * this.currentCapacityFactor * this.secondsInHour;
         double wattsGeneratedForTimeFrame = timeFrameAsPercentageOfHour * wattsGeneratedHourly;
 
         return wattsGeneratedForTimeFrame;
+    }
+
+    private void setCurrentCapacityFactor()
+    {
+        double capacityFactor = this.windTierPercentOfMaxCapacityValues[this.windTier - 1];
+        this.currentCapacityFactor = fluctuatePercentage(capacityFactor);
     }
 
     private double fluctuatePercentage(double percentageAsDecimal)

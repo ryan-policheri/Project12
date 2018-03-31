@@ -162,5 +162,10 @@ public class RotationalBattery extends VolatileBattery
 	{
 		return "RotationalBattery: " + this.getBatteryName();
 	}
-	
+
+	public String getBatteryType()
+	{
+		return "Rotational Battery";
+	}
+
 }

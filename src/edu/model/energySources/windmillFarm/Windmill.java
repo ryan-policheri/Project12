@@ -24,9 +24,9 @@ public class Windmill
         windmillShutdown = false;
     }
 
-    protected double calculateCurrentMegawattHours(WindCondition windCondition, double timeFrameAsPercentageOfHour)
+    protected double calculateCurrentWattage(WindCondition windCondition, double timeFrameAsPercentageOfHour)
     {
-        return windCondition.randomizeWindTierXSurplus(this.maxCapacityInWatts, timeFrameAsPercentageOfHour);
+        return windCondition.calculateSurplus(this.maxCapacityInWatts, timeFrameAsPercentageOfHour);
     }
 
     public String toString()
