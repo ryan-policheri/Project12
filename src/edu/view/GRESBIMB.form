@@ -29,7 +29,7 @@
                 </constraints>
                 <properties>
                   <font size="36"/>
-                  <text value="Welcome to Project G.R.E.S.B.I.M.B."/>
+                  <text value="Welcome to Project C.R.E.S.B.I.M.B."/>
                 </properties>
               </component>
               <vspacer id="d17f4">
@@ -43,7 +43,7 @@
                 </constraints>
                 <properties>
                   <font size="24"/>
-                  <text value="Mechanical Mass-Energy Storage Systems: Making Green, Renewable Energy Work"/>
+                  <text value="Mechanical Mass-Energy Storage Systems: Making Clean, Renewable Energy Work"/>
                 </properties>
               </component>
               <vspacer id="f4060">

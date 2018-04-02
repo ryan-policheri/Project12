@@ -609,7 +609,7 @@ public class GRESBIMB
 				false, 0, 10, xAxisTickUnit, yAxisRange, yAxisTickUnit);
 
 		addJFreeChartToJPanel("Overview", panelOverviewChart,
-				overviewGraphData, "Sample", "Gigawatts", false, 0,
+				overviewGraphData, "Time", "Gigawatts", false, 0,
 				240, xAxisTickUnit, yAxisRange, yAxisTickUnit);
 
 	}
