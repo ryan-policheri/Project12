@@ -1,0 +1,13 @@
+Parsing Key
+() indicates new rotational battery specifications start on the next line
+= indicates end of file
+
+()
+Name:RB_MegaSonic_
+Mass In Kilograms:400
+Radius In Meters:0.5
+Material Name:Carbon Fiber
+Bearing Name:Modern
+Amount of batteries of this type:4300
+
+=
